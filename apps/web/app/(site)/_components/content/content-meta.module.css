@@ -1,0 +1,69 @@
+@reference "../../../globals.css";
+
+.cardMeta { @apply flex min-w-0 flex-1 items-center justify-between gap-3; }
+.identity { @apply min-w-0; }
+.nameRow { @apply flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1; }
+.nameRow .author { overflow-wrap: anywhere; }
+.cardCategory { @apply inline-flex min-w-0 items-center gap-1 text-base text-muted-foreground; overflow-wrap: anywhere; }
+.cardCategory svg { @apply shrink-0; }
+.cardCategory:is(a) { @apply no-underline; }
+.cardCategory:is(a):hover { @apply text-foreground underline; }
+.commentDate { @apply text-xs font-normal whitespace-nowrap text-muted-foreground; }
+
+.meta {
+  @apply
+    mb-3 flex flex-wrap items-center gap-2.5 text-[0.875rem];
+}
+
+.author {
+  @apply
+    text-base font-semibold no-underline hover:underline;
+}
+
+.category {
+  @apply
+    text-muted-foreground;
+}
+.categoryLink {
+  @apply inline-flex min-w-0 items-center gap-2.5 text-muted-foreground no-underline;
+  overflow-wrap: anywhere;
+}
+.categoryLink:hover { @apply text-foreground underline; }
+.categoryLink svg { @apply shrink-0; }
+
+.replyTarget { @apply inline-flex min-w-0 items-center gap-2 text-muted-foreground [overflow-wrap:anywhere]; font-size: var(--content-text-size, 1rem); }
+.replyLabel { @apply sr-only; }
+.replyArrow { @apply size-3 shrink-0; color: var(--muted-foreground); }
+
+.date {
+  @apply
+    ml-auto text-xs whitespace-nowrap text-muted-foreground;
+}
+
+.meta[data-compact="true"] { @apply mb-0 min-w-0 gap-2 text-base; }
+.meta[data-compact="true"] .date { @apply sr-only; }
+.meta[data-compact="true"] .category { @apply text-muted-foreground; }
+.meta[data-compact="true"] .author { @apply [overflow-wrap:anywhere]; }
+
+.body {
+  @apply
+    text-base leading-[1.5] [overflow-wrap:anywhere];
+}
+
+.body > p { @apply m-0 whitespace-pre-wrap; }
+p.body { @apply m-0 whitespace-pre-wrap; }
+.body > p + p { @apply mt-[0.8rem]; }
+.bodyLink { @apply text-inherit no-underline outline-offset-2; }
+.mention { @apply text-primary no-underline outline-offset-2; }
+
+.author,.body,.meta[data-compact="true"] { font-size: var(--content-text-size, 1rem); }
+.body { font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
+
+@media (width < 40.625rem) {
+  .meta { @apply gap-[0.4375rem]; }
+  .date { @apply text-[0.6875rem]; }
+}
+
+@media (width < 30rem) {
+  .date { @apply m-0 w-full text-xs; }
+}

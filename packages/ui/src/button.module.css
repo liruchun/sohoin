@@ -1,0 +1,45 @@
+@reference "../../../apps/web/app/globals.css";
+
+/* Keep shared defaults below caller utilities and unlayered component styles. */
+@layer components {
+  .root {
+    @apply inline-flex shrink-0 items-center justify-center gap-2 border border-solid
+      text-[0.875rem] leading-normal font-medium whitespace-nowrap no-underline
+      outline-none select-none cursor-pointer disabled:cursor-default
+      aria-disabled:cursor-default transition-colors duration-[140ms] ease-out
+      disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2
+      focus-visible:outline-offset-[3px] focus-visible:outline-ring
+      motion-reduce:transition-none;
+  }
+  .root svg { @apply pointer-events-none shrink-0; }
+
+  .root {
+    transition-property: color, background-color, border-color, box-shadow, filter, scale, opacity;
+  }
+  .root:not(:disabled):not([aria-disabled=true]):active {
+    filter: brightness(.92);
+    transition-duration: 70ms;
+  }
+  /* Tiny unfilled icons need a visible cue beyond a subpixel scale change. */
+  .root.plain:not(:disabled):not([aria-disabled=true]):not(:has(> [data-magnetic-surface])):active {
+    opacity: .8;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .root:not(:disabled):not([aria-disabled=true]):not(:has(> [data-magnetic-surface])):active {
+      scale: .98;
+    }
+  }
+
+  .primary { @apply rounded-xl border-transparent bg-primary text-primary-foreground hover:bg-primary/90; }
+  .outline { @apply rounded-xl border-border bg-card text-foreground hover:bg-accent; }
+  .secondary { @apply rounded-xl border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80; }
+  .ghost { @apply rounded-xl border-transparent bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground; }
+  .plain { @apply rounded-xl border-transparent bg-transparent text-muted-foreground; }
+  .avatar { @apply rounded-full border-border bg-background text-muted-foreground hover:bg-accent hover:text-foreground; }
+  .link { @apply rounded-xl border-transparent bg-transparent text-primary underline-offset-4 hover:underline; }
+
+  .defaultSize { @apply min-h-10 px-4 py-2; }
+  .small { @apply min-h-8 px-3 py-1; }
+  .icon { @apply size-11 p-0; }
+  .smallIcon { @apply size-8 p-0; }
+}

@@ -1,0 +1,17 @@
+@reference "../../../globals.css";
+
+.root { position: relative; margin-inline-start: var(--card-text-offset, 0); --feed-fold-after: 5; --feed-fold-visible: 4; }
+.preview { @apply block cursor-pointer overflow-hidden text-inherit no-underline outline-offset-2; max-height: calc(var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))) * 1.5 * var(--feed-fold-visible)); }
+.root[data-measured="true"] .preview,
+.root[data-expanded="true"] .preview { max-height: none; }
+.inlineAction { position: absolute; bottom: 0; right: 0; display: inline-flex; align-items: baseline; white-space: nowrap; line-height: 1.5; font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
+.root[data-measured="false"] .inlineAction { background: var(--background); }
+.expand, .readMore, .collapse { @apply inline-flex items-baseline p-0 font-normal text-primary no-underline outline-offset-2; height: auto; min-height: 0; font-size: inherit; line-height: inherit; }
+.expand, .readMore { margin-left: .2em; }
+.collapse { @apply mt-1; font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
+@media (hover: hover) and (pointer: fine) {
+ .expand:hover, .readMore:hover, .collapse:hover { @apply underline; }
+}
+@media (width >= 40rem) {
+ .root { --feed-fold-after: 7; --feed-fold-visible: 6; }
+}

@@ -1,0 +1,34 @@
+{
+  "observedAt": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "url": "https://bonjour.bio/posts/6ac9c5fa81ca30866f3055dd",
+  "method": "Opened the second post image in Chrome and read document.getAnimations() effect timing/keyframes and viewer DOM. Repeated after closing. No local project browser or build validation.",
+  "selectedIndex": 1,
+  "observed": {
+    "durationMs": 320,
+    "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+    "delayByIndexMs": [32, 0, 32, 64, 96, 128],
+    "stageTransformFromExamples": [
+      {"index": 0, "transform": "translate(710px, -522px) scale(0.222548)"},
+      {"index": 1, "transform": "translate(6px, -522px) scale(0.257627)"},
+      {"index": 2, "transform": "translate(-698px, -522px) scale(0.300395)"},
+      {"index": 3, "transform": "translate(-1402px, -522px) scale(0.274864)"}
+    ],
+    "transformTo": "none",
+    "clipPath": "Stage transitions from a source-sized inset with rounded corners to inset(0 round 16px).",
+    "sideOpacityTo": 0.2,
+    "previews": "Each viewer image contains a preview image underneath a separate original image.",
+    "farSlides": "Some far slides initially use opacity-only entrance; a later opening also exposed geometry transitions for those slides."
+  },
+  "interpretation": "The fan-out comes from source-thumbnail-sized image geometry travelling to slide destinations concurrently, staggered by distance from the selected image; it is not a small translation around the final position.",
+  "localAdaptation": {
+    "keepSelectedTransition": true,
+    "sideOpacity": 0.5,
+    "nativeSideSnapshotLimit": 8,
+    "maxDelayMs": 128,
+    "previewSource": "Reuse only already-loaded source thumbnails; do not preload extra originals or wait for image decode.",
+    "geometry": "Measure clicked thumbnail before opening, measure mounted side endpoints once, derive translate/scale/inset for native snapshots.",
+    "fallback": "Browsers without native View Transitions retain the existing small CSS entrance; reduced motion shows endpoints directly.",
+    "validation": "Reference interaction observed. Local code changed but not built, tested, or browser-verified."
+  }
+}

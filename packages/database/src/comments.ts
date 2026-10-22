@@ -1,0 +1,24 @@
+import "server-only";
+import {getPool} from "./index";
+export class CommentStoreError extends Error{constructor(public code:"forbidden"|"missing"|"conflict"|"invalid_action"){super(code);}}
+export type CommentRow={id:string;content_id:string;content_title:string;author_id:string|null;author_name:string|null;root_id:string|null;reply_to_id:string|null;reply_to_name:string|null;excerpt:string;body?:string;status:"visible"|"hidden"|"deleted";thread_hidden:boolean;version:number;created_at:Date;updated_at:Date};
+const projection=(detail=false)=>`c.id::text,c.content_id::text,COALESCE(NULLIF(p.title,''),left(p.feed_text,80)) AS content_title,c.author_id,u.name AS author_name,c.root_id::text,c.reply_to_id::text,ru.name AS reply_to_name,CASE WHEN c.status='deleted' THEN '' ELSE left(c.body,120) END AS excerpt,${detail?"CASE WHEN c.status='deleted' THEN '' ELSE c.body END AS body,":""}c.status,(c.thread_hidden OR COALESCE(r.thread_hidden,false)) AS thread_hidden,c.version,c.created_at,c.updated_at`;
+const joins=`FROM comments c JOIN contents p ON p.id=c.content_id LEFT JOIN "user" u ON u.id=c.author_id LEFT JOIN comments r ON r.id=c.root_id LEFT JOIN comments t ON t.id=c.reply_to_id LEFT JOIN "user" ru ON ru.id=t.author_id`;
+export async function readComments(query:{status:string;contentId?:string;before?:string},rootId?:string){const result=await getPool().query(`SELECT ${projection()} ${joins} WHERE ($1='all' OR c.status=$1) AND ($2::bigint IS NULL OR c.content_id=$2::bigint) AND ($3::bigint IS NULL OR c.id<$3::bigint) AND ($4::bigint IS NULL OR c.root_id=$4::bigint) ORDER BY c.id DESC LIMIT 31`,[query.status,query.contentId??null,query.before??null,rootId??null]);return result.rows as CommentRow[];}
+export async function readComment(id:string){return (await getPool().query(`SELECT ${projection(true)} ${joins} WHERE c.id=$1`,[id])).rows[0] as CommentRow|undefined;}
+export async function moderateStoredComment(actor:string,id:string,input:{version:number;action:"hide"|"restore"|"delete"|"hide_thread"|"show_thread"}){
+ const client=await getPool().connect();try{await client.query("BEGIN");
+  if(!(await client.query(`SELECT id FROM "user" WHERE id=$1 AND NOT COALESCE(banned,false) AND 'admin'=ANY(string_to_array(COALESCE(role,'user'),',')) FOR SHARE`,[actor])).rowCount)throw new CommentStoreError("forbidden");
+  const relationship=(await client.query("SELECT COALESCE(root_id,id)::text AS thread_id FROM comments WHERE id=$1",[id])).rows[0];if(!relationship)throw new CommentStoreError("missing");
+  // Lock the root first for all actions; thread visibility never updates every reply.
+  await client.query("SELECT id FROM comments WHERE id=$1 FOR UPDATE",[relationship.thread_id]);
+  const current=(await client.query("SELECT id::text,content_id::text,root_id,status,thread_hidden,version FROM comments WHERE id=$1 FOR UPDATE",[id])).rows[0];if(!current)throw new CommentStoreError("missing");if(current.version!==input.version)throw new CommentStoreError("conflict");
+  let status=current.status as CommentRow["status"],hidden=current.thread_hidden as boolean;
+  if(input.action==="hide_thread"||input.action==="show_thread"){if(current.root_id!==null)throw new CommentStoreError("invalid_action");const next=input.action==="hide_thread";if(hidden===next)throw new CommentStoreError("invalid_action");hidden=next;}
+  else{if(status==="deleted")throw new CommentStoreError("invalid_action");const next=input.action==="hide"?"hidden":input.action==="restore"?"visible":"deleted";if(status===next)throw new CommentStoreError("invalid_action");status=next;}
+  await client.query("UPDATE comments SET status=$2,thread_hidden=$3,body=CASE WHEN $2='deleted' THEN '' ELSE body END,deleted_at=CASE WHEN $2='deleted' THEN COALESCE(deleted_at,now()) ELSE NULL END,version=version+1,updated_at=now() WHERE id=$1",[id,status,hidden]);
+  await client.query("INSERT INTO comment_audit(actor_id,comment_id,content_id,action,before_status,after_status,before_thread_hidden,after_thread_hidden) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",[actor,id,current.content_id,input.action,current.status,status,current.thread_hidden,hidden]);
+  const result=(await client.query(`SELECT ${projection(true)} ${joins} WHERE c.id=$1`,[id])).rows[0] as CommentRow;await client.query("COMMIT");return result;
+ }catch(error){await client.query("ROLLBACK");throw error;}finally{client.release();}
+}
+export async function readCommentAudit(before?:string){return (await getPool().query(`SELECT a.id::text,a.comment_id::text,a.content_id::text,a.action,a.created_at,u.name AS actor_name,u.email AS actor_email FROM comment_audit a LEFT JOIN "user" u ON u.id=a.actor_id WHERE ($1::bigint IS NULL OR a.id<$1::bigint) ORDER BY a.id DESC LIMIT 31`,[before??null])).rows as {id:string;comment_id:string;content_id:string;action:"hide"|"restore"|"delete"|"hide_thread"|"show_thread";created_at:Date;actor_name:string|null;actor_email:string|null}[];}

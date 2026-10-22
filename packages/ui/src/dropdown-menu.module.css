@@ -1,0 +1,6 @@
+/* Match Select's floating layer above Dialog content (61), including portalled menus. */
+.content{z-index:70;border-color:var(--border-floating);box-shadow:var(--shadow-popover);transform-origin:var(--radix-dropdown-menu-content-transform-origin);animation:menu-in var(--site-motion-menu) var(--site-ease-menu)}
+.content[data-state=closed]{pointer-events:none;animation:menu-out var(--site-motion-menu) var(--site-ease-menu) forwards}
+@keyframes menu-in{from{opacity:0;transform:translateY(-.375rem) scale(.94)}to{opacity:1;transform:none}}
+@keyframes menu-out{to{opacity:0;transform:translateY(-.375rem) scale(.94)}}
+@media(prefers-reduced-motion:reduce){.content{animation:none}}

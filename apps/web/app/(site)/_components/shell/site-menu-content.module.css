@@ -1,0 +1,6 @@
+@reference "../../../globals.css";
+
+.panel {
+  @apply
+    w-50;
+}

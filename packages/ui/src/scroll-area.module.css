@@ -1,0 +1,13 @@
+@reference "../../../apps/web/app/globals.css";
+
+.root { @apply relative; }
+.viewport { @apply size-full rounded-[inherit] outline-none; }
+/* Absolute overlay: the bar paints over the viewport instead of taking a gutter. */
+.scrollbar { @apply absolute flex touch-none select-none p-px; }
+.scrollbar[data-orientation=vertical] { @apply h-full w-2 border-l border-l-transparent; }
+.scrollbar[data-orientation=horizontal] { @apply h-2 flex-col border-t border-t-transparent; }
+.thumb { @apply relative flex-1 rounded-full bg-muted-foreground/40; }
+.thumb:hover { @apply bg-muted-foreground/60; }
+@media (forced-colors: active) {
+  .thumb { background-color: ButtonText; }
+}

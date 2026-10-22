@@ -1,0 +1,2 @@
+import {updateReactionType,checkWriteOrigin,readJson,errorResponse} from "@sohoin/core/server";
+export async function PATCH(request:Request,{params}:{params:Promise<{code:string}>}){try{checkWriteOrigin(request);return Response.json(await updateReactionType(request.headers,(await params).code,await readJson(request)),{headers:{"Cache-Control":"no-store"}});}catch(error){return errorResponse(error);}}

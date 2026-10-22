@@ -1,0 +1,25 @@
+{
+  "name": "@sohoin/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./server": "./src/server/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sohoin/database": "workspace:*",
+    "@sohoin/extension-api": "workspace:*",
+    "@sohoin/ui": "workspace:*",
+    "@xmldom/xmldom": "0.9.12",
+    "better-auth": "1.7.9",
+    "server-only": "0.0.1",
+    "sharp": "0.35.5"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}

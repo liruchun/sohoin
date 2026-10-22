@@ -1,0 +1,121 @@
+@reference "../../../globals.css";
+
+.root { container-type: inline-size; @apply mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 text-xs text-muted-foreground; }
+.reactions {
+  @apply flex min-w-0 items-center gap-1;
+}
+.tools { @apply ml-auto flex shrink-0 items-center gap-1; }
+.action { @apply box-border h-7 min-h-7 w-auto min-w-8 items-center justify-center gap-1 rounded-lg px-1.5 py-0 text-[0.8125rem] font-normal leading-none text-muted-foreground; }
+.action svg {
+  @apply block size-4;
+}
+.reactionTrigger { position: relative; padding: 0; border-width: 0; }
+.reactionSurface {
+  @apply absolute inset-0 box-border border border-solid border-border bg-card;
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--shadow-ink) 8%, transparent);
+}
+.action[data-state="open"], .action:focus-visible { color: var(--primary); }
+/* Saved selections highlight the icon while retaining the resting surface. */
+.reactions[data-open="true"] .reactionSurface,
+.reactions[data-selected="true"] .reactionSurface {
+  color: var(--primary);
+  --post-action-detail: var(--card);
+}
+.reactions[data-open="true"] .reactionSurface { background: var(--accent); }
+.reactions[data-open="true"] > .action svg,
+.reactions[data-selected="true"] > .action svg { fill: currentColor; }
+.count { @apply box-border inline-flex h-7 min-h-7 items-center justify-center gap-0.5 px-2 py-0 text-[0.8125rem] font-normal leading-none text-muted-foreground; }
+.emoji { @apply inline-flex size-4 shrink-0 items-center justify-center text-[0.9375rem] leading-none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.action, .count { font-variant-numeric: tabular-nums; --animated-number-height: 1rem; }
+
+.summary { @apply relative flex min-w-0 flex-1 items-center gap-1; }
+/* Optical correction for emoji glyphs; keep the shared box and number alignment. */
+.summary .count .emoji { translate: 0 -.0625rem; }
+.summary > [data-overflow="true"] {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.more { @apply shrink-0; }
+.overflowChoices { @apply flex max-w-[18rem] flex-wrap gap-1; }
+
+/* Padding and the close grace period bridge the trigger and portal hit areas. */
+.popover { padding-block: .375rem; transform-origin: var(--radix-popover-content-transform-origin); }
+.bubble { @apply rounded-2xl border border-solid border-border bg-popover p-1.5 text-popover-foreground; border-color: var(--border-floating); box-shadow: var(--shadow-popover); transform-origin: var(--radix-popover-content-transform-origin); }
+.choices { @apply grid gap-0.5; grid-template-rows: repeat(2, auto); }
+.choice { @apply box-border size-8 cursor-pointer rounded-full p-0; transform-origin: center; }
+.choice .emoji {
+  @apply size-7 text-[1.125rem];
+  transition: transform var(--site-motion-feedback) var(--site-ease-feedback);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .action:hover, .choice:hover, .count:hover { background: var(--accent); color: var(--primary); }
+  .action:hover { --post-action-detail: var(--card); }
+  .action:hover svg { fill: currentColor; }
+  .reactionTrigger:hover { background: transparent; }
+  .reactionTrigger:hover > .reactionSurface { background: var(--accent); }
+  .choice:hover .emoji { transform: translateY(-.125rem) scale(1.12); }
+  .choice:active .emoji { transform: scale(.96); }
+  .popover[data-pointer-entry="true"][data-state="closed"] {
+    /* Radix Presence waits for the longest child transition before unmounting. */
+    animation: panel-exit-lifetime 240ms linear;
+  }
+  .popover[data-pointer-entry="true"] .bubble {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity var(--site-motion-menu) var(--site-ease-feedback), transform var(--site-motion-menu) var(--site-ease-feedback);
+  }
+  .popover[data-pointer-entry="true"][data-state="closed"] .bubble {
+    opacity: 0;
+    transform: translateY(.25rem) scale(.96);
+    transition-duration: 140ms, 240ms;
+    transition-delay: 100ms, 0ms;
+  }
+  .popover[data-pointer-entry="true"] .choice {
+    opacity: 1;
+    transform: translate(0,0) scale(1);
+    transition: opacity 240ms var(--site-ease-feedback), transform 240ms var(--site-ease-feedback);
+    transition-delay: var(--emoji-enter-delay, 0ms);
+  }
+  .popover[data-pointer-entry="true"][data-state="closed"] .choice {
+    opacity: 0;
+    transform: translate(-.5rem,.25rem) scale(.45);
+    transition-duration: 160ms;
+    transition-delay: var(--emoji-exit-delay, 0ms);
+  }
+  @starting-style {
+    .popover[data-pointer-entry="true"][data-state="open"] .bubble {
+      opacity: 0;
+      transform: translateY(.25rem) scale(.96);
+    }
+    .popover[data-pointer-entry="true"][data-state="open"] .choice {
+      opacity: 0;
+      transform: translate(-.5rem,.25rem) scale(.45);
+    }
+  }
+}
+
+@media (pointer: coarse) {
+  .action, .choice { min-width: 2.75rem; min-height: 2.75rem; }
+  .count { min-height: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .popover, .popover .bubble, .popover .choice { animation: none !important; transition: none; }
+  .choice .emoji { transition: none; transform: none !important; }
+}
+
+@keyframes panel-exit-lifetime { from { opacity: 1; } to { opacity: 1; } }
+
+.action[aria-pressed="true"], .count[aria-pressed="true"], .choice[aria-pressed="true"] { color: var(--primary); }
+.count[aria-pressed="true"], .choice[aria-pressed="true"] { background: var(--accent); }
+.action[aria-pressed="true"] svg { fill: currentColor; }
+.feedback { @apply col-span-2 w-full; }
+
+
+.actionLabel { @apply text-xs; }
+@container (width < 22rem) {
+ .actionLabel { display: none; }
+}

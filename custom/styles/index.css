@@ -1,0 +1,15 @@
+/* Scoped to the Custom template: the Core comparison keeps its default tokens. */
+[data-theme="custom"] { --surface: #f8f6f0; --ink: #283f37; --muted: #52655b; --line: #d8dfd5; --accent: #315f44; }
+.custom-community ::selection { background: #d5e2bd; color: #283f37; }
+.custom-header .brand { color: var(--accent); }
+.custom-header .brand-note { margin-left: 12px; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+.custom-community .page-grid { grid-template-columns: 220px minmax(0, 1fr); gap: 80px; }
+.custom-community .introduction h1 { font-family: "Noto Serif CJK SC", "Songti SC", SimSun, serif; font-weight: 500; }
+.custom-community .main-content { grid-column: 2; grid-row: 1; }
+.custom-community .sidebar { grid-column: 1; grid-row: 1; padding-right: 28px; border-right: 1px solid var(--line); }
+@media (max-width: 1000px) { .custom-header .brand-note { display: none; } .custom-community .page-grid { gap: 40px; } }
+@media (max-width: 800px) {
+  .custom-community .page-grid { grid-template-columns: minmax(0, 1fr); }
+  .custom-community .main-content { grid-column: 1; grid-row: 1; }
+  .custom-community .sidebar { grid-row: 2; padding-right: 0; border-right: 0; }
+}

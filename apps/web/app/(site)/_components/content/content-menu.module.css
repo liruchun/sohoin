@@ -1,0 +1,23 @@
+@reference "../../../globals.css";
+
+.trigger { @apply relative isolate box-border text-muted-foreground; }
+.trigger::before {
+  @apply pointer-events-none absolute -z-10 size-8 rounded-lg bg-accent opacity-0;
+  content: "";
+  transition: opacity var(--site-motion-feedback) var(--site-ease-feedback);
+}
+.trigger[data-comment] {
+  height: calc(var(--spacing, .25rem) * 8);
+  min-height: 0;
+}
+.trigger[data-state="open"] { @apply text-foreground; }
+.trigger[data-state="open"]::before { @apply opacity-100; }
+
+@media (hover: hover) and (pointer: fine) {
+  .trigger:hover { @apply text-foreground; }
+  .trigger:hover::before { @apply opacity-100; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger::before { transition: none; }
+}

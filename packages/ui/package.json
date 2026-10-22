@@ -1,0 +1,55 @@
+{
+  "name": "@sohoin/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./button": "./src/button.tsx",
+    "./feedback": "./src/feedback.tsx",
+    "./toast": "./src/toast.tsx",
+    "./textarea": "./src/textarea.tsx",
+    "./mention": "./src/mention.tsx",
+    "./input-group": "./src/input-group.tsx",
+    "./animated-number": "./src/animated-number.tsx",
+    "./relative-time": "./src/relative-time.tsx",
+    "./icon-button": "./src/icon-button.tsx",
+    "./carousel": "./src/carousel.tsx",
+    "./magnetic-surface": "./src/magnetic-surface.tsx",
+    "./image-lightbox": "./src/image-lightbox.tsx",
+    "./utils": "./src/utils.ts",
+    "./dialog": "./src/dialog.tsx",
+    "./dialog-content": "./src/dialog-content.tsx",
+    "./dropdown-menu": "./src/dropdown-menu.tsx",
+    "./dropdown-menu-content": "./src/dropdown-menu-content.tsx",
+    "./popover": "./src/popover.tsx",
+    "./radio-group": "./src/radio-group.tsx",
+    "./toggle-group": "./src/toggle-group.tsx",
+    "./switch": "./src/switch.tsx",
+    "./select": "./src/select.tsx",
+    "./theme-provider": "./src/theme-provider.tsx",
+    "./theme-preference": "./src/theme-preference.ts",
+    "./tooltip": "./src/tooltip.tsx",
+    "./skeleton-reveal": "./src/skeleton-reveal.tsx",
+    "./page-scrollbar": "./src/page-scrollbar.tsx",
+    "./scroll-area": "./src/scroll-area.tsx",
+    "./theme.css": "./src/theme.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@diceui/mention": "1.0.0",
+    "@sohoin/extension-api": "workspace:*",
+    "class-variance-authority": "0.7.1",
+    "cn": "0.4.0",
+    "embla-carousel-react": "8.6.0",
+    "lucide-react": "1.57.0",
+    "next-intl": "4.14.9",
+    "photoswipe": "5.4.4",
+    "radix-ui": "1.8.1"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}

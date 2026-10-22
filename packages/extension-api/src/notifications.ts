@@ -1,0 +1,10 @@
+import {z} from "zod";
+import {contentIdSchema} from "./content";
+import {userIdSchema} from "./users";
+const text=(max:number)=>z.string().trim().max(max).refine(v=>!/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(v));
+export const notificationQuerySchema=z.strictObject({before:contentIdSchema.optional(),status:z.enum(["all","unread"]).default("all")});
+export const notificationReadSchema=z.union([z.strictObject({ids:z.array(contentIdSchema).min(1).max(100).refine(ids=>new Set(ids).size===ids.length)}),z.strictObject({through:contentIdSchema})]);
+export const systemNotificationSchema=z.strictObject({recipientId:userIdSchema,key:z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/),title:text(120).min(1),body:text(1000)});
+export const notificationSchema=z.strictObject({id:z.string(),kind:z.enum(["reply","content_reacted","comment_reacted","follow","system"]),actor:z.strictObject({id:z.string(),name:z.string()}).nullable(),title:z.string(),body:z.string(),target:z.strictObject({contentId:z.string().nullable(),commentId:z.string().nullable(),userId:z.string().nullable()}),createdAt:z.string(),readAt:z.string().nullable()});
+export const notificationPageSchema=z.strictObject({items:z.array(notificationSchema).max(30),nextCursor:z.string().nullable()});
+export type Notification=z.infer<typeof notificationSchema>;

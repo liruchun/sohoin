@@ -1,0 +1,40 @@
+{
+  "name": "@sohoin/extension-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./routes": "./src/routes.ts",
+    "./settings": "./src/settings.ts",
+    "./components": "./src/index.ts",
+    "./openapi": "./src/openapi.ts",
+    "./admin": "./src/admin.ts",
+    "./users": "./src/users.ts",
+    "./account": "./src/account.ts",
+    "./link-preview": "./src/link-preview.ts",
+    "./content": "./src/content.ts",
+    "./mentions": "./src/mentions.ts",
+    "./comments": "./src/comments.ts",
+    "./media": "./src/media.ts",
+    "./media-limits": "./src/media-limits.ts",
+    "./interactions": "./src/interactions.ts",
+    "./community": "./src/community.ts",
+    "./follows": "./src/follows.ts",
+    "./activities": "./src/activities.ts",
+    "./profiles": "./src/profiles.ts",
+    "./notifications": "./src/notifications.ts",
+    "./points": "./src/points.ts",
+    "./badges": "./src/badges.ts",
+    "./video": "./src/video.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}

@@ -1,0 +1,13 @@
+@reference "../../../apps/web/app/globals.css";
+
+.group { @apply grid gap-3; }
+.item {
+ @apply aspect-square size-4 shrink-0 rounded-full border border-solid border-input bg-background p-0 text-primary outline-none disabled:cursor-not-allowed disabled:opacity-50;
+ transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.item[data-state=checked] { @apply border-primary; }
+.item:focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
+.item[aria-invalid=true] { @apply border-destructive; }
+.indicator { @apply flex items-center justify-center; }
+.indicator svg { @apply size-2 fill-current stroke-current; }
+@media (prefers-reduced-motion: reduce) { .item { transition: none; } }

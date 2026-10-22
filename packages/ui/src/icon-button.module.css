@@ -1,0 +1,19 @@
+.root:not(:disabled):not([aria-disabled=true]){cursor:pointer}
+.root[data-icon-active=true],.root:focus-visible{color:var(--foreground)}
+.root svg{width:1.3125rem;height:1.3125rem;stroke-width:1.75}
+.rotate svg,.menu svg path{transition:transform var(--site-motion-menu) var(--site-ease-feedback)}
+.rotate svg{transform-origin:center}
+.rotate[data-icon-active=true] svg{transform:rotate(45deg)}
+.menu[data-icon-active=true] svg path:nth-child(odd){transform:translateX(-.125rem)}
+.menu[data-icon-active=true] svg path:nth-child(even){transform:translateX(.125rem)}
+@media(hover:hover) and (pointer:fine){
+ .root:not(:disabled):not([aria-disabled=true]):hover{color:var(--foreground)}
+ .rotate:hover svg{transform:rotate(45deg)}
+ .menu:hover svg path:nth-child(odd){transform:translateX(-.125rem)}
+ .menu:hover svg path:nth-child(even){transform:translateX(.125rem)}
+}
+@media(prefers-reduced-motion:reduce){
+ .rotate svg,.menu svg path{transition:none;transform:none!important}
+}
+:global(:root[data-reduce-motion=true]) .rotate svg,
+:global(:root[data-reduce-motion=true]) .menu svg path { transition:none;transform:none!important; }

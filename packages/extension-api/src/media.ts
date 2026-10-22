@@ -1,0 +1,15 @@
+import {z} from "zod";
+import {contentIdSchema} from "./content";
+export {MAX_MEDIA_BYTES} from "./media-limits";
+export const mediaQuerySchema=z.strictObject({before:contentIdSchema.optional(),kind:z.enum(['image','video']).optional()});
+export const deleteMediaSchema=z.strictObject({version:z.number().int().positive()});
+export const generateIconsSchema=z.strictObject({mediaId:contentIdSchema});
+export const mediaSchema=z.strictObject({id:z.string(),name:z.string(),mimeType:z.string(),byteSize:z.number(),width:z.number(),height:z.number(),durationMs:z.number().nullable().optional(),version:z.number(),createdAt:z.string(),inUse:z.boolean(),previewUrl:z.string(),fileUrl:z.string()});
+export const mediaPageSchema=z.strictObject({items:z.array(mediaSchema).max(30),nextCursor:z.string().nullable()});
+export type MediaAsset=z.infer<typeof mediaSchema>;
+export type MediaPage=z.infer<typeof mediaPageSchema>;
+export const mediaReferenceSchema=z.strictObject({id:z.string(),contentId:z.string(),title:z.string(),status:z.enum(["draft","published","archived"]),role:z.enum(["cover","gallery","attachment"]),position:z.number().int().nonnegative()});
+export const mediaDetailSchema=z.strictObject({asset:mediaSchema,references:z.strictObject({items:z.array(mediaReferenceSchema).max(30),nextCursor:z.string().nullable()})});
+export const mediaAuditPageSchema=z.strictObject({items:z.array(z.strictObject({id:z.string(),mediaId:z.string(),label:z.string(),action:z.enum(["uploaded","deleted"]),createdAt:z.string(),actorName:z.string(),actorEmail:z.string().nullable()})).max(30),nextCursor:z.string().nullable()});
+export type MediaDetail=z.infer<typeof mediaDetailSchema>;
+export type MediaAuditPage=z.infer<typeof mediaAuditPageSchema>;

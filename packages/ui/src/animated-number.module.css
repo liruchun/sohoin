@@ -1,0 +1,43 @@
+.root {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  align-items: center;
+  justify-items: center;
+  height: var(--animated-number-height, 1.25em);
+  line-height: 1;
+  vertical-align: middle;
+  overflow: clip;
+  font-variant-numeric: tabular-nums;
+  --number-enter: 100%;
+  --number-exit: -100%;
+}
+.root[hidden] { display: none; }
+.root[data-direction="down"] { --number-enter: -100%; --number-exit: 100%; }
+.current, .previous {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  white-space: nowrap;
+}
+.previous { pointer-events: none; }
+.root[data-changing] .current { animation: number-in 260ms cubic-bezier(.32,.72,0,1) both; }
+.root[data-changing] .previous { animation: number-out 260ms cubic-bezier(.32,.72,0,1) both; }
+
+@keyframes number-in {
+  from { opacity: 0; transform: translateY(var(--number-enter)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes number-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(var(--number-exit)); }
+}
+@keyframes number-static { from, to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .root[data-changing] .current {
+    /* Complete through the same animationend lifecycle without visible movement. */
+    animation: number-static .001ms linear both;
+  }
+  .root[data-changing] .previous { display: none; animation: none; }
+}

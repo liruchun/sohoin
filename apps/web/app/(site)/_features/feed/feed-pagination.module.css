@@ -1,0 +1,12 @@
+@reference "../../../globals.css";
+
+.link {
+  @apply
+    rounded-full border border-solid border-border bg-card px-[1.125rem] py-2
+    text-[0.875rem] text-muted-foreground no-underline;
+}
+
+.pagination {
+  @apply
+    flex justify-center gap-4 p-6;
+}

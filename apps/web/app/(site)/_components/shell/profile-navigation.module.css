@@ -1,0 +1,10 @@
+@reference "../../../globals.css";
+.bar { @apply grid w-full min-w-0 items-center gap-3 px-8; min-height: var(--site-toolbar-height); grid-template-columns: minmax(0,1fr) auto; }
+.bar[data-has-back] { grid-template-columns: minmax(5rem,1fr) minmax(0,2fr) minmax(5rem,1fr); }
+.bar[data-has-back][data-own] { grid-template-columns: minmax(7.5rem,1fr) minmax(0,2fr) minmax(7.5rem,1fr); }
+.back { @apply justify-self-start; }
+.action { @apply justify-self-end; }
+.title { @apply min-w-0 truncate text-base font-semibold; }
+.bar[data-has-back] .title { @apply text-center; }
+@media (width < 40.625rem) { .bar { @apply gap-2 px-6; } }
+@media (width < 30rem) { .bar { @apply gap-1 px-5; } }

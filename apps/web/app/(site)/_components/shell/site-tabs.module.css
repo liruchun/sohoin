@@ -1,0 +1,29 @@
+@reference "../../../globals.css";
+
+.tabs { @apply flex flex-col items-start gap-1 px-0; }
+.tab {
+  @apply relative inline-flex min-h-12 max-w-full items-center gap-3 rounded-full border-0 py-2 text-lg no-underline;
+  padding-inline: 0;
+  transition: color var(--site-motion-feedback) var(--site-ease-feedback);
+}
+.icon { @apply inline-flex size-[1.375rem] shrink-0; }
+.icon svg { @apply size-full overflow-visible; }
+.label { @apply min-w-0 break-words; }
+.selected { @apply font-bold text-foreground; }
+.selected .icon svg { stroke-width: 2.5; }
+.inactive { @apply font-normal text-muted-foreground; }
+.tab:focus-visible { @apply outline-2 outline-offset-2 outline-foreground; }
+
+@media (hover: hover) {
+  .tab:hover { @apply bg-transparent text-foreground; }
+}
+
+@media (width < 64rem) {
+  .tabs { @apply w-full items-center; }
+  .tab { @apply size-12 justify-center gap-0 p-0; }
+  .label { @apply sr-only; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab { transition: none; }
+}

@@ -1,0 +1,16 @@
+import {z} from "zod";
+import {contentIdSchema} from "./content";
+export const commentQuerySchema=z.strictObject({before:contentIdSchema.optional(),contentId:contentIdSchema.optional(),status:z.enum(["all","visible","hidden","deleted"]).default("all")});
+export const commentContextQuerySchema=z.strictObject({before:contentIdSchema.optional()});
+export const moderateCommentSchema=z.strictObject({version:z.number().int().nonnegative(),action:z.enum(["hide","restore","delete","hide_thread","show_thread"])});
+export const commentSummarySchema=z.strictObject({id:z.string(),contentId:z.string(),contentTitle:z.string(),authorId:z.string().nullable(),authorName:z.string(),rootId:z.string().nullable(),replyToId:z.string().nullable(),replyToName:z.string().nullable(),excerpt:z.string(),status:z.enum(["visible","hidden","deleted"]),threadHidden:z.boolean(),version:z.number().int().nonnegative(),createdAt:z.string(),updatedAt:z.string()});
+export const commentSchema=commentSummarySchema.extend({body:z.string()});
+export const commentPageSchema=z.strictObject({items:z.array(commentSummarySchema).max(30),nextCursor:z.string().nullable()});
+export const commentContextSchema=z.strictObject({comment:commentSchema,root:commentSchema.nullable(),replyTo:commentSchema.nullable(),replies:commentPageSchema});
+export const commentAuditPageSchema=z.strictObject({items:z.array(z.strictObject({id:z.string(),commentId:z.string(),contentId:z.string(),action:z.enum(["hide","restore","delete","hide_thread","show_thread"]),actorName:z.string(),actorEmail:z.string().nullable(),createdAt:z.string()})).max(30),nextCursor:z.string().nullable()});
+export type CommentSummary=z.infer<typeof commentSummarySchema>;
+export type AdminComment=z.infer<typeof commentSchema>;
+export type CommentPage=z.infer<typeof commentPageSchema>;
+export type CommentContext=z.infer<typeof commentContextSchema>;
+export type ModerateComment=z.infer<typeof moderateCommentSchema>;
+export type CommentAuditPage=z.infer<typeof commentAuditPageSchema>;

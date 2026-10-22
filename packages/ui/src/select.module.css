@@ -1,0 +1,29 @@
+@reference "../../../apps/web/app/globals.css";
+
+.trigger {
+ @apply inline-flex min-h-8 min-w-28 items-center justify-between gap-3 rounded-lg border border-solid border-input bg-background px-2.5 py-1.5 text-xs leading-normal text-foreground outline-none;
+ cursor: pointer;
+}
+.trigger:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.trigger[data-state=open] { @apply bg-accent; }
+.trigger:disabled { @apply cursor-default opacity-50; }
+.icon { @apply size-3.5 shrink-0; }
+.trigger > .icon { @apply text-muted-foreground; }
+.content {
+ @apply overflow-hidden rounded-lg border border-solid bg-popover text-popover-foreground;
+ z-index: 70;
+ min-width: var(--radix-select-trigger-width);
+ max-height: var(--radix-select-content-available-height);
+ max-width: var(--radix-select-content-available-width);
+ border-color: var(--border-floating);
+ box-shadow: var(--shadow-popover);
+}
+.viewport { @apply p-1; }
+.item {
+ @apply relative flex min-h-8 cursor-default select-none items-center rounded-md py-1.5 pr-8 pl-2 text-xs leading-normal outline-none;
+}
+.item[data-highlighted] { @apply bg-accent text-accent-foreground; }
+.item[data-disabled] { @apply pointer-events-none opacity-50; }
+.indicator { @apply absolute right-2 flex size-3.5 items-center justify-center; }
+.scroll { @apply flex items-center justify-center py-1; }
+@media (pointer: coarse) { .trigger,.item { @apply min-h-11 text-base; } }

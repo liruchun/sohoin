@@ -1,0 +1,32 @@
+.surface {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  border-radius: .625rem;
+  transition:
+    scale var(--site-motion-feedback, 140ms) var(--site-ease-feedback, cubic-bezier(0,0,.2,1)),
+    transform var(--site-motion-feedback, 140ms) var(--site-ease-feedback, cubic-bezier(0,0,.2,1)),
+    border-radius var(--site-motion-feedback, 140ms) var(--site-ease-feedback, cubic-bezier(0,0,.2,1)),
+    background-color var(--site-motion-feedback, 140ms) var(--site-ease-feedback, cubic-bezier(0,0,.2,1));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(button, a, [role="button"]):not(:disabled):not([aria-disabled="true"]):active > .surface {
+    scale: .98;
+    transition-duration: 70ms;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(button, a, [role="button"]):not(:disabled):not([aria-disabled="true"]):hover > .surface {
+    border-radius: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .surface {
+    transform: none !important;
+    transition: none;
+  }
+}

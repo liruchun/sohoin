@@ -1,0 +1,46 @@
+@reference "../../../globals.css";
+
+.menu {
+  @apply flex min-w-0 items-center gap-3;
+  min-height: var(--site-toolbar-height);
+  padding-inline: calc(var(--spacing, .25rem) * 8);
+}
+
+.icon {
+  @apply grid size-9 shrink-0 place-items-center overflow-hidden rounded-xl bg-primary/10 text-primary;
+}
+.icon svg { @apply size-[1.125rem]; stroke-width: 1.75; }
+.iconImage { @apply size-full object-cover; }
+
+.identity { @apply min-w-0 flex-1; }
+.title {
+  @apply truncate text-[1.0625rem] font-semibold leading-tight;
+}
+.description {
+  @apply truncate text-xs leading-normal text-muted-foreground;
+}
+
+.join { @apply shrink-0 rounded-full; }
+.join svg { @apply size-4; stroke-width: 1.75; }
+
+.skeletonBlock {
+  @apply block bg-muted;
+  animation: community-menu-breathe var(--site-motion-skeleton-breathe, 2400ms) cubic-bezier(.4, 0, .6, 1) infinite;
+}
+.skeletonIcon { @apply size-9 shrink-0 rounded-xl; }
+.skeletonTitle { @apply mb-1.5 h-3 w-28 rounded; }
+.skeletonDescription { @apply h-2.5 w-48 max-w-full rounded; }
+.skeletonJoin { @apply h-8 w-20 shrink-0 rounded-full; }
+
+@keyframes community-menu-breathe {
+  50% { opacity: var(--site-skeleton-breathe-opacity, .65); }
+}
+
+@media (width < 40rem) {
+  .menu { @apply gap-2; padding-inline: 1rem; }
+  .description, .skeletonDescription { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonBlock { animation: none; }
+}

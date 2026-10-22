@@ -1,0 +1,603 @@
+{
+  "routeTransitionRechecked20261018": {
+    "reference": "https://bonjour.bio/",
+    "post": "https://bonjour.bio/posts/6ad1e0a04b9cb999eba94f6e",
+    "method": "Read-only link and return-button navigation; requestAnimationFrame sampling of document.getAnimations and keyframes.",
+    "entry": "Parent exits left 40px in 160ms while detail enters from right 50px in 200ms.",
+    "back": "Parent enters from left 50px in 200ms while detail exits right 40px with opacity 1 to 0 in 160ms. Both had the same currentTime in the sampled frame.",
+    "easing": "cubic-bezier(0.32,0.72,0,1)",
+    "localImplementation": "One browser snapshot flow shared by ReadingLink and the in-page return button. Native Next routing and document scrolling retained; skeleton implementation unchanged. Browser toolbar history is not intercepted."
+  },
+  "routeTransitionObserved20261017": {
+    "reference": "https://bonjour.bio/",
+    "post": "https://bonjour.bio/posts/6ad1e0a04b9cb999eba94f6e",
+    "method": "Browser getAnimations() frame sampling during public post entry and the return button; no data writes.",
+    "easing": "cubic-bezier(.32,.72,0,1)",
+    "parentOut": {"durationMs":160,"translateXpx":[0,-40],"opacity":[1,0]},
+    "detailIn": {"durationMs":200,"translateXpx":[50,0],"opacity":[0.001,1]},
+    "detailOut": {"durationMs":160,"translateXpx":[0,40],"opacity":[1,0]},
+    "parentIn": {"durationMs":200,"translateXpx":[-50,0],"opacityAnimated":false},
+    "layering": "The source detail is a fixed surface above the retained parent. Our implementation preserves document scrolling and uses native snapshots with detail above list; it does not copy the source scroll container."
+  },
+  "reference": "https://bonjour.bio/?feed=featured",
+  "capturedOn": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "scope": "Public anonymous community feed and existing public post detail; no likes, bookmarks, comments or login were submitted.",
+  "method": "Read computed styles and stylesheet declarations; sample browser animation timing/keyframes after read-only UI actions. CSS-only definitions are not proof that an interaction was observed.",
+  "viewports": {
+    "desktop": [
+      1440,
+      1000
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "mobileObservedUrl": "https://bonjour.bio/"
+  },
+  "confirmed": {
+    "hover": {
+      "colorDurationMs": 140,
+      "colorEasing": "cubic-bezier(0,0,.2,1)",
+      "scaleDurationMs": 160,
+      "scaleTo": 1.02,
+      "scaleEasing": "cubic-bezier(0,.1,0,1)"
+    },
+    "menuEnter": {
+      "durationMs": 160,
+      "easing": "cubic-bezier(.4,0,.2,1)",
+      "opacity": [
+        0,
+        1
+      ],
+      "translateYPx": [
+        -6,
+        0
+      ],
+      "scale": [
+        0.94,
+        1
+      ],
+      "origin": "top right in sampled menu"
+    },
+    "anonymousLoginDialog": {
+      "trigger": "Anonymous comment action opens login, not post detail",
+      "durationMs": 180,
+      "easing": "cubic-bezier(0,0,.2,1)",
+      "opacity": [
+        0,
+        1
+      ],
+      "scale": [
+        0.98,
+        1
+      ]
+    },
+    "imageViewerEnter": {
+      "animations": [
+        {
+          "timing": {
+            "delay": 32,
+            "direction": "normal",
+            "duration": 320,
+            "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "0",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "0.2",
+              "computedOffset": 1
+            }
+          ]
+        },
+        {
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 400,
+            "easing": "cubic-bezier(0, 0, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "0",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "1",
+              "computedOffset": 1
+            }
+          ]
+        },
+        {
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 320,
+            "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "0",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "opacity": "1",
+              "computedOffset": 1
+            }
+          ]
+        },
+        {
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 320,
+            "easing": "linear",
+            "endDelay": 0,
+            "fill": "both",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+              "composite": "auto",
+              "opacity": "0",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+              "composite": "auto",
+              "opacity": "1",
+              "computedOffset": 1
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "transitionrun",
+          "property": "clip-path",
+          "transition": "transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), clip-path 0.32s cubic-bezier(0.32, 0.72, 0, 1)",
+          "duration": "0s",
+          "easing": "ease"
+        },
+        {
+          "type": "transitionrun",
+          "property": "transform",
+          "transition": "all",
+          "duration": "0s",
+          "easing": "ease"
+        },
+        {
+          "type": "transitionrun",
+          "property": "clip-path",
+          "transition": "all",
+          "duration": "0s",
+          "easing": "ease"
+        },
+        {
+          "type": "animationstart",
+          "name": "community-image-viewer-backdrop-in",
+          "transition": "all",
+          "duration": "0.32s",
+          "easing": "cubic-bezier(0.32, 0.72, 0, 1)"
+        },
+        {
+          "type": "animationend",
+          "name": "community-image-viewer-backdrop-in",
+          "transition": "all",
+          "duration": "0.32s",
+          "easing": "cubic-bezier(0.32, 0.72, 0, 1)"
+        }
+      ]
+    },
+    "imageViewerClose": {
+      "animations": [
+        {
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 140,
+            "easing": "cubic-bezier(0, 0, 0.2, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "backgroundColor": "rgba(0, 0, 0, 0)",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "backgroundColor": "oklab(0.204625 0.00000931323 0.00000409782 / 0.03)",
+              "computedOffset": 1
+            }
+          ]
+        },
+        {
+          "timing": {
+            "delay": 0,
+            "direction": "normal",
+            "duration": 160,
+            "easing": "cubic-bezier(0, 0.1, 0, 1)",
+            "endDelay": 0,
+            "fill": "backwards",
+            "iterationStart": 0,
+            "iterations": 1
+          },
+          "frames": [
+            {
+              "offset": 0,
+              "easing": "linear",
+              "composite": "auto",
+              "scale": "none",
+              "computedOffset": 0
+            },
+            {
+              "offset": 1,
+              "easing": "linear",
+              "composite": "auto",
+              "scale": "1.02",
+              "computedOffset": 1
+            }
+          ]
+        }
+      ],
+      "events": []
+    }
+  },
+  "declarations": [
+    {
+      "animation": "0.24s ease 0s 1 normal both running community-comment-connector-uncover-x",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.24s linear 0s 1 normal both running community-comment-connector-uncover-y",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.32s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running community-image-viewer-backdrop-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.26s cubic-bezier(0.32, 0.72, 0, 1) 0.12s 1 normal both running community-image-viewer-backdrop-out",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.32s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal none running community-like-pop",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.8s linear 0s infinite normal none running community-list-refresh-dot",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running community-list-refresh-indicator-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running community-list-refresh-indicator-out",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.6s cubic-bezier(0, 1, 1, 1) 0s 1 normal backwards running community-onboarding-blur-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.6s cubic-bezier(0, 1, 1, 1) 0s 1 normal backwards running community-onboarding-float-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-detail-modal-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-detail-modal-out",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-down",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-right",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-up",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-down",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-right",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-up",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.18s cubic-bezier(0, 0, 0, 1) 0s 1 normal both running playground-feed-item-fade-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0, 0, 0, 1) 0s 1 normal both running playground-feed-item-fade-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.36s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-sidebar-modal-in",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.28s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-sidebar-modal-out",
+      "condition": "(prefers-reduced-motion: no-preference)",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.24s ease 0s 1 normal both running community-comment-connector-uncover-x",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.24s linear 0s 1 normal both running community-comment-connector-uncover-y",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.32s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running community-image-viewer-backdrop-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.26s cubic-bezier(0.32, 0.72, 0, 1) 0.12s 1 normal both running community-image-viewer-backdrop-out",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.32s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal none running community-like-pop",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.8s linear 0s infinite normal none running community-list-refresh-dot",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running community-list-refresh-indicator-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running community-list-refresh-indicator-out",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.6s cubic-bezier(0, 1, 1, 1) 0s 1 normal backwards running community-onboarding-blur-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.6s cubic-bezier(0, 1, 1, 1) 0s 1 normal backwards running community-onboarding-float-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-detail-modal-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-detail-modal-out",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-down",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-right",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-in-up",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-down",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-right",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.16s cubic-bezier(0.4, 0, 0.2, 1) 0s 1 normal both running playground-drop-menu-out-up",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.18s cubic-bezier(0, 0, 0, 1) 0s 1 normal both running playground-feed-item-fade-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.2s cubic-bezier(0, 0, 0, 1) 0s 1 normal both running playground-feed-item-fade-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.36s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-sidebar-modal-in",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.28s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal both running playground-sidebar-modal-out",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    },
+    {
+      "animation": "0.32s cubic-bezier(0.32, 0.72, 0, 1) 0s 1 normal none running community-like-pop",
+      "condition": "",
+      "verification": "loaded CSS declaration only"
+    }
+  ],
+  "rolling": [
+    {
+      "selector": "#bonjour-playbook [data-community-rolling-count] [data-rolling-digit-in], #bonjour-playbook [data-community-rolling-count] [data-rolling-digit-out]",
+      "name": "",
+      "duration": "0.26s",
+      "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook [data-community-rolling-count=\"up\"] [data-rolling-digit-in]",
+      "name": "community-rolling-count-in-up",
+      "duration": "",
+      "easing": "",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook [data-community-rolling-count=\"up\"] [data-rolling-digit-out]",
+      "name": "community-rolling-count-out-up",
+      "duration": "",
+      "easing": "",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook [data-community-rolling-count=\"down\"] [data-rolling-digit-in]",
+      "name": "community-rolling-count-in-down",
+      "duration": "",
+      "easing": "",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook [data-community-rolling-count=\"down\"] [data-rolling-digit-out]",
+      "name": "community-rolling-count-out-down",
+      "duration": "",
+      "easing": "",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook [data-post-like-icon][data-like-pop]",
+      "name": "community-like-pop",
+      "duration": "0.32s",
+      "easing": "cubic-bezier(0.32, 0.72, 0, 1)",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook[data-motion=\"reduce\"] [data-community-rolling-count] [data-rolling-digit-in], #bonjour-playbook[data-motion=\"reduce\"] [data-community-rolling-count] [data-rolling-digit-out], #bonjour-playbook[data-motion=\"reduce\"] [data-post-like-icon][data-like-pop]",
+      "name": "none",
+      "duration": "auto",
+      "easing": "ease",
+      "media": ""
+    },
+    {
+      "selector": "#bonjour-playbook[data-motion=\"reduce\"] [data-community-rolling-count] [data-rolling-digit-out]",
+      "name": "",
+      "duration": "",
+      "easing": "",
+      "media": ""
+    }
+  ],
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "fineHover": false,
+    "reduce": false,
+    "button": {
+      "transition": "padding 0.14s cubic-bezier(0, 0, 0.2, 1), width 0.14s cubic-bezier(0, 0, 0.2, 1), height 0.14s cubic-bezier(0, 0, 0.2, 1), border-radius 0.16s cubic-bezier(0, 0.1, 0, 1)",
+      "scale": "none"
+    },
+    "reducedRules": []
+  },
+  "uncertainties": [
+    "Menu close sample did not capture a stable outgoing animation; 160ms exit comes from CSS only.",
+    "Text expansion changed height, but no reliable associated CSS/WAAPI duration was captured.",
+    "Reply expansion sample contained no active animations; 240ms connector rules were found in CSS.",
+    "Like pop and count changes were not triggered because they would change external data.",
+    "Reduced-motion CSS/data-attribute branches were inspected; OS preference was not toggled.",
+    "Mobile navigation resolved to the community homepage; mobile findings concern the shared shell rather than a guaranteed featured-tab state."
+  ],
+  "projectAdaptations": [
+    "Keep source motion character but avoid animated padding/width/height by default.",
+    "No first-render counter roll or staggered feed entrance.",
+    "Skip source image-exit delay by default and support reduced motion.",
+    "Documentation only; no animation implementation or dependency change."
+  ]
+}

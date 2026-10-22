@@ -1,0 +1,14 @@
+import {z} from "zod";
+export const auditQuerySchema=z.strictObject({before:z.string().regex(/^[1-9][0-9]{0,18}$/).refine(value=>BigInt(value)<=9223372036854775807n).optional()});
+export const settingsAuditEntrySchema=z.strictObject({id:z.string(),actorName:z.string(),actorEmail:z.string().nullable(),createdAt:z.string(),changedFields:z.array(z.string())});
+export const settingsAuditPageSchema=z.strictObject({items:z.array(settingsAuditEntrySchema).max(30),nextCursor:z.string().nullable()});
+export type SettingsAuditEntry=z.infer<typeof settingsAuditEntrySchema>;
+export type SettingsAuditPage=z.infer<typeof settingsAuditPageSchema>;
+export const userAuditEntrySchema=z.strictObject({id:z.string(),actorName:z.string(),actorEmail:z.string().nullable(),targetId:z.string(),targetName:z.string(),targetEmail:z.string().nullable(),createdAt:z.string(),changedFields:z.array(z.string())});
+export const userAuditPageSchema=z.strictObject({items:z.array(userAuditEntrySchema).max(30),nextCursor:z.string().nullable()});
+export const accountAuditEntrySchema=z.strictObject({id:z.string(),actorName:z.string(),actorEmail:z.string().nullable(),createdAt:z.string(),action:z.enum(["password_changed","session_revoked","other_sessions_revoked"]),affectedSessions:z.number().int().nonnegative()});
+export const accountAuditPageSchema=z.strictObject({items:z.array(accountAuditEntrySchema).max(30),nextCursor:z.string().nullable()});
+export type UserAuditPage=z.infer<typeof userAuditPageSchema>;
+export type AccountAuditPage=z.infer<typeof accountAuditPageSchema>;
+export const contentAuditPageSchema=z.strictObject({items:z.array(z.strictObject({id:z.string(),kind:z.enum(["content","categories","tags"]),objectId:z.string(),label:z.string(),action:z.enum(["created","updated","deleted"]),actorName:z.string(),actorEmail:z.string().nullable(),createdAt:z.string()})).max(30),nextCursor:z.string().nullable()});
+export type ContentAuditPage=z.infer<typeof contentAuditPageSchema>;

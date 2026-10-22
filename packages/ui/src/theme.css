@@ -1,0 +1,163 @@
+/* shadcn/ui default Neutral theme: https://ui.shadcn.com/docs/theming */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --lightbox-background: #242427;
+    --lightbox-backdrop: #000;
+    --lightbox-foreground: #fff;
+    /* The splash mark is brand artwork, not body copy, so it keeps its own tone
+       instead of inheriting the body text color. */
+    --splash-mark: #3e3e3e;
+    --foreground: oklch(.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(.145 0 0);
+    --primary: #ff4d55;
+    --primary-foreground: #fff;
+    --secondary: oklch(.97 0 0);
+    --secondary-foreground: oklch(.205 0 0);
+    --muted: oklch(.97 0 0);
+    --muted-foreground: oklch(.556 0 0);
+    --accent: oklch(.97 0 0);
+    --accent-foreground: oklch(.205 0 0);
+    --destructive: oklch(.577 .245 27.325);
+    --border: oklch(0.96140338 0.00448331 214.328535);
+    --border-floating: var(--border);
+    --shadow-ink: #000;
+    --shadow-popover: 0 8px 24px rgb(0 0 0 / 12%);
+    --shadow-dialog: 0 16px 48px rgb(0 0 0 / 18%);
+    --overlay-background: rgb(0 0 0 / 30%);
+    --input: oklch(.922 0 0);
+    --ring: oklch(.708 0 0);
+    --sidebar: oklch(.985 0 0);
+    --sidebar-foreground: oklch(.145 0 0);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(.97 0 0);
+    --sidebar-accent-foreground: oklch(.205 0 0);
+    --sidebar-border: oklch(.922 0 0);
+    --sidebar-ring: oklch(.708 0 0);
+    --site-motion-feedback: 140ms;
+    --site-toolbar-height: calc(3.75rem + 1px);
+    --site-motion-menu: 180ms;
+    --site-motion-dialog: 220ms;
+    --site-motion-page-enter: 200ms;
+    --site-motion-page-exit: 160ms;
+    --site-motion-image-enter: 320ms;
+    --site-motion-image-exit: 260ms;
+    --site-motion-skeleton-expand: 240ms;
+    --site-skeleton-text-height: .8125rem;
+    --site-motion-splash-min: 300ms;
+    --site-motion-splash-icon: 900ms;
+    --site-motion-splash-exit: 240ms;
+    --site-motion-splash-gap: 0ms;
+    --site-motion-skeleton-min: 180ms;
+    --site-motion-skeleton-enter: var(--site-motion-skeleton-min);
+    --site-motion-sidebar-enter: 520ms;
+    --site-motion-navigation-enter: 420ms;
+    --site-motion-navigation-stagger: 120ms;
+    --site-motion-skeleton-stagger: 40ms;
+    --site-motion-skeleton-spa-stagger: 20ms;
+    --site-motion-skeleton-breathe: 2400ms;
+    --site-skeleton-breathe-opacity: .65;
+    --site-motion-reveal: 280ms;
+    --site-ease-reveal: cubic-bezier(.4,0,.2,1);
+    --site-ease-emphasis: cubic-bezier(.32,.72,0,1);
+    --site-ease-feedback: cubic-bezier(0,0,.2,1);
+    --site-ease-menu: cubic-bezier(.2,.8,.2,1);
+  }
+  /* Public personalization presets. The attribute scopes each preset, so the
+     settings swatch can read its own accent without a parallel color scale. */
+  /* Red mirrors the root default so its preview swatch never inherits another preset. */
+  [data-site-primary="red"] { --primary: #ff4d55; }
+  [data-site-primary="orange"] { --primary: #c2410c; }
+  [data-site-primary="green"] { --primary: #15803d; }
+  [data-site-primary="cyan"] { --primary: #0e7490; }
+  [data-site-primary="blue"] { --primary: #1d4ed8; }
+  [data-site-primary="black"] { --primary: #171717; --primary-foreground: #fff; }
+  /* Settings-only preview tones for the light panel: OKLCH L .60 with chroma near
+     the sRGB gamut edge keeps the six options at one perceived lightness and one
+     colorfulness, so no single swatch dominates the strip. Presentation only; the
+     applied accent stays --primary, and dark mode keeps its own lighter presets. */
+  :root:not(.dark) [data-site-primary="red"],:root:not(.dark)[data-site-primary="red"] { --primary-preview: #d7464b; }
+  :root:not(.dark) [data-site-primary="orange"],:root:not(.dark)[data-site-primary="orange"] { --primary-preview: #c0640a; }
+  :root:not(.dark) [data-site-primary="green"],:root:not(.dark)[data-site-primary="green"] { --primary-preview: #1d994a; }
+  :root:not(.dark) [data-site-primary="cyan"],:root:not(.dark)[data-site-primary="cyan"] { --primary-preview: #0d8fa7; }
+  :root:not(.dark) [data-site-primary="blue"],:root:not(.dark)[data-site-primary="blue"] { --primary-preview: #397be9; }
+  /* The neutral preview stays the real near-black so the monochrome option still reads as black. */
+  :root:not(.dark) [data-site-primary="black"],:root:not(.dark)[data-site-primary="black"] { --primary-preview: #171717; }
+  :root.dark {
+    --background: #0a0a0a;
+    --foreground: oklch(.85 0 0);
+    /* Stay legible on the dark surface by following the on-dark text color. */
+    --splash-mark: var(--foreground);
+    --card: #171717;
+    --card-foreground: var(--foreground);
+    --popover: #171717;
+    --popover-foreground: var(--foreground);
+    --secondary: #262626;
+    --secondary-foreground: var(--foreground);
+    --muted: #262626;
+    --muted-foreground: oklch(.708 0 0);
+    --accent: #262626;
+    --accent-foreground: var(--foreground);
+    --destructive: oklch(.704 .191 22.216);
+    --border: rgb(255 255 255 / 8%);
+    --border-floating: rgb(255 255 255 / 10%);
+    --shadow-popover: 0 8px 24px rgb(0 0 0 / 35%);
+    --shadow-dialog: 0 16px 48px rgb(0 0 0 / 50%);
+    --overlay-background: rgb(0 0 0 / 60%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(.556 0 0);
+    --sidebar: oklch(.205 0 0);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(.269 0 0);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(.556 0 0);
+  }
+  /* Cover public media and portaled lightboxes without dimming their controls. */
+  :root.dark :is(.public-site, .site-portal) :is(img, video) {
+    filter: brightness(.85);
+  }
+  /* Lighter dark-mode values keep links and selected icons legible on #0a0a0a.
+     The descendant selector previews the same value inside the root swatch. */
+  :root.dark[data-site-primary="orange"],:root.dark [data-site-primary="orange"] { --primary: #ea580c; }
+  :root.dark[data-site-primary="green"],:root.dark [data-site-primary="green"] { --primary: #16a34a; }
+  :root.dark[data-site-primary="cyan"],:root.dark [data-site-primary="cyan"] { --primary: #0891b2; }
+  :root.dark[data-site-primary="blue"],:root.dark [data-site-primary="blue"] { --primary: #3b82f6; }
+  /* A black accent becomes the monochrome light accent on the dark surface. */
+  :root.dark[data-site-primary="black"],:root.dark [data-site-primary="black"] { --primary: #e5e5e5; --primary-foreground: #171717; }
+}

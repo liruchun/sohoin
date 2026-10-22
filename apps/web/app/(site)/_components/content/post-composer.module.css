@@ -1,0 +1,196 @@
+@reference "../../../globals.css";
+
+.panel,
+.overlay {
+  /* SSPAI CommonCommentDialog: 360ms, cubic-bezier(.5,0,0,1),
+     translateY + opacity. Observed in its public CSS on 2026-10-19;
+     our panel enters from the top and stays opaque in both directions. */
+  --composer-motion-duration: 360ms;
+  --composer-motion-ease: cubic-bezier(.5, 0, 0, 1);
+}
+
+.panel[data-slot=dialog-content][data-size=default] {
+  @apply flex flex-col box-border min-w-0 rounded-t-none rounded-b-3xl bg-popover p-0 text-popover-foreground;
+  left: var(--composer-left);
+  top: 0;
+  width: var(--composer-width);
+  height: var(--composer-height);
+  max-width: none;
+  max-height: 90dvh;
+  overflow: hidden;
+  transform: none;
+  box-shadow: var(--shadow-dialog);
+  animation: slide-in var(--composer-motion-duration) var(--composer-motion-ease) both;
+}
+
+.panel[data-slot=dialog-content][data-size=default][data-state=closed] {
+  animation: slide-out var(--composer-motion-duration) var(--composer-motion-ease) both;
+}
+
+.overlay[data-slot=dialog-overlay] { background: var(--overlay-background); }
+.overlay[data-slot=dialog-overlay],
+.overlay[data-slot=dialog-overlay][data-state=closed] {
+  animation-duration: var(--composer-motion-duration);
+  animation-timing-function: var(--composer-motion-ease);
+}
+.form { @apply flex min-h-0 flex-1 flex-col; }
+.count { @apply text-xs text-muted-foreground; }
+.confirmActions { @apply mt-4 flex justify-end gap-2; }
+.ownerControls { @apply mb-2 flex justify-end gap-1; }
+.attachments { @apply shrink-0 px-5; }
+.imageGrid { @apply gap-3 py-2; }
+.imageTile { @apply relative shrink-0 rounded-xl; flex:0 0 7.5rem; height:10rem; }
+.mediaPreview { @apply size-full overflow-hidden rounded-xl border border-border bg-muted; }
+.imageHandle { @apply absolute bottom-2 right-2 flex size-7 cursor-grab items-center justify-center rounded-xl border-0 bg-popover/90 p-0 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring; touch-action:none; }
+.imageHandle svg { @apply size-4; }
+.imageHandle:disabled { @apply cursor-default; }
+.mediaPreview > img { @apply block size-full select-none object-cover; }
+.imageTile[data-dragging] { z-index: 1; pointer-events: none; box-shadow: var(--shadow-popover); }
+.imageTile[data-dragging] .imageHandle { cursor: grabbing; }
+.imageTile[data-drop-target] { outline: 2px solid var(--primary); outline-offset: 2px; }
+.imageRemove[data-slot=button] { @apply absolute right-1 top-1 size-6 min-h-0 rounded-full border border-border bg-popover/80 p-0 text-foreground shadow-sm backdrop-blur-md hover:bg-popover; }
+.imageRemove[data-slot=button] svg { @apply size-3; }
+.imageAppend[data-slot=button] { @apply size-full rounded-xl border-dashed p-0 text-muted-foreground shadow-none; }
+.header { @apply flex shrink-0 items-center justify-between gap-3 px-5 pt-4 pb-3; }
+.category { @apply gap-2 rounded-xl text-sm; }
+.close { @apply border-0 p-0 text-foreground; }
+.closeSurface { @apply size-8 rounded-lg border border-solid border-border bg-card; }
+.close:hover > .closeSurface { @apply bg-accent; }
+.header .close svg { @apply size-4; }
+.editor { @apply flex min-h-0 flex-1 items-start px-5 py-2; cursor: text; }
+.input {
+  @apply min-h-0 resize-none overflow-hidden rounded-none border-0 bg-transparent px-0 py-2 text-base shadow-none;
+  outline-offset: 0;
+}
+.footer { @apply flex shrink-0 flex-wrap items-center justify-between gap-2 px-4 pt-3; }
+.footer [data-slot=button]:not(:disabled) { @apply cursor-pointer; }
+.tools { @apply flex flex-wrap items-center; }
+.tools svg, .header svg, .submit svg { @apply size-5; stroke-width: 1.75; }
+.submit { @apply ml-auto border-0 p-0 text-primary-foreground; }
+.submitSurface { @apply min-h-10 gap-1.5 rounded-full bg-primary px-5 py-2; }
+.submit:hover > .submitSurface { @apply bg-primary/90; }
+.submitArrow { transform-origin: center; }
+@media (hover: hover) and (pointer: fine) {
+  .submit:hover .submitArrow { animation: arrow-lift 460ms cubic-bezier(.22, 1, .36, 1); }
+}
+.submit:focus-visible .submitArrow { animation: arrow-lift 460ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes arrow-lift {
+  0%, 100% { transform: translateY(0); }
+  38% { transform: translateY(-.25rem); }
+  68% { transform: translateY(.0625rem); }
+}
+.discussionTitle { @apply text-lg font-semibold; }
+.context { @apply mx-5 mb-3 flex shrink-0 items-start gap-3 rounded-xl bg-muted/50 p-3 text-sm; }
+.context p { @apply mt-1 line-clamp-2 break-words text-muted-foreground; overflow-wrap: anywhere; }
+.originalLink, .discussionLink {
+  @apply inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground no-underline;
+}
+.originalLink:hover, .discussionLink:hover { @apply text-foreground; }
+.linkArrow { @apply size-3; stroke-width: 1.75; }
+.linkArrow path:first-child { transform-origin: 5px 12px; }
+/* lucide-animated ArrowRight motion, CSS adaptation; see apps/web/LICENSE.lucide-animated.
+   https://lucide-animated.com/r/arrow-right.json */
+@media (hover: hover) and (pointer: fine) {
+  .originalLink:hover .linkArrow path:first-child,
+  .discussionLink:hover .linkArrow path:first-child,
+  .originalLink:focus-visible .linkArrow path:first-child,
+  .discussionLink:focus-visible .linkArrow path:first-child { animation: discussion-arrow-shaft 400ms ease-in-out; }
+  .originalLink:hover .linkArrow path:last-child,
+  .discussionLink:hover .linkArrow path:last-child,
+  .originalLink:focus-visible .linkArrow path:last-child,
+  .discussionLink:focus-visible .linkArrow path:last-child { animation: discussion-arrow-head 400ms ease-in-out; }
+}
+@keyframes discussion-arrow-shaft {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(.642857); }
+}
+@keyframes discussion-arrow-head {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-3px); }
+}
+.previewBody { @apply min-w-0 flex-1; }
+.previewBody strong { @apply text-sm font-medium; }
+.contextHeading { @apply flex min-w-0 items-center justify-between gap-2; }
+.contextHeading strong { @apply min-w-0 break-words; }
+.replyTarget { @apply flex shrink-0 items-center gap-2 px-5 text-xs text-muted-foreground; }
+.replyTarget svg { @apply size-3; }
+.discussion {
+  @apply mx-5 mt-4 min-h-0 shrink border-t border-border pt-3;
+}
+/* The overlay bar needs a bounded viewport; keep the previous 42% share of the
+   resizable composer without reserving a scrollbar gutter. */
+.discussionViewport {
+  max-height: calc(var(--composer-height, 42rem) * .42);
+  overscroll-behavior: contain;
+}
+.discussionHeading { @apply mb-2 flex items-center justify-between gap-3 pe-2 text-sm; }
+.discussionHeading h3 { @apply font-medium; }
+.previewRow { @apply flex items-start gap-3 py-2 text-sm; }
+.previewRow[data-nested] { @apply ml-12 pl-3; }
+.previewRow p { @apply mt-1 line-clamp-2 whitespace-pre-line break-words; overflow-wrap: anywhere; }
+.replyName { @apply text-muted-foreground; }
+.replyLink {
+  @apply mt-1 h-auto min-h-0 rounded-lg border-0 bg-transparent p-0 text-xs text-muted-foreground shadow-none;
+}
+.replyLink:hover { @apply bg-transparent text-foreground; }
+/* The magnetic surface is the visible small button: fixed hit area on the
+   wrapper, bordered surface moving inside it. */
+.replySurface { @apply h-7 border border-solid border-border bg-card px-2.5 text-xs; }
+@media (hover: hover) and (pointer: fine) {
+  .replyLink:hover > .replySurface { @apply bg-accent; }
+}
+.previewStatus { @apply py-5 text-center text-sm text-muted-foreground; }
+.skeletonAvatar { @apply size-10 shrink-0 rounded-full bg-muted; }
+.skeletonName { @apply mb-3 block h-3 w-20 rounded bg-muted; }
+.skeletonLine { @apply mb-4 block h-3 w-4/5 rounded bg-muted; }
+.resize {
+  @apply flex h-8 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center outline-none;
+}
+.resize span { @apply h-1 w-16 rounded-full bg-muted-foreground/30; }
+.resize:hover span, .resize:focus-visible span { @apply bg-muted-foreground; }
+.resize:focus-visible { @apply outline-2 -outline-offset-4 outline-ring; }
+
+@keyframes slide-in {
+  from { transform: var(--composer-from, translateY(calc(-100% - 4rem))); opacity: 1; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes slide-out {
+  from { transform: var(--composer-from, translateY(0)); opacity: 1; }
+  to { transform: translateY(calc(-100% - 4rem)); opacity: 1; }
+}
+
+@media (width < 40rem) {
+  .header { @apply px-3; }
+  .replyTarget { @apply px-3; }
+  .editor { @apply gap-2 px-3; }
+  .footer { @apply px-2; }
+  .tools { @apply gap-0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submit:hover .submitArrow, .submit:focus-visible .submitArrow { animation: none; }
+  .originalLink:hover .linkArrow path,
+  .discussionLink:hover .linkArrow path,
+  .originalLink:focus-visible .linkArrow path,
+  .discussionLink:focus-visible .linkArrow path { animation: none !important; }
+  .panel[data-slot=dialog-content][data-size=default],
+  .panel[data-slot=dialog-content][data-size=default][data-state=closed] { animation: none; }
+}
+
+.mediaStatus { @apply px-5 pb-2 text-sm text-muted-foreground; }
+
+.videoBadge { @apply pointer-events-none absolute bottom-2 left-2 size-4 rounded bg-background/90 p-0.5 text-foreground; }
+
+.discard[data-slot=dialog-content][data-size=default] {
+ @apply max-w-sm rounded-2xl p-5;
+ left:calc(var(--composer-left) + var(--composer-width)/2);
+ top:calc(var(--composer-height)/2);
+ width:min(24rem,calc(var(--composer-width) - 2rem));
+ translate:0 -50%;
+}
+.discard [data-slot=dialog-title] { @apply text-base; }
+.discard > p { @apply my-3 text-sm text-muted-foreground; }
+
+.editorScroll { @apply h-full min-h-0 w-full; }
+.editorScroll [data-slot=scroll-area-viewport] { @apply overscroll-contain; }
+.editorScroll [data-slot=scroll-area-scrollbar] { display:none; }

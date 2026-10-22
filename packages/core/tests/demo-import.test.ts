@@ -1,0 +1,21 @@
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import {importBonjour,validateDataset,type Dataset} from "../scripts/import-bonjour";
+import {getPool,readInteractionBatch,writeInteraction} from "@sohoin/database";
+const fixture=():Dataset=>({source:"https://bonjour.bio/?feed=featured",capturedAt:new Date().toISOString(),warnings:[],reactionTypes:[{key:"fire",name:"火热",emoji:"🔥",order:20}],users:["alice","bob"].map(id=>({id,name:id,bio:"公开介绍",avatar:null,homepage:"https://bonjour.bio/"+id,links:[],role:""})),posts:Array.from({length:20},(_,i)=>({id:"post"+i,author:"alice",body:"公开帖子 "+i,createdAt:"2026-10-14 12:00:00",updatedAt:"2026-10-14 12:00:00",media:[],reactions:i===0?[{code:"like",count:3},{code:"fire",count:2}]:[]})),comments:[{id:"root",parentId:null,author:"bob"},{id:"reply",parentId:"root",author:"alice"},{id:"reply2",parentId:"reply",author:"bob"}].map(c=>({...c,postId:"post0",body:c.id,createdAt:"2026-10-14 13:00:00",updatedAt:"2026-10-14 13:00:00",media:[],reactions:[{code:"fire",count:1}]}))});
+test("demo import validates before writes, preserves ancestry, separates counts and is idempotent",async()=>{const pool=getPool();try{
+ const data=fixture();const cyclic=structuredClone(data);cyclic.comments[0].parentId="reply2";assert.throws(()=>validateDataset(cyclic),/cyclic/);
+ const a=await importBonjour(data,"test-demo-import","a".repeat(64));assert.equal(a.posts,20);assert.equal(a.comments,3);assert.equal(a.users,2);
+ const mapping=(await pool.query("SELECT kind,source_id,local_id FROM demo_import_objects WHERE batch_id='test-demo-import'")).rows;const id=(kind:string,source:string)=>mapping.find(r=>r.kind===kind&&r.source_id===source)!.local_id;
+ const replies=(await pool.query("SELECT id::text,root_id::text,reply_to_id::text FROM comments WHERE content_id=$1",[id("content","post0")])).rows;
+ assert.equal(replies.find(r=>r.id===id("comment","reply2"))?.root_id,id("comment","root"));assert.equal(replies.find(r=>r.id===id("comment","reply2"))?.reply_to_id,id("comment","reply"));
+ assert.equal((await pool.query('SELECT count(*)::int AS n FROM "account" WHERE "userId"=ANY($1::text[])',[mapping.filter(r=>r.kind==='user').map(r=>r.local_id)])).rows[0].n,0);assert.equal((await pool.query("SELECT count(*)::int AS n FROM notifications")).rows[0].n,0);
+ const owner=id("user","bob"),pid=id("content","post0");let rows=await readInteractionBatch(owner,"content",[pid]);assert.equal(rows[0].reactions.find(r=>r.code==="like")?.count,3);assert.equal(rows[0].my_reaction,null);
+ await writeInteraction(owner,"content",pid,{code:"like"});rows=await readInteractionBatch(owner,"content",[pid]);assert.equal(rows[0].reactions.find(r=>r.code==="like")?.count,4);assert.equal(rows[0].my_reaction,"like");
+ await writeInteraction(owner,"content",pid,{code:null});assert.equal((await readInteractionBatch(owner,"content",[pid]))[0].reactions.find(r=>r.code==="like")?.count,3);
+ assert.equal((await readInteractionBatch(owner,"comments",[id("comment","reply2")]))[0].reactions[0].count,1);
+ const b=await importBonjour(data,"test-demo-import","a".repeat(64));assert.equal(b.alreadyImported,true);assert.equal((await pool.query("SELECT count(*)::int AS n FROM contents")).rows[0].n,20);
+ await assert.rejects(importBonjour(data,"test-demo-import","b".repeat(64)),/different source/);assert.equal((await pool.query("SELECT count(*)::int AS n FROM contents")).rows[0].n,20);
+ await pool.query("UPDATE contents SET status='archived' WHERE id=$1",[pid]);assert.equal((await readInteractionBatch(owner,"content",[pid])).length,0);
+ await pool.query("DELETE FROM contents WHERE id=$1",[pid]);assert.equal((await pool.query("SELECT count(*)::int AS n FROM demo_reaction_counts")).rows[0].n,0);
+}finally{await pool.end();}});

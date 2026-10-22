@@ -1,0 +1,68 @@
+/* Component-owned native scopes: keep attribute boundaries out of CSS Modules.
+ * Webpack otherwise leaves :local() in @scope; Turbopack rejects attribute-only
+ * boundaries in pure modules. Both content and fallback roots stop ancestor
+ * reveal rules before hydration. Import only from skeleton-reveal.tsx. */
+[data-reveal-root]:not([data-reveal-entry="server"]) > [data-skeleton-placeholder] {
+ animation: sohoin-skeleton-in var(--site-motion-reveal, 280ms) var(--site-ease-reveal, cubic-bezier(.4,0,.2,1)) both;
+ animation-delay: var(--skeleton-entry-delay, 0ms);
+}
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:not([data-reveal-entry="server"]):is([data-skeleton-waiting], [data-reveal-phase="pending"]) > [data-skeleton-initial] {
+ animation: sohoin-skeleton-in var(--site-motion-reveal, 280ms) var(--site-ease-reveal, cubic-bezier(.4,0,.2,1)) both;
+ animation-delay: var(--skeleton-entry-delay, 0ms);
+}
+}
+/* SPA measured rows are already painted at the placeholder geometry by their
+   paused morph. Fading the resolved layer in would hide that handoff, making
+   the placeholders vanish and the measured rows appear to drop in. */
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root][data-reveal-entry="server"]:is([data-reveal-phase="pending"], [data-reveal-phase="splash-out"]) > [data-skeleton-splash] { display: block; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:is([data-skeleton-waiting], [data-reveal-phase="pending"]) > [data-skeleton-initial] { display: block; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:is([data-skeleton-waiting], [data-reveal-phase="pending"]) > [data-skeleton-resolved] {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ visibility: hidden;
+ pointer-events: none;
+}
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root][data-reveal-entry="server"][data-reveal-phase="pending"] > [data-skeleton-initial] { display: none; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root][data-reveal-entry="server"][data-reveal-phase="pending"] > [data-skeleton-resolved] { position: static; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+/* Reserve the real layout without exposing cards outside the measured set. */
+:scope[data-reveal-root]:is([data-reveal-phase="splash-out"], [data-reveal-phase="entering"], [data-reveal-phase="measured"], [data-reveal-phase="revealing"], [data-reveal-phase="expanding"]) > [data-skeleton-resolved] [data-skeleton-item]:not([data-skeleton-animated]) { visibility: hidden; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:is([data-reveal-phase="splash-out"], [data-reveal-phase="entering"], [data-reveal-phase="measured"], [data-reveal-phase="expanding"]) > [data-skeleton-resolved] :is([data-skeleton-animated], [data-skeleton-context-animated]) > :not([data-skeleton-overlay]) { opacity: 0; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+/* Item/context animation markers arrive after commit. Cover that first frame too. */
+:scope[data-reveal-root]:not([data-reveal-phase="revealing"]):not([data-reveal-phase="ready"]) > [data-skeleton-resolved] :is([data-skeleton-item], [data-skeleton-context]) > :not([data-skeleton-overlay]) { opacity: 0 !important; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:not([data-reveal-phase="ready"]):not([data-reveal-phase="revealing"]) [data-skeleton-align-start] { margin-inline-start: 0; }
+:scope[data-reveal-root]:not([data-reveal-phase="ready"]):not([data-reveal-phase="revealing"]) [data-skeleton-align-start] > * { translate: none; transition: none; }
+}
+
+@scope ([data-reveal-root]) to ([data-reveal-root]) {
+:scope[data-reveal-root]:is([data-reveal-phase="splash-out"], [data-reveal-phase="entering"], [data-reveal-phase="measured"], [data-reveal-phase="revealing"], [data-reveal-phase="expanding"]) [data-skeleton-overlay] > div { animation-play-state: running; }
+}
+@keyframes sohoin-skeleton-in { from { opacity: 0; } to { opacity: 1; } }

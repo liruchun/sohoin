@@ -1,0 +1,47 @@
+{
+  "name": "sohoin",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "graphify:index": "graphify extract . --code-only --no-cluster --max-workers 2",
+    "graphify:query": "graphify query",
+    "graphify:path": "graphify path",
+    "graphify:explain": "graphify explain",
+    "media:responsive": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/media-responsive.ts",
+    "dev": "node --env-file-if-exists=apps/web/.env.local scripts/dev.mjs",
+    "build": "pnpm --filter @sohoin/web build",
+    "start": "pnpm --filter @sohoin/web start --port 3194 --hostname 127.0.0.1",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "db:check": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/check-integrity.ts",
+    "media:cleanup": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/media-cleanup.ts",
+    "site:backup": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/site-backup.ts backup",
+    "site:restore": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/site-backup.ts restore",
+    "test:maintenance": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts maintenance",
+    "test:performance": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts performance",
+    "db:local": "node --env-file=apps/web/.env.local scripts/local-postgres.mjs",
+    "db:migrate": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/migrate.ts",
+    "admin:create": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/create-admin.ts",
+    "test:security": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts",
+    "test:activities": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts activities-performance",
+    "test:public-site": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts public-site",
+    "test:demo-import": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts demo-import",
+    "demo:import": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/import-bonjour.ts",
+    "demo:media": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/core/scripts/import-demo-media.ts",
+    "test:routing": "node --import=tsx --test packages/core/tests/routing.test.ts",
+    "test:skeleton": "node --import=tsx --test packages/ui/tests/skeleton.test.ts",
+    "test:community": "node --conditions=react-server --import=tsx --env-file=apps/web/.env.local packages/database/scripts/run-security.ts community-performance"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "embedded-postgres": "17.10.0-beta.17",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

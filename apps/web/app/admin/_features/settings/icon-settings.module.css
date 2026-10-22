@@ -1,0 +1,18 @@
+@reference "../../../globals.css";
+
+.root { @apply grid min-w-0 gap-5; }
+.grid { @apply grid grid-cols-2 gap-6; }
+.item { @apply grid min-w-0 content-start gap-3; }
+.item h3 { @apply text-[0.875rem] font-semibold; }
+.item label { @apply grid gap-2; }
+.preview {
+  @apply grid min-h-32 place-items-center p-5;
+  border:1px solid var(--au-line);
+  border-radius:var(--radius-2xl);
+  background:var(--au-bg);
+  color:var(--au-muted);
+}
+.preview img { @apply max-w-full object-contain; }
+.favicon { @apply size-8; }
+.app { @apply size-24; }
+@media(width < 40rem){ .grid { @apply grid-cols-1; } }

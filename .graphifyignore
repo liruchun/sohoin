@@ -1,0 +1,27 @@
+# Local data, credentials, dependencies and generated output are not corpus.
+.git/
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.local/
+work/
+graphify-out/
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+*.dump
+*.sqlite*
+*.db
+*.log
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+
+# Vendor assets and observation captures are not project source.
+apps/web/public/
+docs/references/
+pnpm-lock.yaml

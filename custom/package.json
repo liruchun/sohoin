@@ -1,0 +1,19 @@
+{
+  "name": "@sohoin/custom",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./register": "./register.ts",
+    "./styles": "./styles/index.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sohoin/extension-api": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}

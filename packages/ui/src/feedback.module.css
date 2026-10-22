@@ -1,0 +1,12 @@
+@reference "../../../apps/web/app/globals.css";
+
+.root { @apply flex items-start gap-2 m-0 text-sm text-foreground; line-height:1.5; }
+.icon { @apply shrink-0 size-4; margin-top:.15625rem; }
+.body { @apply min-w-0; overflow-wrap:anywhere; }
+.body a { @apply underline underline-offset-2; }
+.error { @apply font-medium; }
+.alert { @apply rounded-xl border border-border bg-background p-3; }
+.sr { @apply sr-only; }
+.loading { animation:spin 1s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .loading { animation:none; } }

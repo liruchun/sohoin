@@ -1,0 +1,46 @@
+@reference "../../../globals.css";
+
+.panel {
+  @apply min-h-dvh overflow-hidden rounded-3xl border border-solid border-border;
+}
+
+.context { @apply flex items-center px-7 py-[0.9375rem] border-0 border-b border-solid border-border; min-height: 3.125rem; }
+.label, .name, .menu, .line, .shortLine { display: block; height: .5rem; border-radius: 9999px; background: var(--muted); }
+.label, .name, .line, .shortLine { height: var(--site-skeleton-text-height); }
+.label { width: 4rem; }
+.name { width: 6rem; max-width: 70%; }
+.menu { width: 1rem; margin-inline-start: auto; flex-shrink: 0; }
+.avatar { @apply block size-10 shrink-0 rounded-lg; background: var(--muted); }
+.body { @apply grid gap-4 py-2; }
+.line { width: 100%; }
+.shortLine { width: 72%; }
+.actions { @apply mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1; }
+.tools { @apply ml-auto flex gap-1; }
+.action { @apply block h-7 w-8 rounded-lg; background: var(--muted); }
+/* Match the stable post actions so the measured handoff starts at their row. */
+.reactionAction { @apply w-8; }
+.commentAction { @apply w-14; }
+.likeAction { @apply w-12; }
+.bookmarkAction { @apply w-8; }
+
+@media (width < 40.625rem) {
+ .context { @apply px-5 py-3; }
+}
+
+@media (width < 30rem) {
+ .panel { @apply rounded-none border-x-0; }
+ .avatar { @apply size-9; }
+}
+
+@media (pointer: coarse) {
+ .action { @apply size-11; }
+}
+
+.label, .breathing {
+ animation: breathe var(--site-motion-skeleton-breathe, 2400ms) cubic-bezier(.4,0,.6,1) infinite;
+ animation-delay: var(--skeleton-breathe-delay, 0ms);
+}
+@keyframes breathe { 50% { opacity: var(--site-skeleton-breathe-opacity, .65); } }
+@media (prefers-reduced-motion: reduce) {
+ .label, .breathing { animation: none; }
+}

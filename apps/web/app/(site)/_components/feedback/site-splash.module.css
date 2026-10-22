@@ -1,0 +1,32 @@
+@reference "../../../globals.css";
+
+/* The fixed skeleton cover clips this viewport-wide canvas. Native scrollbar
+   removal must not move the launch logo's center during hydration. */
+.screen { @apply absolute inset-y-0 left-0 w-screen flex items-center justify-center bg-background text-foreground; z-index: 50; }
+/* Brand mark: keeps its own theme tone instead of inheriting the body text
+   color, so the light theme stays #3E3E3E while dark follows the on-dark text. */
+.icon {
+ @apply size-24;
+ color: var(--splash-mark);
+ transform-origin: 50% 50%;
+}
+
+/* Preserve the original scale and two sways, then hold the second pose.
+   The cover waits for the full gesture before fading out.
+   CSS starts at SSR display; the negative delay preserves progress on streaming. */
+:global([data-reveal-entry="server"]) .icon {
+ animation: handshake var(--site-motion-splash-icon) cubic-bezier(.42,0,.58,1) 1 both;
+ animation-delay: var(--skeleton-launch-delay, 0ms);
+}
+
+@keyframes handshake {
+ 0% { transform: scale(1) rotate(0deg); }
+ 20% { transform: scale(1.1) rotate(0deg); }
+ 45% { transform: scale(1.1) rotate(7deg); }
+ 70% { transform: scale(1.1) rotate(-7deg); }
+ 100% { transform: scale(1.1) rotate(-7deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+ :global([data-reveal-entry="server"]) .icon { animation: none; }
+}

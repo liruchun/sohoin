@@ -1,0 +1,202 @@
+@reference "../../../globals.css";
+
+.toolbar {
+ --skeleton-enter-transform: translateY(-.75rem);
+ --skeleton-enter-duration: 680ms;
+ --skeleton-enter-ease: var(--site-ease-reveal);
+ @apply relative flex w-full min-w-0 items-center justify-between gap-1 pl-5;
+ height: var(--site-toolbar-height);
+}
+.searchTrigger {
+ @apply relative h-10 min-h-10 w-24 min-w-0 shrink justify-start pr-5 py-1;
+ padding-left: calc(var(--spacing, 0.25rem) * 3 - 1px);
+ border-color: transparent;
+ background: transparent;
+}
+.searchTrigger::after {
+ content: "";
+ position: absolute;
+ z-index: 20;
+ inset: -1px;
+ border: 1px solid var(--border);
+ border-radius: inherit;
+ pointer-events: none;
+ opacity: 1;
+ transform: none;
+ transition: opacity 240ms var(--site-ease-reveal), transform 240ms var(--site-ease-reveal);
+}
+.searchTrigger > span { @apply truncate font-normal text-muted-foreground; }
+.searchTrigger > :is(svg, span) { transition: opacity 120ms var(--site-ease-reveal); }
+.toolbar[data-search-open=true] .searchTrigger::after { opacity: 0; transform: scale(1.3); }
+.toolbar[data-search-open=true] .searchTrigger > :is(svg, span) { opacity: 0; }
+.controls {
+ --content-avatar-size: 2.25rem;
+ --content-avatar-text-size: 1rem;
+ @apply ml-auto flex items-center;
+ gap: calc(var(--spacing, 0.25rem) * 2);
+}
+.controls > * {
+ opacity: 1;
+ transform: none;
+ transition: opacity 160ms var(--site-ease-reveal), transform 200ms var(--site-ease-reveal);
+}
+.controls > :nth-child(1) { transition-delay: 120ms; }
+.controls > :nth-child(2) { transition-delay: 80ms; }
+.controls > :nth-child(3) { transition-delay: 40ms; }
+.toolbar[data-search-open=true] .controls > * { opacity: 0; transform: scale(.65); transition-delay: 0ms; }
+.toolbar[data-search-open=true] .controls > :nth-child(2) { transition-delay: 40ms; }
+.toolbar[data-search-open=true] .controls > :nth-child(3) { transition-delay: 80ms; }
+.toolbar[data-search-open=true] .controls > :nth-child(4) { transition-delay: 120ms; }
+.sidebar { @apply relative col-start-4 row-start-2 min-w-0 self-stretch; }
+.original {
+ opacity: 1;
+ transform: none;
+ visibility: visible;
+ transition: opacity 180ms var(--site-ease-reveal) 40ms, transform 180ms var(--site-ease-reveal) 40ms, visibility 0s;
+}
+.sidebar[data-open=true] .original {
+ opacity: 0;
+ transform: translateY(.25rem);
+ visibility: hidden;
+ transition-duration: 120ms, 120ms, 0s;
+ transition-delay: 0s, 0s, 120ms;
+}
+.searchLayer {
+ @apply absolute inset-0;
+ pointer-events: none;
+ visibility: hidden;
+ transition: visibility 0s 160ms;
+}
+.searchLayer[data-active=true] { visibility: visible; transition-delay: 0s; }
+.panel {
+ @apply relative pl-5 pt-5 pb-16;
+ max-height: calc(100dvh - var(--site-header-height));
+ overflow-y: auto;
+ scrollbar-width: none;
+ opacity: 0;
+ transform: translateY(-.5rem);
+ transition: opacity 160ms var(--site-ease-reveal), transform 160ms var(--site-ease-reveal);
+}
+.searchLayer[data-active=true] .panel {
+ opacity: 1;
+ transform: none;
+ pointer-events: auto;
+ transition-duration: 200ms;
+ transition-delay: 60ms;
+}
+.panel::-webkit-scrollbar { display: none; }
+.panel.utilityPanel { @apply pt-2; }
+@media (width >= 82rem) {
+ /* Keep recommendations in document flow while each utility layer sticks
+    independently. Toggling the shared sidebar's positioning would move the
+    still-visible outgoing content before its opacity transition can run. */
+ .sidebar { display: grid; }
+ .original { grid-area: 1 / 1; align-self: start; }
+ .searchLayer {
+  @apply sticky self-start;
+  grid-area: 1 / 1;
+  inset: auto;
+  top: var(--site-header-height);
+  height: calc(100dvh - var(--site-header-height));
+  min-width: 0;
+ }
+}
+.settingsHeading { @apply mb-5 flex items-center justify-between gap-2; }
+.settingsHeading h2 { @apply m-0 text-sm font-semibold; }
+.panelClose { @apply shrink-0 border-0 p-0 text-foreground; }
+.panelCloseSurface { @apply size-8 rounded-lg bg-transparent; }
+.panelClose:hover > .panelCloseSurface { @apply bg-accent; }
+.field {
+ @apply absolute z-10 box-border flex min-h-10 items-center gap-2 rounded-xl bg-background px-3 text-muted-foreground;
+ inset-inline-start: 1.25rem;
+ inset-inline-end: 0;
+ opacity: 0;
+ visibility: hidden;
+ clip-path: inset(0 calc(100% - 6rem) 0 0 round .75rem);
+ transition: clip-path 280ms var(--site-ease-reveal), opacity 160ms var(--site-ease-reveal), visibility 0s 280ms;
+}
+.toolbar[data-search-open=true] .field {
+ opacity: 1;
+ visibility: visible;
+ clip-path: inset(0 0 0 0 round .75rem);
+ transition-delay: 0s;
+}
+.field:focus-within { outline: 1px solid var(--ring); outline-offset: 2px; }
+.field input {
+ @apply min-w-0 w-full border-0 bg-transparent p-0 text-base text-foreground outline-none;
+ font-family: inherit;
+}
+.field input::-webkit-search-cancel-button { display: none; }
+.field input::placeholder { color: var(--muted-foreground); }
+.field > svg { @apply shrink-0; }
+.close { @apply -mr-2 shrink-0; }
+.suggestions { @apply m-0; }
+.label { @apply m-0 px-3 pt-2 pb-2 text-xs text-muted-foreground; }
+.option {
+ @apply min-h-11 w-full justify-start gap-2 rounded-lg px-3 py-2 text-sm text-foreground;
+ opacity: 0;
+ transform: translateY(-.25rem);
+ transition: opacity 120ms var(--site-ease-reveal), transform 120ms var(--site-ease-reveal);
+}
+.searchLayer[data-active=true] .option {
+ opacity: 1;
+ transform: none;
+ transition-duration: 200ms;
+ transition-delay: calc(60ms + var(--entry-delay, 0ms));
+}
+.option[aria-selected=true] { @apply bg-accent; }
+@media (hover: hover) and (pointer: fine) {
+ .close:hover { @apply bg-accent; }
+ .option:hover { @apply bg-accent; }
+}
+.empty { @apply m-0 px-3 py-4 text-sm text-muted-foreground; }
+@media (width < 82rem) {
+ .sidebar {
+  @apply fixed right-4 z-30 grid;
+  top: var(--site-header-height);
+  width: min(24rem, calc(100% - 2rem));
+  pointer-events: none;
+ }
+ .original { display: none; }
+ .searchLayer { position: relative; grid-area: 1 / 1; }
+ .panel {
+  @apply rounded-2xl border border-solid bg-popover;
+  border-color: var(--border-floating);
+  box-shadow: var(--shadow-popover);
+  max-height: calc(100dvh - var(--site-header-height) - 1rem);
+  overflow-y: auto;
+ }
+}
+@media (prefers-reduced-motion: reduce) {
+ .original, .searchLayer, .panel, .option, .field, .searchTrigger::after, .searchTrigger > :is(svg, span), .controls > * { transition: none; transform: none; }
+ .sidebar[data-open=true] .original { transform: none; }
+}
+
+@media (width < 40rem) {
+ .toolbar { @apply pl-2; }
+ .field { inset-inline-start: .5rem; }
+ .searchTrigger { @apply size-11 justify-center p-0; }
+ .searchTrigger > span { display: none; }
+}
+
+/* Local toolbar treatment; keep the shared IconButton geometry elsewhere. */
+.controls > :is(button, a) { color: var(--foreground); }
+.controls .account {
+ @apply size-9 border-0 bg-transparent;
+ --content-avatar-origin: 50% 50%;
+ --content-avatar-offset-x: 0%;
+}
+.guestAvatar { @apply grid size-8 shrink-0 place-items-center rounded-full border border-border bg-accent; }
+/* Optical alignment includes the lower badge and shadow, not just the image frame.
+   Move the avatar only so the button hit area and search transition stay fixed. */
+.controls .account > [data-skeleton-part=block] { top: -.1875rem; }
+@media (pointer: coarse) { .controls .account { @apply size-11; } }
+.controls .toolIcon svg { width: 1.125rem; height: 1.125rem; }
+.controls .toolIcon { @apply size-8 rounded-full; }
+@media (pointer: coarse) {
+ .controls .toolIcon { @apply size-11; }
+}
+@media (hover: hover) and (pointer: fine) {
+ .toolIcon:hover { @apply bg-accent; }
+}
+.controls .toolIcon[data-icon-active=true] { @apply bg-primary/10; }

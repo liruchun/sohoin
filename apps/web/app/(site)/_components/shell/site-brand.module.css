@@ -1,0 +1,46 @@
+@reference "../../../globals.css";
+
+.logo { color-scheme:light; }
+.logo[data-scheme=dark] { color-scheme:dark; }
+
+.brand {
+  @apply
+    inline-flex min-w-0 items-center gap-[0.4375rem] text-[1.4375rem] font-[650] tracking-[-.02em] whitespace-nowrap
+    no-underline;
+  transform-origin: left center;
+  transition:
+    scale var(--site-motion-feedback) var(--site-ease-feedback),
+    opacity var(--site-motion-feedback) var(--site-ease-feedback);
+}
+.brand:active {
+  scale: .97;
+  opacity: .8;
+  transition-duration: 70ms;
+}
+
+.logo {
+  @apply
+    h-10 w-35 flex-none object-contain object-left;
+}
+
+.name {
+  @apply
+    max-w-36 overflow-hidden text-ellipsis;
+}
+
+.dot {
+  @apply
+    mt-[0.8125rem] size-[0.3125rem] rounded-full bg-current;
+}
+
+@media (width < 64rem) {
+  .brand { @apply gap-0 text-xs; }
+  .logo { @apply h-10 w-14 max-w-full object-center; }
+  .name { @apply max-w-full; }
+  .dot { @apply hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand { transition: none; }
+  .brand:active { scale: none; }
+}

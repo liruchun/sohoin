@@ -1,0 +1,3 @@
+import {getMemberImage,errorResponse} from '@sohoin/core/server';
+export const runtime='nodejs';
+export async function GET(request:Request,{params}:{params:Promise<{id:string}>}){try{const {id}=await params;const query=new URL(request.url).searchParams;const file=await getMemberImage(request.headers,id,query.get('contact')==='1'?'contact':'avatar',query.get('variant')==='thumbnail');return new Response(new Uint8Array(file.bytes),{headers:{'Content-Type':file.mime,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex','Cross-Origin-Resource-Policy':'same-origin'}});}catch(error){return errorResponse(error);}}

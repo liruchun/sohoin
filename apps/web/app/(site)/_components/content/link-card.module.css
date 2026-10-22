@@ -1,0 +1,46 @@
+@reference "../../../globals.css";
+.card { @apply flex h-full w-full min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card text-left text-foreground no-underline; }
+.card:focus-visible { @apply outline-2 outline-offset-2 outline-ring; }
+.visual { @apply relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-muted; }
+.fallback { @apply size-8 text-muted-foreground; }
+.cover { @apply absolute inset-0 size-full object-cover; }
+.brandBackdrop { @apply absolute inset-0 size-full object-cover; filter:blur(1rem); transform:scale(1.6); }
+.caption { @apply flex shrink-0 flex-col gap-1 p-3; }
+.heading { @apply flex min-w-0 items-center gap-2; }
+.title { @apply block min-w-0 flex-1 truncate text-sm font-medium; }
+.site { @apply flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground; }
+.site span { @apply truncate; }
+.published .site span { @apply min-w-0 flex-1; }
+.published .heading { @apply relative block; }
+.published .title { @apply absolute inset-x-0 top-0; }
+.expandedTitle {
+ @apply line-clamp-3 text-sm font-medium;
+ line-height:1.5;
+ max-height:1lh;
+ opacity:0;
+ overflow-wrap:anywhere;
+ transition:max-height var(--site-motion-menu) var(--site-ease-feedback),opacity var(--site-motion-feedback) var(--site-ease-feedback);
+}
+.published .title { line-height:1.5; transition:opacity var(--site-motion-feedback) var(--site-ease-feedback); }
+@media (hover:hover) and (pointer:fine) {
+ .published:hover .expandedTitle { max-height:3lh; opacity:1; }
+ .published:hover .title { opacity:0; }
+}
+.published:focus-visible .expandedTitle { max-height:3lh; opacity:1; transition:none; }
+.published:focus-visible .title { opacity:0; transition:none; }
+@media (prefers-reduced-motion:reduce) {
+ .expandedTitle, .published .title { transition:none; }
+}
+:global(:root[data-reduce-motion=true]) .expandedTitle,
+:global(:root[data-reduce-motion=true]) .published .title { transition:none; }
+.icon { @apply size-4 shrink-0 rounded-sm border border-solid border-border object-contain; }
+.preview { @apply h-48 w-full; }
+.dialog[data-slot=dialog-content][data-size=default] { @apply p-0; scrollbar-width:none; }
+.dialog::-webkit-scrollbar { display:none; }
+.fields { @apply mt-4 flex flex-col gap-4 px-5 pb-5; }
+.field { @apply flex flex-col gap-1.5 text-sm; }
+.actions { @apply flex flex-wrap items-center justify-end gap-2; }
+
+button.card { @apply cursor-pointer p-0; transition:opacity 70ms; }
+button.card:active { opacity:.8; }
+button.card:disabled { @apply cursor-default; }

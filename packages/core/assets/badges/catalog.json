@@ -1,0 +1,68 @@
+[
+  {
+    "key": "soho-avatar",
+    "name": "倍有面",
+    "description": "上传并设置个人头像",
+    "file": "soho-avatar.svg"
+  },
+  {
+    "key": "soho-first-step",
+    "name": "混个脸熟",
+    "description": "发布第 1 篇帖子",
+    "file": "soho-first-step.svg"
+  },
+  {
+    "key": "soho-regular",
+    "name": "常驻选手",
+    "description": "累计发布 20 篇帖子",
+    "file": "soho-regular.svg"
+  },
+  {
+    "key": "soho-field-notes",
+    "name": "有点干货",
+    "description": "发布 5 篇「干货」帖子",
+    "file": "soho-field-notes.svg"
+  },
+  {
+    "key": "soho-gear",
+    "name": "装备党",
+    "description": "发布 3 篇「秀装备」帖子",
+    "file": "soho-gear.svg"
+  },
+  {
+    "key": "soho-problem-solver",
+    "name": "接话高手",
+    "description": "在他人帖子下回复 50 条",
+    "file": "soho-problem-solver.svg"
+  },
+  {
+    "key": "soho-supporter",
+    "name": "夸夸队长",
+    "description": "点赞他人 100 篇不同帖子",
+    "file": "soho-supporter.svg"
+  },
+  {
+    "key": "soho-recognized",
+    "name": "有被认可",
+    "description": "自己的帖子累计获赞 100 次",
+    "file": "soho-recognized.svg"
+  },
+  {
+    "key": "soho-indie-maker",
+    "name": "我做的，看看",
+    "description": "在「产品」发布 1 篇自己的产品介绍",
+    "file": "soho-indie-maker.svg"
+  },
+  {
+    "key": "soho-seed-saver",
+    "name": "种子小富翁",
+    "description": "种子余额首次达到 1,000",
+    "file": "soho-seed-saver.svg"
+  },
+  {
+    "key": "soho-conversation",
+    "name": "评论区开席",
+    "description": "单帖获他人回复 30 条，至少 10 人参与",
+    "file": "soho-conversation.svg"
+  }
+]

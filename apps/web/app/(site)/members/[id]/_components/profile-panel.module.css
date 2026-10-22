@@ -1,0 +1,44 @@
+@reference "../../../../globals.css";
+.panel { @apply min-w-0 px-8 pb-12; min-height: 36rem; }
+.identity {
+ @apply flex min-w-0 flex-col items-start gap-5 py-8 text-left;
+ --content-avatar-size: 4rem;
+ --content-avatar-medal-size: calc(var(--content-avatar-size) * .35);
+ --content-avatar-text-size: 1.5rem;
+}
+.avatarRow { @apply flex w-full min-w-0 items-end gap-5; }
+.badges { @apply m-0 flex min-w-0 flex-wrap items-end gap-1 p-0 list-none; line-height: 1; }
+.badges > li { @apply flex; line-height: 1; }
+.badgeButton { @apply items-end border-0 pb-0; line-height: 1; }
+.badge {
+ @apply block box-content shrink-0 rounded-full border-2 border-solid border-background bg-background text-primary;
+ width: var(--content-avatar-medal-size);
+ height: var(--content-avatar-medal-size);
+ line-height: 1;
+}
+@media (pointer: coarse) {
+ .badgeButton { @apply size-11; }
+}
+.details { @apply flex w-full min-w-0 flex-col items-start gap-3; }
+.contacts { @apply flex flex-wrap items-center gap-3; }
+.contactText { @apply flex flex-wrap gap-x-2 text-sm; overflow-wrap: anywhere; }
+.contactText > :first-child { @apply text-muted-foreground; }
+.contactDialog { @apply max-w-[22rem] rounded-2xl p-3; }
+.contactDialogHeader { @apply mb-3 flex items-center justify-between gap-3; }
+.contactQr { @apply block h-auto w-full rounded-xl; }
+.name { @apply m-0 max-w-full text-xl font-semibold; line-height: 1.4; overflow-wrap: anywhere; }
+.bio { @apply m-0 max-w-full line-clamp-2 whitespace-normal text-base; overflow-wrap: anywhere; line-height: 1.8; }
+.joined { @apply m-0 flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground; }
+.sections { @apply flex flex-wrap items-center justify-start gap-x-5 border-b border-border; }
+.tab, .current { @apply inline-flex min-h-12 items-center justify-center gap-2 px-0 py-3 text-sm; }
+.current { @apply border-b-2 border-primary font-medium text-primary; margin-bottom: -1px; }
+.tab { @apply rounded-none text-foreground hover:text-primary; }
+@media (width < 40.625rem) {
+ .panel { @apply px-6; }
+ .identity { @apply gap-4; }
+ .sections { @apply gap-x-4; }
+}
+@media (width < 30rem) {
+ .panel { @apply px-5; }
+ .avatarRow { @apply gap-4; }
+}

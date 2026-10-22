@@ -1,0 +1,25 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.env*
+!.env.example
+*.log
+.DS_Store
+
+.local/
+work/
+
+__pycache__/
+*.py[cod]
+
+# Local code knowledge graph and extraction caches
+graphify-out/
+
+# Temporary dependency patch workspaces
+/.mention-patch/
+/.mention-trigger-patch/
+/.mention-highlight-patch/
+/.mention-highlight-sync-patch/

@@ -1,0 +1,9 @@
+@reference "../../../globals.css";
+
+.link { @apply inline-flex items-baseline text-primary no-underline outline-offset-2; max-width: calc(100% - .5em); margin-inline: .25em; font-size: inherit; vertical-align: baseline; }
+.link > span:first-child { @apply min-w-0 underline underline-offset-2; overflow-wrap: anywhere; }
+.dialog[data-slot=dialog-content][data-size=default] { @apply max-w-sm rounded-2xl p-5; }
+.title[data-slot=dialog-title] { @apply text-base font-semibold; line-height:1.5; }
+.description[data-slot=dialog-description] { @apply mt-1 text-sm; line-height:1.5; }
+.destination { @apply my-3 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground; line-height:1.6; overflow-wrap:anywhere; }
+.actions { @apply mt-4 flex justify-end gap-2; }

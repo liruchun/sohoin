@@ -1,0 +1,26 @@
+@reference "../../../apps/web/app/globals.css";
+
+.content {
+  @apply z-[80] max-w-64 rounded-lg bg-foreground px-3 py-1.5 text-xs leading-normal text-background;
+  overflow-wrap: anywhere;
+  transform-origin: var(--radix-tooltip-content-transform-origin);
+  animation: bubble-in 220ms var(--site-ease-feedback) both;
+}
+.content[data-state=closed] { animation: bubble-out 140ms var(--site-ease-feedback) both; }
+.content[data-side=top] { --bubble-x: 0; --bubble-y: .25rem; }
+.content[data-side=bottom] { --bubble-x: 0; --bubble-y: -.25rem; }
+.content[data-side=left] { --bubble-x: .25rem; --bubble-y: 0; }
+.content[data-side=right] { --bubble-x: -.25rem; --bubble-y: 0; }
+@keyframes bubble-in {
+  from { opacity: 0; transform: translate(var(--bubble-x), var(--bubble-y)) scale(.94); }
+  70% { opacity: 1; transform: scale(1.025); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes bubble-out {
+  to { opacity: 0; transform: translate(var(--bubble-x), var(--bubble-y)) scale(.96); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .content, .content[data-state=closed] { animation: none; }
+}
+
+:global(:root.dark) .content { background:var(--popover);color:var(--popover-foreground);border:1px solid var(--border-floating);box-shadow:var(--shadow-popover); }

@@ -1,0 +1,52 @@
+@reference "../../../globals.css";
+
+.sidebar {
+  --skeleton-enter-transform: translateX(1.5rem);
+  --skeleton-enter-duration: var(--site-motion-sidebar-enter);
+  --skeleton-enter-stagger: var(--site-motion-navigation-stagger);
+  --skeleton-enter-ease: var(--site-ease-emphasis);
+  @apply min-w-0 pl-5 pt-5 pb-12;
+}
+
+.recommendations {
+  @apply m-0 list-none p-0;
+}
+
+.item {
+  @apply border-b border-border py-5;
+  overflow-wrap: anywhere;
+}
+
+.item:first-child { @apply pt-0; }
+.item:last-child { @apply border-b-0 pb-0; }
+
+.title {
+  @apply m-0 text-base font-normal leading-normal;
+}
+
+.category {
+  @apply mt-1.5 mb-0 text-sm leading-normal text-muted-foreground;
+}
+
+.banners {
+  @apply mt-9 grid gap-5;
+}
+
+.journal,
+.stories {
+  @apply flex min-h-36 flex-col justify-center rounded-xl px-5 py-6;
+  overflow-wrap: anywhere;
+}
+
+.journal { @apply bg-secondary text-secondary-foreground; }
+.stories { @apply border border-border bg-background text-foreground; }
+
+.bannerTitle {
+  @apply m-0 text-xl font-semibold leading-snug;
+}
+
+.bannerDescription {
+  @apply mt-2 mb-0 text-sm leading-normal;
+}
+
+

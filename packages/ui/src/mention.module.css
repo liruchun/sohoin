@@ -1,0 +1,11 @@
+@reference '../../../apps/web/app/globals.css';
+
+.content {
+ @apply box-border max-h-64 w-64 overflow-y-auto rounded-xl border border-solid bg-popover p-1 text-sm text-popover-foreground outline-none;
+ max-width: var(--dice-available-width, calc(100vw - 2rem));
+ border-color: var(--border-floating);
+ box-shadow: var(--shadow-popover);
+}
+.item { @apply flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 py-2; }
+.item[data-highlighted] { @apply bg-accent text-accent-foreground; }
+.item[data-disabled] { @apply cursor-default text-muted-foreground; }

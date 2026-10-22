@@ -1,0 +1,34 @@
+{
+  "observedOn": "2026-10-16",
+  "method": "Direct HTTP fetch of public JavaScript; no browser, DOM or computed-style inspection",
+  "source": "https://bonjour.bio/_next/static/chunks/105_3jsy3xymz.js",
+  "symbols": ["communityMediaTrackLayout", "CommunityPostMediaGallery", "data-media-edge", "isCommunityLongImageRatio"],
+  "observedMdImageRules": {
+    "wideViewportPx": 720,
+    "single": {
+      "heightCap": "max(wide ? 360 : 220, availableWidth / 1.6)",
+      "height": "min(heightCap, availableWidth / displayRatio)",
+      "width": "min(availableWidth, max(52, height * displayRatio))"
+    },
+    "multiple": {
+      "maxAvailableWidth": "trackWidth - 24",
+      "heightWide": "min(200, max(150, 200 / firstDisplayRatio))",
+      "heightNarrow": "min(180, max(120, maxAvailableWidth / firstDisplayRatio))",
+      "itemWidth": "min(wide ? min(maxAvailableWidth, 200) : maxAvailableWidth, max(52, height * displayRatio))",
+      "gapPx": 6
+    },
+    "longImage": {"thresholdRatio": "13 / 30", "displayRatio": 0.3, "position": "top", "badge": true},
+    "imageFit": "object-cover; center unless long image",
+    "border": "Absolute non-interactive overlay, inherited rounded corners, 1px inset shadow using 60% of the source edge-media token"
+  },
+  "localAdaptation": {
+    "dimensions": "Convert source pixel design values to rem; query-container units derive available width without client layout measurements",
+    "singleAvailableWidth": "Existing content column; do not copy Bonjour's avatar/padding bleed or layout-dependent end inset",
+    "borderColor": "Existing --site-border-strong neutral token; preserve local keyboard focus",
+    "borderImplementation": "Restore the pseudo-element inset overlay per user correction; define --site-border-strong as #00000024 in the shared theme with a matching Tailwind color mapping; no outer border",
+    "carousel": "Existing approved Embla; single image does not instantiate Carousel",
+    "sources": "Single image and detail use the original local WebP; feed carousel keeps thumbnails",
+    "originalImage": "Existing image link remains available; no new fullscreen viewer is introduced"
+  },
+  "validation": "Source review only. No build, tests, detector, performance measurement or browser verification run."
+}

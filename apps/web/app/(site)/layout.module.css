@@ -1,0 +1,6 @@
+@reference "../globals.css";
+
+.surface {
+  @apply min-h-[100svh] text-base leading-[1.65] text-foreground;
+}
+

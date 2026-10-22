@@ -1,0 +1,96 @@
+@reference "../../../globals.css";
+.library[data-slot=dialog-content][data-size=default] { @apply flex max-w-2xl flex-col overflow-hidden p-0; height: min(36rem,var(--ui-dialog-available-height)); }
+.aligned[data-slot=dialog-content][data-size=default][data-aligned=true] {
+ @apply rounded-t-none rounded-b-3xl;
+ top: 0; left: var(--composer-left); width: var(--composer-width); height: var(--composer-height); max-width: none; max-height: 90dvh; transform: none;
+ animation: library-in var(--site-motion-menu) var(--site-ease-feedback);
+}
+.aligned[data-slot=dialog-content][data-size=default][data-aligned=true][data-state=closed] { animation: library-out var(--site-motion-feedback) var(--site-ease-feedback) forwards; }
+.header { @apply flex shrink-0 items-center gap-3 px-5 pt-3; }
+.title { @apply shrink-0 whitespace-nowrap; }
+.close[data-slot=button] { @apply ml-auto shrink-0 border-0 p-0; }
+.closeSurface { @apply size-7 rounded-lg border border-border bg-card; }
+@media (hover:hover) { .close:hover .closeSurface { @apply bg-accent; } }
+.closeSurface svg { @apply size-4; }
+.tools { @apply flex shrink-0 flex-wrap items-center gap-3 px-5 py-3; }
+.filters { @apply flex w-fit shrink-0 gap-1 rounded-lg bg-muted p-1; }
+.uploadButton[data-slot=button] { @apply ml-auto shrink-0 border-dashed border-primary/40 bg-primary/10 text-primary shadow-none; }
+.uploadButton[data-slot=button] svg { @apply size-3; }
+@media (hover:hover) { .uploadButton[data-slot=button]:hover { @apply border-primary/60 bg-primary/15 text-primary; } }
+.filters button { @apply cursor-pointer rounded-md border-0 bg-transparent px-3 py-1 text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring; }
+.filters button[data-state=on] { @apply bg-background text-foreground shadow-sm; }
+.scroller { @apply min-h-0 flex-1 overflow-hidden; }
+.viewport { @apply h-full; }
+.scrollContent { @apply px-5 pt-1 pb-3; }
+.scroller [data-slot=scroll-area-thumb] { @apply bg-muted-foreground/20; }
+@media (hover:hover) { .scroller [data-slot=scroll-area-thumb]:hover { @apply bg-muted-foreground/30; } }
+.searchSlot { @apply relative min-w-0; width:2rem; height:2rem; transition:width var(--site-motion-menu) var(--site-ease-feedback); }
+.searchSlot[data-open] { width:clamp(6rem,18vw,11rem); flex-shrink:1; }
+.searchTrigger[data-slot=button] { @apply absolute inset-0; transition:opacity var(--site-motion-feedback) var(--site-ease-feedback); }
+.searchSlot[data-open] .searchTrigger { opacity:0;pointer-events:none; }
+.search { @apply absolute inset-0 min-w-0; height:2rem; opacity:0;pointer-events:none; transform:scaleX(.95);transform-origin:left;transition:opacity var(--site-motion-menu) var(--site-ease-feedback),transform var(--site-motion-menu) var(--site-ease-feedback); }
+.searchSlot[data-open] .search { opacity:1;pointer-events:auto;transform:none; }
+.search button[data-slot=button] { @apply size-6 min-h-0 p-0; }
+.drop { @apply mt-6 min-h-40 w-full flex-col gap-3 whitespace-normal border-dashed; }
+.grid { @apply grid gap-x-3 gap-y-3; grid-template-columns: repeat(auto-fill,minmax(max(6.25rem,calc((100% - 2.25rem)/4)),1fr)); }
+.tile { @apply flex min-w-0 select-none cursor-pointer flex-col gap-1 border-0 bg-transparent p-0 text-left text-foreground outline-none; }
+.tile:focus-visible .thumbnail { @apply outline-2 outline-offset-2 outline-ring; }
+.thumbnail { @apply relative block w-full overflow-hidden rounded-lg border border-border; aspect-ratio: 4/3; transition:border-color var(--site-motion-feedback) var(--site-ease-feedback),box-shadow var(--site-motion-feedback) var(--site-ease-feedback); }
+.thumbnail img { @apply block size-full object-cover; }
+.tile[aria-pressed=true] .thumbnail { @apply border-primary ring-1 ring-primary; }
+.check { @apply absolute right-2 top-2 grid size-5 place-items-center rounded border border-input bg-background text-primary-foreground; }
+.videoBadge { @apply pointer-events-none absolute bottom-1 left-1 inline-flex items-center rounded bg-background/90 p-0.5 text-foreground; }
+.videoBadge svg { @apply size-3; }
+.uploadTile:has(.videoBadge) .uploadStatus { @apply pl-6; }
+.tile[aria-pressed=true] .check { @apply border-primary bg-primary; }
+.filename { @apply mt-1 w-full truncate text-sm; }
+.info { @apply block w-full truncate text-xs text-muted-foreground; min-height: 1rem; }
+.uploadTile { @apply relative min-w-0; }
+.uploadTile > .tile { @apply w-full; }
+.uploadTile .tile:disabled { cursor: default; opacity: 1; }
+.tile { transition: opacity var(--site-motion-menu) var(--site-ease-feedback),transform var(--site-motion-menu) var(--site-ease-feedback); }
+@starting-style { .tile { opacity: 0; transform: translateY(.375rem) scale(.97); } }
+.serverImage { @apply absolute inset-0; opacity:0; transition:opacity var(--site-motion-menu) var(--site-ease-feedback); }
+.serverImage[data-ready] { opacity:1; }
+.uploadStatus { @apply absolute inset-x-0 bottom-0 flex min-h-7 items-center justify-center gap-1 bg-background/90 px-1 py-1 text-xs text-foreground; }
+.uploadStatus svg { @apply size-3; }
+.removeUpload[data-slot=button] { @apply absolute right-1 top-1 size-6; }
+.videoPlaceholder { @apply grid size-full place-items-center bg-muted text-muted-foreground; }
+.progress { @apply absolute inset-x-0 bottom-0 block h-0.5 overflow-hidden bg-muted; transition: opacity var(--site-motion-menu) var(--site-ease-feedback); }
+.progressFill { @apply block size-full bg-primary; transform: scaleX(0); transform-origin: left; }
+.uploadTile[data-complete] .progress { opacity: 0; }
+.check svg { @apply size-4; }
+.empty { @apply flex min-h-24 items-center justify-center text-sm text-muted-foreground; }
+.footer { @apply flex shrink-0 flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-3 text-sm; }
+.footer > span { @apply mr-auto; }
+.resize { @apply flex h-8 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center outline-none; }
+.resize span { @apply h-1 w-16 rounded-full bg-muted-foreground/30; }
+.resize:focus-visible { @apply outline-2 -outline-offset-4 outline-ring; }
+.resize:focus-visible span { @apply bg-muted-foreground; }
+@media (hover:hover) { .resize:hover span { @apply bg-muted-foreground; } }
+.cropLayout { @apply my-6 grid items-start gap-6; grid-template-columns: minmax(0,1fr) 7rem; }
+.crop { @apply relative w-full touch-none overflow-hidden rounded-xl bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring; aspect-ratio: 1; cursor: grab; }
+.crop:active { cursor: grabbing; }
+.crop img { @apply pointer-events-none absolute block select-none; max-width: none; }
+.preview { @apply flex flex-col items-center gap-4 text-sm text-muted-foreground; --content-avatar-size: 4rem; }
+.sliders { @apply flex flex-col gap-4; }
+.slider { @apply flex items-center gap-3 text-sm; }
+.slider span { @apply w-20 shrink-0; }
+.slider input { @apply min-h-11 min-w-0 flex-1 accent-primary; }
+.imagePicker { @apply flex flex-wrap items-center gap-5; --content-avatar-size: 4rem; }
+.imageActions { @apply flex flex-col items-start gap-2; }
+.hint { @apply m-0 text-xs text-muted-foreground; }
+.qr { @apply grid size-48 place-items-center rounded-xl border border-border bg-background p-3 text-muted-foreground; }
+.qr img { @apply block size-full object-contain; }
+@keyframes library-in { from { opacity:0; } to { opacity:1; } }
+@keyframes library-out { to { opacity:0; } }
+@media (width < 40rem) { .cropLayout { grid-template-columns: minmax(0,1fr); } .preview { @apply flex-row justify-center; } }
+@media (prefers-reduced-motion:reduce) { .aligned[data-slot=dialog-content][data-size=default],.library[data-slot=dialog-content][data-size=default],.tile,.serverImage,.progress,.searchSlot,.search,.searchTrigger { animation:none!important;transition:none!important; } @starting-style { .tile { opacity:1;transform:none; } } }
+:global(:root[data-reduce-motion=true]) .tile { transition:none; }
+@starting-style { :global(:root[data-reduce-motion=true]) .tile { opacity:1;transform:none; } }
+
+.loadMore { @apply mt-5 flex justify-center; }
+.loadMoreButton[data-slot=button] { @apply p-0; }
+.loadMoreSurface { @apply inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm; }
+.loadMoreSurface svg { @apply size-4; }
+@media(hover:hover) { .loadMoreButton:hover .loadMoreSurface { @apply bg-accent; } }

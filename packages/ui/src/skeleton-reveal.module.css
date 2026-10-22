@@ -1,0 +1,50 @@
+/* Base styles stay local; native attribute scopes live in skeleton-reveal.css. */
+.content { position: relative; }
+
+.initial, .startupSplash, .waitingSplash { display: none; }
+.startupSplash, .waitingSplash { position: fixed; inset: 0; z-index: 50; overflow: clip; }
+.persistentSplash { display: none; position: fixed; inset: 0; z-index: 50; overflow: clip; }
+/* Keep the SVG mounted so Strict Mode and visibility changes do not restart it. */
+.persistentSplash[data-reveal-entry="server"] { display: block; visibility: hidden; pointer-events: none; }
+.persistentSplash[data-reveal-entry="server"]:is([data-reveal-phase="pending"], [data-reveal-phase="splash-out"]) { visibility: visible; pointer-events: auto; }
+
+.waiting[data-reveal-entry="server"][data-has-splash="true"] > .waitingSplash { display: block; }
+
+.waiting[data-reveal-entry="server"][data-has-splash="true"] > .waitingSkeleton { visibility: hidden; }
+
+.overlay {
+ position: absolute;
+ inset: 0;
+ pointer-events: none;
+ overflow: hidden;
+ /* Inherit the resolved layer's pending visibility until the measured handoff. */
+ z-index: 1;
+}
+.shape {
+ position: absolute;
+ display: block;
+ background: var(--muted);
+ transform-origin: 0 0;
+}
+.breathing {
+ position: absolute;
+ inset: 0;
+ animation: breathe var(--site-motion-skeleton-breathe, 2400ms) cubic-bezier(.4,0,.6,1) infinite;
+ animation-delay: var(--skeleton-breathe-delay, 0ms);
+ animation-play-state: paused;
+}
+
+@keyframes breathe { 50% { opacity: var(--site-skeleton-breathe-opacity, .65); } }
+
+@media (prefers-reduced-motion: reduce) {
+ .waiting > .waitingSkeleton, .content > .initial, .content > .resolved { animation: none !important; }
+ .persistentSplash[data-reveal-entry="server"] { display: none; }
+ .breathing { animation: none; }
+ .content[data-reveal-phase="pending"] > .initial,
+ .content[data-reveal-phase="pending"] > .startupSplash { display: none; }
+ .content[data-reveal-phase="pending"] > .resolved { position: static; visibility: visible; pointer-events: auto; }
+}
+
+/* A real Suspense wait still needs static placeholders in reduced motion. */
+.content[data-skeleton-waiting] > .initial { display: block; }
+.content[data-skeleton-waiting] > .resolved { position: absolute; visibility: hidden; pointer-events: none; }

@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "page": "https://ui.shadcn.com/",
+  "registryStyle": "radix-rhea",
+  "theme": "neutral",
+  "evidence": "Live computed styles and class names of the homepage component example, compared with official registry source. Other shadcn presets are not implied.",
+  "registrySource": "https://ui.shadcn.com/r/styles/radix-rhea/{component}.json",
+  "components": ["button", "input", "textarea", "card", "badge", "table", "native-select", "checkbox", "radio-group", "switch", "alert-dialog", "sheet", "sidebar"],
+  "observed": {
+    "buttonHeightPx": 32,
+    "buttonFontSizePx": 14,
+    "controlRadiusPx": 18,
+    "cardRadiusMaxPx": 24,
+    "cardSpacingPx": 20,
+    "inputFill": "var(--input) at 50% opacity",
+    "focusRing": "3px, var(--ring) at 30% opacity",
+    "fontFamily": "Geist with fallback"
+  },
+  "projectAdaptations": [
+    "Semantic CSS classes replace repeated utility lists; standard token values are scoped to admin roots and Radix portals.",
+    "Retain neutral error/destructive colors per project instructions.",
+    "Use existing system font stack; do not add dependencies or download a font.",
+    "Preserve fieldset/legend cards, server-rendered tables and native GET form semantics.",
+    "Use 44px minimum coarse-pointer hit areas and 16px mobile text inputs.",
+    "The responsive shell keeps host route matching and collapse state while using sidebar/inset/menu composition."
+  ]
+}

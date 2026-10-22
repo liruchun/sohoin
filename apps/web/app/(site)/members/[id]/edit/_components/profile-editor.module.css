@@ -1,0 +1,26 @@
+@reference "../../../../../globals.css";
+
+.panel { @apply min-w-0 p-8; }
+.title { @apply m-0 mb-8 text-xl font-semibold; line-height: 1.4; }
+.form { @apply flex min-w-0 flex-col gap-7; }
+.field { @apply flex min-w-0 flex-col gap-2 text-sm font-medium; }
+.hint { @apply m-0 text-xs font-normal text-muted-foreground; line-height: 1.5; }
+.contactField { @apply m-0 min-w-0 border-0 p-0; }
+.contactHeading { @apply mb-3 flex flex-wrap items-center justify-between gap-3; }
+.contactHeading h2 { @apply m-0 text-sm font-medium; }
+.contacts { @apply flex flex-wrap gap-3; }
+.contact { @apply min-h-11 gap-2 px-4; }
+.contact svg { @apply text-primary; }
+.contact[data-filled] { @apply border-primary; }
+.actions { @apply flex items-center justify-end gap-3 border-t border-border pt-5; }
+.actions > button { @apply ml-0; }
+.dialog { @apply max-w-md; }
+.contactForm { @apply mt-6 flex flex-col gap-6; }
+.dialogActions { @apply flex items-center justify-end gap-3; }
+.remove { @apply mr-auto; }
+@media (width < 40.625rem) { .panel { @apply p-6; } }
+@media (width < 30rem) {
+ .panel { @apply px-5; }
+ .contacts { @apply gap-2; }
+ .contact { @apply px-3; }
+}

@@ -1,0 +1,6 @@
+.content {
+  z-index: 50;
+  max-width: var(--radix-popover-content-available-width);
+  max-height: var(--radix-popover-content-available-height);
+  outline: none;
+}

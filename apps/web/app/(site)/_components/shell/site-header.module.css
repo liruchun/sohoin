@@ -1,0 +1,20 @@
+@reference "../../../globals.css";
+
+.header {
+ composes: frosted from "./frosted-toolbar.module.css";
+ @apply sticky top-0 z-40 grid min-w-0 border-b border-border;
+ grid-column: 1 / -1;
+ grid-row: 1;
+ grid-template-columns: subgrid;
+ min-height: var(--site-toolbar-height);
+}
+.brand { @apply col-start-2 flex min-w-0 items-center; }
+.menu { @apply col-start-3 min-w-0; }
+.tools { @apply hidden min-w-0 items-center justify-end; }
+@media (width >= 82rem) {
+ .tools { @apply col-start-4 flex; }
+}
+@media (width < 82rem) {
+ .tools { @apply col-start-3 row-start-2 flex; }
+}
+:global(:root[data-lightbox-direction]) .header { view-transition-name: none !important; }

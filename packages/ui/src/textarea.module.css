@@ -1,0 +1,12 @@
+@reference "../../../apps/web/app/globals.css";
+
+@layer components {
+  .root {
+    @apply box-border block min-h-16 w-full rounded-lg border border-solid border-input
+      bg-card px-3 py-2 text-base text-foreground outline-none
+      placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2
+      focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+}

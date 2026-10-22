@@ -1,0 +1,63 @@
+@reference "../../../globals.css";
+
+.content { @apply min-w-0; }
+.streak { @apply min-w-0; }
+.summary { @apply flex items-center justify-between gap-3; }
+.number { @apply m-0 flex items-center gap-3 text-5xl font-semibold leading-none; }
+.number span { @apply max-w-16 text-xs font-medium leading-normal text-muted-foreground; }
+.seedIcon { @apply grid size-16 place-items-center rounded-2xl border border-border bg-background text-primary; }
+.streak h3 { @apply mt-5 mb-2 text-sm font-medium; }
+.description { @apply m-0 text-sm leading-relaxed text-muted-foreground; }
+.month { @apply mt-6 mb-3 flex flex-wrap items-center justify-between gap-2; }
+.month h4 { @apply m-0 text-xs font-medium; }
+.month > span { @apply flex items-center gap-1 text-xs text-muted-foreground; }
+.weekdays { @apply mb-2 grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground; }
+.calendar { @apply m-0 grid list-none grid-cols-7 gap-1 p-0; }
+.calendar li { @apply relative flex aspect-square min-w-0 flex-col items-center justify-center rounded-lg border border-border bg-secondary/30 text-xs text-muted-foreground; }
+.calendar li[data-checked=true] { @apply border-primary/20 bg-primary/10 text-primary; }
+.calendar li[data-current=true] { @apply outline-1 outline-offset-2 outline-primary; }
+.calendar li svg { @apply absolute bottom-0.5 right-0.5 size-2; }
+.balance { @apply my-6 flex items-center justify-between border-y border-border py-4 text-sm text-muted-foreground; }
+.balance strong { @apply flex items-center gap-2 text-xl font-semibold text-foreground; }
+.records h3 { @apply m-0 mb-3 text-sm font-semibold; }
+.filters { @apply flex flex-wrap gap-1; }
+.filters button { @apply min-h-11 flex-1; }
+.filters button[data-state=on] { @apply bg-secondary text-foreground; }
+.ledger { @apply m-0 mt-2 list-none p-0; }
+.ledger li { @apply flex items-center justify-between gap-3 border-b border-border py-3; }
+.ledger li:last-child { @apply border-b-0; }
+.ledger p { @apply m-0 text-sm; }
+.ledger time { @apply mt-1 block text-xs text-muted-foreground; }
+.amount { @apply text-sm font-medium tabular-nums; }
+.medalSummary { @apply mb-6; }
+.medalSummary p { @apply m-0 text-sm text-muted-foreground; }
+.medalSummary strong { @apply text-2xl font-semibold tabular-nums text-foreground; }
+.medalProgress { @apply mt-3 block h-1 w-full appearance-none overflow-hidden rounded-full border-0 bg-muted; }
+.medalProgress::-webkit-progress-bar { @apply rounded-full bg-muted; }
+.medalProgress::-webkit-progress-value { @apply rounded-full bg-primary; }
+.medalProgress::-moz-progress-bar { @apply rounded-full bg-primary; }
+.medalGroup + .medalGroup { @apply mt-4 border-t border-border pt-4; }
+.medalGroupTitle { @apply m-0 mb-2 text-xs font-medium text-muted-foreground; }
+.medals { @apply m-0 grid list-none grid-cols-1 gap-2 p-0; }
+.medals li { @apply -ml-2 flex min-w-0 items-start rounded-lg pl-2; }
+.medals li[data-worn=true] { @apply bg-primary/5; }
+.medalChoice { @apply flex h-auto min-w-0 flex-1 items-start justify-start gap-3 whitespace-normal rounded-lg py-1.5 pr-2 pl-0 text-left; }
+.medals li:has(.selectable:hover) { @apply bg-accent; }
+.selectable:hover { @apply bg-transparent; }
+.medalChoice:disabled { @apply opacity-100; }
+.medalDetails { @apply min-w-0 break-words; }
+.medalIcon { @apply relative box-border grid size-8 shrink-0 place-items-center text-muted-foreground; }
+.medalArtwork { @apply block size-5; }
+.medalIcon:has(img) .medalArtwork { @apply size-8; }
+.medals li[data-earned=true] .medalIcon { @apply text-primary; }
+.medalIcon > .earnedCheck { @apply absolute -bottom-0.5 -right-0.5 box-content size-2 rounded-full border-2 border-background bg-primary p-0.5 text-primary-foreground; }
+.medalName { @apply flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-foreground; }
+.medalDescription { @apply mt-1 block text-xs font-normal leading-relaxed text-muted-foreground; }
+.medalStatus { @apply mt-1.5 block text-xs text-muted-foreground; }
+.wearing { @apply text-xs font-normal text-primary; }
+.removeMedal { @apply mt-2 shrink-0 px-2 text-xs text-muted-foreground; }
+.wearPreview { @apply mb-5 flex items-center gap-3; }
+.previewLabel { @apply m-0 text-xs text-muted-foreground; }
+.previewName { @apply m-0 mt-1 break-words text-sm font-medium; }
+.empty { @apply m-0 mb-4 text-sm leading-relaxed text-muted-foreground; }
+.moreMedals { @apply mt-5 w-full; }

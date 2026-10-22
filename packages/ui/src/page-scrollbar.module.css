@@ -1,0 +1,33 @@
+.track {
+ position: fixed;
+ inset: 0 0 0 auto;
+ z-index: 40;
+ width: .75rem;
+ touch-action: none;
+ user-select: none;
+}
+
+.track[hidden] { display: none; }
+
+.thumb {
+ position: absolute;
+ top: 0;
+ right: .125rem;
+ width: .375rem;
+ border-radius: 999px;
+ background: var(--border);
+ cursor: grab;
+}
+
+.thumb:hover,
+.thumb:focus-visible,
+.track[data-dragging] .thumb { background: var(--muted-foreground); }
+.track[data-dragging] .thumb { cursor: grabbing; }
+.thumb:focus-visible { outline: 2px solid var(--muted-foreground); outline-offset: 1px; }
+
+/* Hide immediately when Radix locks scrolling, before the observer's next frame. */
+:global(body[data-scroll-locked]) .track { display: none; }
+
+@media (forced-colors: active) {
+ .track { display: none; }
+}

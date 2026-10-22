@@ -1,0 +1,52 @@
+@reference "../../../apps/web/app/globals.css";
+
+.host { @apply fixed; z-index:100; right:max(1rem,env(safe-area-inset-right)); top:max(1rem,env(safe-area-inset-top)); width:max-content; max-width:min(24rem,calc(100vw - max(1rem,env(safe-area-inset-left)) - max(1rem,env(safe-area-inset-right)))); pointer-events:none; }
+.viewport { @apply m-0 flex flex-col gap-2 list-none outline-none; padding:0; }
+.root { @apply flex items-center gap-2 rounded-xl border border-solid border-border bg-popover text-popover-foreground px-3 py-1; border-color:var(--border-floating);box-shadow:var(--shadow-popover);pointer-events:auto; }
+.message { @apply flex-1 min-w-0 text-sm; line-height:1.5; overflow-wrap:anywhere; }
+.close { @apply relative inline-flex shrink-0 items-center justify-center size-7 rounded-md border-0 bg-transparent p-0 text-current cursor-pointer hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring; }
+.close svg { @apply size-3.5; }
+/* Frontend feedback uses a quiet tinted surface; admin toasts stay neutral. */
+:global(.public-site) .root {
+ @apply gap-2 rounded-lg px-2.5 py-1.5;
+ background:linear-gradient(115deg,var(--popover),color-mix(in oklab,var(--primary) 8%,var(--popover)));
+ border-color:var(--border-floating);
+ box-shadow:0 .25rem .75rem color-mix(in oklab,var(--shadow-ink) 6%,transparent);
+}
+:global(.public-site) .message { @apply font-normal; font-size:.8125rem; }
+:global(.public-site) .root > svg {
+ width:1rem;height:1rem;margin-top:0;flex-shrink:0;
+ color:var(--primary);
+}
+:global(.public-site) .root[data-variant=error] {
+ background:linear-gradient(115deg,var(--popover),color-mix(in oklab,var(--destructive) 8%,var(--popover)));
+}
+:global(.public-site) .root[data-variant=error] > svg { color:var(--destructive); }
+:global(.public-site) .close {
+ width:1.5rem;height:1.5rem;
+ background:color-mix(in oklab,var(--popover) 20%,transparent);
+ color:var(--muted-foreground);
+ -webkit-backdrop-filter:blur(.5rem);
+ backdrop-filter:blur(.5rem);
+}
+:global(.public-site) .close:hover { background:color-mix(in oklab,var(--popover) 45%,transparent);color:var(--popover-foreground); }
+:global(.public-site) .close svg { width:.75rem;height:.75rem; }
+@media (any-pointer:coarse) { .close::after { content:""; position:absolute; inset:-.5rem; } }
+@media (any-pointer:coarse) { :global(.public-site) .close::after { inset:-.625rem; } }
+.root[data-state="open"] { animation:enter 160ms ease-out; }
+.root[data-state="closed"] { animation:leave 140ms ease-in; }
+.root[data-swipe="move"] { transform:translateX(var(--radix-toast-swipe-move-x)); }
+.root[data-swipe="cancel"] { transform:translateX(0); transition:transform 140ms ease-out; }
+.root[data-swipe="end"] { animation:swipe 140ms ease-out; }
+@keyframes enter { from { opacity:0; transform:translateY(-.375rem); } to { opacity:1; transform:translateY(0); } }
+@keyframes leave { to { opacity:0; } }
+@keyframes swipe { from { transform:translateX(var(--radix-toast-swipe-end-x)); } to { transform:translateX(110%); opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .root[data-state],.root[data-swipe] { animation:none; transition:none; } }
+.action { color: var(--primary); font-size: .8125rem; white-space: nowrap; text-decoration: underline; text-underline-offset: .2em; }
+
+:global(.public-site) .host { left:50%;right:auto;transform:translateX(-50%); }
+:global(.public-site) .root[data-state="open"] { animation:notice-in var(--site-motion-menu) var(--site-ease-feedback); }
+@keyframes notice-in { from { opacity:0;transform:translateY(calc(-100% - 1rem)); } to { opacity:1;transform:translateY(0); } }
+.action:is(button) { border:0;background:transparent;padding:0;cursor:pointer;font-family:inherit; }
+@media(prefers-reduced-motion:reduce) { :global(.public-site) .root[data-state] { animation:none; } }
+:global(:root[data-reduce-motion=true]) .root[data-state] { animation:none; }

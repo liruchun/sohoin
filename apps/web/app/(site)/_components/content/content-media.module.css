@@ -1,0 +1,69 @@
+@reference "../../../globals.css";
+
+.frame { @apply mt-3 min-w-0; margin-inline-start: var(--card-text-offset, 0rem); width: calc(100% - var(--card-text-offset, 0rem)); container-type: inline-size; }
+.frame[data-detail="true"] { @apply mb-4; }
+.imageLink { @apply relative block overflow-hidden rounded-xl border border-solid border-border bg-card outline-offset-4; }
+.imageLink img { @apply block h-full w-full max-w-none object-cover select-none; }
+.imageLink[data-long-image="true"] img { @apply object-top; }
+.longImage { @apply pointer-events-none absolute bottom-2 left-2 rounded-md bg-card px-2 py-1 text-xs text-muted-foreground; }
+.single {
+ --media-height-cap: max(13.75rem, calc(100cqw / 1.6));
+ --media-height: min(var(--media-height-cap), calc(100cqw / var(--media-ratio)));
+}
+.single .imageLink {
+ width: min(100cqw, max(3.25rem, calc(var(--media-height) * var(--media-ratio))));
+ height: var(--media-height);
+}
+.gallery, .linkSingle {
+ --media-max-width: max(0rem, calc(100cqw - 1.5rem));
+ --media-base-height: min(11.25rem, max(7.5rem, calc(var(--media-max-width) / var(--media-first-ratio))));
+ --media-height: calc(var(--media-base-height) * 5 / 6);
+}
+.track { @apply gap-1.5; }
+.viewport { @apply rounded-xl; }
+.slide { flex: 0 0 auto; }
+.slide, .linkSingle { width: calc(var(--media-height) * var(--media-ratio)); height: var(--media-height); }
+.slide .imageLink { @apply h-full w-full; }
+.previous[data-slot=button], .next[data-slot=button] {
+ @apply absolute top-1/2 size-8 -translate-y-1/2 rounded-lg shadow-none;
+}
+.previous { inset-inline-start: .5rem; }
+.next { inset-inline-end: .5rem; }
+.previous svg, .next svg { @apply size-4; }
+.previous:disabled, .next:disabled,
+.gallery[data-carousel-static] .previous,
+.gallery[data-carousel-static] .next { visibility: hidden; pointer-events: none; }
+@media (pointer: coarse) {
+ .previous[data-slot=button], .next[data-slot=button] { @apply size-11; }
+}
+@media (hover: hover) and (pointer: fine) {
+ .previous, .next { opacity: 0; pointer-events: none; }
+ .gallery:hover .previous:not(:disabled), .gallery:hover .next:not(:disabled),
+ .gallery:focus-within .previous:not(:disabled), .gallery:focus-within .next:not(:disabled) {
+  opacity: 1; pointer-events: auto;
+ }
+}
+@media (hover: hover) and (pointer: fine) {
+ .gallery[data-carousel-ready="true"]:not([data-carousel-static]) .imageLink,
+ .gallery[data-carousel-ready="true"]:not([data-carousel-static]) .imageLink img { cursor: grab; }
+ .gallery[data-carousel-ready="true"]:not([data-carousel-static]):active .imageLink,
+ .gallery[data-carousel-ready="true"]:not([data-carousel-static]):active .imageLink img { cursor: grabbing; }
+}
+@media (width >= 45rem) {
+ .single { --media-height-cap: max(22.5rem, calc(100cqw / 1.6)); }
+ .gallery, .linkSingle { --media-base-height: clamp(9.375rem, calc(12.5rem / var(--media-first-ratio)), 12.5rem); }
+}
+
+.video { @apply block max-h-[32rem] w-full rounded-[inherit] bg-muted; object-fit: contain; }
+
+.slide .video { @apply h-full w-full rounded-[inherit]; max-height: none; }
+
+.videoFrame { @apply relative overflow-hidden rounded-xl border border-solid border-border/70 bg-muted; }
+.slide .videoFrame { @apply size-full; }
+.video { @apply select-none; }
+.soundButton[data-slot=button] { @apply absolute bottom-3 right-3 size-6 rounded-full border-0 bg-black/35 p-0 text-white backdrop-blur-md; }
+.soundButton svg { @apply size-3.5; }
+@media(hover:hover) { .soundButton[data-slot=button]:hover { @apply bg-black/50; } }
+
+@media(pointer:coarse) { .soundButton::after { content:"";position:absolute;inset:-.625rem; } }
+

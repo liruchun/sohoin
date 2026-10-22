@@ -1,0 +1,65 @@
+@reference "../../../globals.css";
+
+.frame { @apply relative min-w-0; }
+
+.navigation {
+  @apply flex items-center px-8;
+  height: var(--site-toolbar-height);
+  border: 0;
+}
+
+.panel {
+  @apply
+    p-8;
+}
+.panel[data-has-discussion] { padding-bottom: 0; }
+
+.publish {
+  @apply relative ml-auto min-h-11 border-0 bg-transparent p-0 text-[0.875rem] text-primary-foreground;
+}
+.publishSurface {
+  @apply min-h-8 bg-primary px-4 py-1;
+}
+
+.back {
+  @apply
+    relative min-h-11 min-w-20 rounded-none border-0 bg-transparent p-0 text-[0.875rem] text-foreground no-underline;
+}
+
+.back .backSurface {
+  @apply box-border h-8 w-full gap-1.5 border border-solid border-border bg-card px-4;
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--shadow-ink) 8%, transparent);
+}
+
+/* Lucide Animated ArrowLeft motion, CSS adaptation; see apps/web/LICENSE.lucide-animated. */
+.back svg path:last-child { transform-origin: 19px 12px; }
+@media (hover: hover) and (pointer: fine) {
+  .back:hover svg path:first-child { animation: arrowHead .4s ease-in-out; }
+  .back:hover svg path:last-child { animation: arrowShaft .4s ease-in-out; }
+}
+@keyframes arrowHead {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+@keyframes arrowShaft {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(.642857); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .back:hover svg path { animation: none; }
+}
+
+.title {
+  @apply
+    mt-0 mb-4 text-[1.625rem] leading-normal font-bold [overflow-wrap:anywhere];
+}
+
+@media (width < 40.625rem) {
+  .navigation { @apply px-6; }
+  .panel { @apply p-6; }
+}
+
+@media (width < 30rem) {
+  .navigation { @apply px-5; }
+  .panel { @apply px-5; }
+}

@@ -1,0 +1,20 @@
+@reference "../../../globals.css";
+.stack { @apply grid min-w-0 gap-5; }
+.form { @apply grid min-w-0 gap-4; }
+.form fieldset { @apply m-0 grid min-w-0 gap-4 border-0 p-0; }
+.form label { @apply grid gap-2 text-sm; }
+.actions { @apply flex flex-wrap items-center gap-3; }
+.tabs { @apply flex flex-wrap gap-5 border-b pb-3; border-color:var(--au-line); }
+.tabs a[aria-current="page"] { @apply font-semibold underline underline-offset-8; }
+.icon { @apply size-12 shrink-0 rounded-lg object-contain; background:var(--au-bg); }
+.identity { @apply flex items-center gap-3; }
+.identity p { @apply m-0; }
+.muted { color:var(--au-muted); @apply text-sm; }
+.preview { @apply flex items-center gap-4; }
+.preview img { @apply size-20 rounded-xl object-contain; border:1px solid var(--au-line); }
+.picker { @apply grid gap-3; }
+.option { @apply flex min-w-0 items-center gap-3; }
+.option span { @apply min-w-0 flex-1 break-words; }
+.dialog { max-height:calc(100dvh - 2rem); overflow:auto; }
+.wrap { @apply max-w-md whitespace-normal break-words; }
+.pagination { @apply flex items-center justify-between gap-4; }

@@ -1,0 +1,4 @@
+.details {
+  fill: none;
+  stroke: var(--post-action-detail, currentColor);
+}

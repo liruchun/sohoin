@@ -1,0 +1,2 @@
+import {getInteractionBatch,checkWriteOrigin,readJson,errorResponse} from "@sohoin/core/server";
+export async function POST(request:Request,{params}:{params:Promise<{kind:string}>}){try{checkWriteOrigin(request);return Response.json(await getInteractionBatch(request.headers,(await params).kind,await readJson(request)),{headers:{"Cache-Control":"no-store"}});}catch(error){return errorResponse(error);}}

@@ -1,0 +1,23 @@
+.content:is([data-size=default],[data-size=lg]){border:1px solid var(--border-floating);box-shadow:var(--shadow-dialog)}
+.overlay{background:var(--overlay-background);animation:overlay-in var(--site-motion-dialog) var(--site-ease-feedback)}
+.content[data-size=page]{inset:0;width:100%;max-width:none;height:100dvh;max-height:none;border-radius:0;padding:0;background:var(--background);box-shadow:none;transform:none;transform-origin:center;animation:page-in var(--site-motion-page-enter) var(--site-ease-emphasis)}
+.content[data-size=page][data-state=closed]{animation:page-out var(--site-motion-page-exit) var(--site-ease-emphasis) forwards}
+@keyframes page-in{from{opacity:.001;transform:translateX(3.125rem)}to{opacity:1;transform:none}}
+@keyframes page-out{to{opacity:0;transform:translateX(3.125rem)}}
+.content{
+ --ui-dialog-top:max(env(safe-area-inset-top,0rem),clamp(1.5rem,8dvh,5rem));
+ --ui-dialog-available-height:calc(100dvh - var(--ui-dialog-top) - max(1.5rem,env(safe-area-inset-bottom,0rem)));
+ transform:translateX(-50%);
+ transform-origin:top center;
+ animation:dialog-in var(--site-motion-dialog) var(--site-ease-feedback);
+}
+.overlay[data-state=closed]{animation:overlay-out var(--site-motion-feedback) var(--site-ease-feedback) forwards}
+.content[data-state=closed]{pointer-events:none;animation:dialog-out var(--site-motion-feedback) var(--site-ease-feedback) forwards}
+.content[data-size=document]{display:flow-root;position:relative;inset:auto;z-index:auto;width:100%;max-width:none;height:auto;max-height:none;overflow:visible;overscroll-behavior:auto;border-radius:0;padding:0;background:var(--background);box-shadow:none;transform:none;transform-origin:center;animation:page-in var(--site-motion-page-enter) var(--site-ease-emphasis)}
+.content[data-size=document][data-state=closed]{animation:page-out var(--site-motion-page-exit) var(--site-ease-emphasis) forwards}
+@keyframes overlay-in{from{opacity:0}to{opacity:1}}
+@keyframes overlay-out{to{opacity:0}}
+@keyframes dialog-in{from{opacity:0;transform:translateX(-50%) scale(.98)}to{opacity:1;transform:translateX(-50%)}}
+@keyframes dialog-out{to{opacity:0;transform:translateX(-50%) scale(.98)}}
+@media(max-width:40.625rem){.content{--ui-dialog-top:max(env(safe-area-inset-top,0rem),clamp(1rem,4dvh,2rem))}}
+@media(prefers-reduced-motion:reduce){.content,.overlay,.content[data-size=page],.content[data-state=closed],.content[data-size=page][data-state=closed],.content[data-size=document],.content[data-size=document][data-state=closed]{animation:none}}

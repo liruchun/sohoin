@@ -1,0 +1,82 @@
+@reference "../../../globals.css";
+
+/* Topic index on /community; the category page reuses the row for sorting. */
+.topics {
+  @apply flex flex-wrap items-center gap-2;
+  border-bottom: 1px solid var(--border);
+  padding-inline: calc(var(--spacing, .25rem) * 8);
+  padding-block: .75rem;
+}
+
+.topic {
+  @apply inline-flex min-h-8 items-center rounded-full border border-solid border-border bg-card px-3 text-[0.8125rem] text-muted-foreground no-underline;
+}
+
+.topic:hover { @apply bg-accent text-foreground; }
+
+.topic[aria-current=page] { @apply border-primary/20 bg-primary/5 text-primary; }
+
+/* Category page sort bar: text-only tabs in a shorter row. */
+.sortBar {
+  @apply flex flex-wrap items-center gap-5 bg-sidebar;
+  --sort-bar-pad: .5rem;
+  min-height: 3rem;
+  padding-inline: calc(var(--spacing, .25rem) * 8);
+  padding-block: var(--sort-bar-pad);
+  border-bottom: 1px solid var(--border);
+}
+.sortTab { @apply inline-flex min-h-0 items-center gap-1.5 text-[0.875rem] text-muted-foreground no-underline; align-self: stretch; }
+.sortTab:hover { @apply text-foreground; }
+.sortLabel { @apply relative inline-flex min-h-0 items-center; align-self: stretch; }
+/* The active marker sits under the label only, flush with the container border. */
+.sortTab[aria-current=page] .sortLabel::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(-1 * (var(--sort-bar-pad, .5rem) + 1px));
+  height: 2px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+.sortIcon { @apply size-4 shrink-0; stroke-width: 1.75; }
+.clockHand, .minuteHand { transform-origin: 12px 12px; }
+.clockHand { transition: transform .6s cubic-bezier(.4,0,.2,1); }
+.minuteHand { transition: transform .5s ease-in-out; }
+.flameIcon, .handshakeIcon { transform-origin: center; }
+
+@media (hover: hover) and (pointer: fine) {
+  .sortTab:hover .clockHand { transform: rotate(360deg); }
+  .sortTab:hover .minuteHand { transform: rotate(45deg); }
+  .sortTab:hover .flameIcon { animation: community-flame 700ms var(--site-ease-emphasis) 1; }
+  .sortTab:hover .handshakeIcon { animation: community-handshake 600ms var(--site-ease-emphasis) 1; }
+}
+
+@keyframes community-flame {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0); }
+  30% { transform: translateY(-.0625rem) scale(1.12) rotate(-4deg); }
+  60% { transform: translateY(0) scale(.96) rotate(3deg); }
+  80% { transform: translateY(-.03125rem) scale(1.05) rotate(-1deg); }
+}
+@keyframes community-handshake {
+  0%, 100% { transform: translateX(0) rotate(0) scale(1); }
+  30% { transform: translateX(-.0625rem) rotate(-4deg) scale(1.06); }
+  60% { transform: translateX(.0625rem) rotate(4deg) scale(1.06); }
+  80% { transform: translateX(0) rotate(0) scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clockHand, .minuteHand { transition: none; }
+  .sortTab:hover .clockHand, .sortTab:hover .minuteHand { transform: none; }
+  .sortTab:hover .flameIcon, .sortTab:hover .handshakeIcon { animation: none; }
+}
+
+@media (width < 40.625rem) {
+  .topics { padding-inline: 1rem; }
+  .sortBar { padding-inline: 1rem; }
+}
+
+@media (pointer: coarse) {
+  .topic { min-height: 2.75rem; }
+  .sortBar { --sort-bar-pad: 0; padding-block: 0; }
+  .sortTab { min-height: 2.75rem; }
+}

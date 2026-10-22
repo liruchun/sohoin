@@ -1,0 +1,35 @@
+import {communityAdminOpenApiPaths} from "./community-admin-openapi";
+import {badgeOpenApiPaths} from "./badges-openapi";
+import {activitiesOpenApiPaths} from "./activities-openapi";
+import {followsOpenApiPaths} from "./follows-openapi";
+import {contentOpenApiPaths} from "./content-openapi";
+import {mediaOpenApiPaths} from "./media-openapi";
+import {interactionsOpenApiPaths} from "./interactions-openapi";
+import {commentsOpenApiPaths} from "./comments-openapi";
+import {sessionsPageSchema,revokeSessionsSchema,revokeSessionsResultSchema,changePasswordSchema,changePasswordResultSchema} from "./account";
+import {settingsAuditPageSchema,userAuditPageSchema,accountAuditPageSchema} from "./admin";
+import {managedUserSchema,managedUsersPageSchema,updateUserSchema} from "./users";
+import {z} from "zod";
+import {updateSettingsSchema,settingsSnapshotSchema,publicSettingsSnapshotSchema} from "./settings";
+const response=(description:string,schema:unknown)=>({description,content:{"application/json":{schema}}});
+export function settingsOpenApi(){
+ const errorSchema={type:"object",required:["error"],properties:{error:{type:"object",required:["code","message"],properties:{code:{type:"string"},message:{type:"string"}}}}};
+ const failures=Object.fromEntries([[400,"参数不正确"],[401,"未登录"],[403,"无权限或来源校验失败"],[404,"用户不存在"],[409,"版本冲突或访问保护"],[413,"请求过大"],[415,"不支持的格式"],[429,"请求过于频繁"],[503,"服务不可用"]].map(([code,label])=>[code,response(String(label),errorSchema)]));
+ const snapshot=z.toJSONSchema(settingsSnapshotSchema,{target:"openapi-3.0",unrepresentable:"any"});
+ const publicSnapshot=z.toJSONSchema(publicSettingsSnapshotSchema,{target:"openapi-3.0",unrepresentable:"any"});
+ return {openapi:"3.1.0",info:{title:"sohoin API",version:"1.0.0",description:"网站和 APP 共用 Core 服务。Cookie 写入须携带匹配站点的 Origin；无 Cookie 的原生 APP 可使用 Bearer 会话令牌。"},
+ components:{securitySchemes:{bearerSession:{type:"http",scheme:"bearer",description:"Better Auth 会话令牌，非自定义 JWT"},sessionCookie:{type:"apiKey",in:"cookie",name:"better-auth.session_token",description:"开发环境 Cookie 名称；生产 HTTPS 默认增加 __Secure- 前缀"}}},
+ paths:{...contentOpenApiPaths(),...mediaOpenApiPaths(),...commentsOpenApiPaths(),...interactionsOpenApiPaths(),...followsOpenApiPaths(),...activitiesOpenApiPaths(),...communityAdminOpenApiPaths(),...badgeOpenApiPaths(),
+ "/api/v1/account/sessions":{get:{operationId:"listAccountSessions",summary:"查看自己的有效登录，不返回会话令牌，每页20条",security:[{bearerSession:[]},{sessionCookie:[]}],parameters:[{name:"before",in:"query",schema:{type:"string",maxLength:128}}],responses:{200:response("登录会话",z.toJSONSchema(sessionsPageSchema,{target:"openapi-3.0"})),...failures}}},
+ "/api/v1/account/sessions/revoke":{post:{operationId:"revokeAccountSessions",summary:"退出自己的指定登录或其他全部登录，不能通过此接口退出当前登录",security:[{bearerSession:[]},{sessionCookie:[]}],requestBody:{required:true,content:{"application/json":{schema:z.toJSONSchema(revokeSessionsSchema,{target:"openapi-3.0"})}}},responses:{200:response("已退出数量",z.toJSONSchema(revokeSessionsResultSchema,{target:"openapi-3.0"})),...failures}}},
+ "/api/v1/account/password":{post:{operationId:"changeAccountPassword",summary:"验证旧密码后修改自己的密码，撤销全部登录，成功后必须重新登录",security:[{bearerSession:[]},{sessionCookie:[]}],requestBody:{required:true,content:{"application/json":{schema:z.toJSONSchema(changePasswordSchema,{target:"openapi-3.0",unrepresentable:"any"})}}},responses:{200:response("必须重新登录",z.toJSONSchema(changePasswordResultSchema,{target:"openapi-3.0"})),...failures}}},
+ "/api/v1/admin/audit/users":{get:{operationId:"listUserAudit",summary:"管理员查看用户权限与状态变更记录",security:[{bearerSession:[]},{sessionCookie:[]}],parameters:[{name:"before",in:"query",schema:{type:"string",pattern:"^[1-9][0-9]{0,18}$"}}],responses:{200:response("用户操作记录",z.toJSONSchema(userAuditPageSchema,{target:"openapi-3.0"})),...failures}}},
+ "/api/v1/admin/audit/account":{get:{operationId:"listAccountAudit",summary:"管理员查看账号安全操作记录，不返回密码与令牌",security:[{bearerSession:[]},{sessionCookie:[]}],parameters:[{name:"before",in:"query",schema:{type:"string",pattern:"^[1-9][0-9]{0,18}$"}}],responses:{200:response("账号安全记录",z.toJSONSchema(accountAuditPageSchema,{target:"openapi-3.0"})),...failures}}},
+
+ "/api/v1/admin/users":{get:{operationId:"listUsers",summary:"管理员搜索用户（姓名或邮箱前缀，每页30位，编号倒序）",security:[{bearerSession:[]},{sessionCookie:[]}],parameters:[{name:"q",in:"query",schema:{type:"string",maxLength:100}},{name:"role",in:"query",schema:{type:"string",enum:["all","admin","user"]}},{name:"status",in:"query",schema:{type:"string",enum:["all","active","banned"]}},{name:"before",in:"query",description:"上一页返回的 nextCursor",schema:{type:"string",maxLength:128}}],responses:{200:response("用户列表",z.toJSONSchema(managedUsersPageSchema,{target:"openapi-3.0"})),...failures}}},
+ "/api/v1/admin/users/{id}":{parameters:[{name:"id",in:"path",required:true,schema:{type:"string",maxLength:128}}],get:{operationId:"getUser",summary:"管理员查看用户资料",security:[{bearerSession:[]},{sessionCookie:[]}],responses:{200:response("用户",z.toJSONSchema(managedUserSchema,{target:"openapi-3.0"})),...failures}},patch:{operationId:"updateUser",summary:"调整用户状态或角色；撤销目标会话，不能调整自己的访问权限",security:[{bearerSession:[]},{sessionCookie:[]}],requestBody:{required:true,content:{"application/json":{schema:z.toJSONSchema(updateUserSchema,{target:"openapi-3.0",unrepresentable:"any"})}}},responses:{200:response("更新后的用户",z.toJSONSchema(managedUserSchema,{target:"openapi-3.0"})),...failures}}},
+"/api/v1/admin/audit":{get:{operationId:"listSettingsAudit",summary:"管理员查看设置操作记录",security:[{bearerSession:[]},{sessionCookie:[]}],parameters:[{name:"before",in:"query",required:false,description:"上一页返回的 nextCursor；每页最多30条",schema:{type:"string",pattern:"^[1-9][0-9]{0,18}$"}}],responses:{200:response("操作记录",z.toJSONSchema(settingsAuditPageSchema,{target:"openapi-3.0"})),400:failures[400],401:failures[401],403:failures[403],503:failures[503]}}},"/api/v1/site-settings":{get:{operationId:"getSiteSettings",summary:"读取公开站点设置，Logo 返回公共地址",responses:{200:response("设置",publicSnapshot),503:failures[503]}}},
+ "/api/v1/site-logo/{variant}":{get:{operationId:"getSiteLogo",summary:"读取当前站点 Logo；暗黑版留空时回退普通版，不开放其他媒体",parameters:[{name:"variant",in:"path",required:true,schema:{type:"string",enum:["normal","dark"]}}],responses:{200:{description:"校验后的 SVG 或栅格 Logo 缩略图；不缓存，禁止独立索引",content:Object.fromEntries(["image/webp","image/svg+xml"].map(mime=>[mime,{schema:{type:"string",format:"binary"}}]))},404:failures[404],503:failures[503]}}},
+ "/api/v1/admin/site-settings":{get:{operationId:"getAdminSiteSettings",summary:"管理员读取设置",security:[{bearerSession:[]},{sessionCookie:[]}],responses:{200:response("设置",snapshot),401:failures[401],403:failures[403],503:failures[503]}},
+ patch:{operationId:"updateSiteSettings",summary:"管理员修改设置",security:[{bearerSession:[]},{sessionCookie:[]}],requestBody:{required:true,content:{"application/json":{schema:z.toJSONSchema(updateSettingsSchema,{target:"openapi-3.0",unrepresentable:"any"})}}},responses:{200:response("保存后的设置",snapshot),...failures}}}}};
+}

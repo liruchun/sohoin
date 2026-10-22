@@ -1,0 +1,66 @@
+{
+  "source": "https://manus.im/",
+  "capturedOn": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "scope": "Public homepage, Simplified Chinese, light theme; not an official Manus design specification.",
+  "method": "Read-only browser getComputedStyle and element geometry; source CSS variable names retained.",
+  "desktop": {
+    "url": "https://manus.im/",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "tokens": {
+      "--background-gray-main": "#f8f8f7",
+      "--background-menu-white": "#fff",
+      "--background-gray-secondary": "#f3f3f3",
+      "--background-card": "#fafafa",
+      "--text-primary": "#1a1a1a",
+      "--text-secondary": "#4d4d4d",
+      "--text-tertiary": "#737373",
+      "--text-quaternary": "#8c8c8c",
+      "--text-disable": "#a6a6a6",
+      "--text-blue": "#0081f2",
+      "--text-blue-dark": "#F35837",
+      "--border-main": "#0000000f",
+      "--border-dark": "#00000024",
+      "--Button-black": "#1a1a19",
+      "--Button-border-secondary": "#0000001f",
+      "--accent-send-button": "#1a1a19",
+      "--ui-density-small-radius": "8px",
+      "--ui-density-card-radius": "12px",
+      "--ui-density-composer-radius": "22px",
+      "--ui-density-small-row-height": "32px"
+    },
+    "h1": {
+      "fontFamily": "\"Noto Serif SC\", \"Noto Serif SC Fallback\", LibreBaskerville, Georgia, Cambria, ui-serif, \"Times New Roman\", Times, serif",
+      "fontSize": "36px",
+      "lineHeight": "54px",
+      "fontWeight": "400"
+    },
+    "composer": {
+      "width": 768,
+      "radius": "22px"
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "h1": {
+      "fontSize": "28px",
+      "lineHeight": "42px"
+    },
+    "editor": {
+      "fontSize": "15px",
+      "lineHeight": "24px"
+    },
+    "composer": {
+      "width": 358,
+      "radius": "22px"
+    },
+    "overflow": false
+  },
+  "adaptations": "Community feed width, reading line height, touch targets, accessibility constraints, icon choice and component layouts in DESIGN.md are sohoin project decisions."
+}

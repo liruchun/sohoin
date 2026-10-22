@@ -1,0 +1,23 @@
+{
+  "capturedOn": "2026-10-16",
+  "method": "Public HTML and JavaScript read over HTTP only; no browser or runtime observation.",
+  "pages": ["https://bonjour.bio/?feed=featured", "https://bonjour.bio/?feed=friends"],
+  "source": "https://bonjour.bio/_next/static/chunks/105_3jsy3xymz.js",
+  "module": "17258",
+  "sourceDeclarations": {
+    "measurement": "Actual content rectangles and fallback data-skeleton-shape roles (name, meta, body, avatar) provide source and target geometry.",
+    "shapeMorph": {"durationMs": 400, "easing": "cubic-bezier(0.32,0.72,0,1)", "properties": ["left", "top", "width", "height", "opacity"]},
+    "cardExpansion": {"durationMs": 400, "staggerMs": 50, "easing": "cubic-bezier(0,0,0,1)", "fallbackCompletionMs": 434},
+    "contentFadeMs": 180,
+    "completion": "Source fades each row after its own expansion; one branch preserves the first row and starts later rows at zero height."
+  },
+  "localChoices": {
+    "preservedRows": 2,
+    "sequence": "One continuous 280ms layer entrance across SPA fallback/measuring/measured slots; morph both first rows over 320ms while remaining rows join downward expansion at 20/40/60/80ms, each lasting 320ms. Shape/height/opacity use cubic-bezier(.4,0,.2,1). Wait for all geometry and paint, then crossfade content/skeleton top-to-bottom over 280ms with an independent 80ms stagger on SSR/SPA. Splash exits directly into shell entrance. These are local user-requested overlapping choreography choices, not source observations; sourceDeclarations remain unchanged.",
+    "geometry": "Use transforms for matched shapes, opacity for new/obsolete skeleton shapes, bounded height/padding/border animation for card flow.",
+    "contentBarrier": "User explicitly requires all expansion to complete before any real data appears; this differs from source per-row completion.",
+    "panel": "Initial and real feed panels share a 100dvh minimum height; no whole-panel height tween.",
+    "limits": "At most six measured cards, twelve regions and thirty-six shapes per card including old-shape ghosts.",
+    "verification": "Source module17258 fetched again over HTTP on 2026-10-16; it starts geometry immediately and fades each row on completion via requestAnimationFrame, without two 300ms holds. Pure state/shape regression cases added but not run; no build, tests, performance scripts or browser verification run."
+  }
+}

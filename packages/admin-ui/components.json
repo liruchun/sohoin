@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-rhea",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@sohoin/admin-ui",
+    "utils": "cn/lite",
+    "ui": "@sohoin/admin-ui",
+    "hooks": "@sohoin/admin-ui/hooks",
+    "lib": "@sohoin/admin-ui/lib"
+  }
+}

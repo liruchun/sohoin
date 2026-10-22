@@ -1,0 +1,18 @@
+@reference "../../../../../globals.css";
+.block { @apply block shrink-0 rounded-lg bg-muted; }
+.titleRow { @apply flex items-center; height:1.75rem; }
+.title { width:8rem;height:var(--site-skeleton-text-height); }
+.labelRow { @apply flex items-center; height:1.25rem; }
+.label { width:3.5rem;height:var(--site-skeleton-text-height); }
+.avatar { width:var(--content-avatar-size);height:var(--content-avatar-size); }
+.button { @apply h-10 w-28; }
+.hint { width:12rem;max-width:100%;height:var(--site-skeleton-text-height); }
+.input { @apply h-10 w-full; }
+.bio { @apply w-full; height:8.875rem; }
+.select { @apply h-8 w-36; }
+.contact { @apply w-24; }
+.contact:nth-child(2),.contact:nth-child(6) { @apply w-32; }
+.skeleton { animation:breathe var(--site-motion-skeleton-breathe,2400ms) cubic-bezier(.4,0,.6,1) infinite;animation-delay:var(--skeleton-breathe-delay,0ms); }
+@keyframes breathe { 50% { opacity:var(--site-skeleton-breathe-opacity,.65); } }
+@media (pointer:coarse) { .input,.button { @apply h-11; } }
+@media (prefers-reduced-motion:reduce) { .skeleton { animation:none; } }

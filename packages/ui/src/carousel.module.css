@@ -1,0 +1,32 @@
+.root { position: relative; min-width: 0; outline-offset: .25rem; }
+.viewport {
+ overflow-x: auto;
+ overscroll-behavior-x: contain;
+ /* Preserve native scrolling before Embla is ready without briefly painting
+    a scrollbar or changing the viewport height during the handoff. */
+ scrollbar-width: none;
+}
+.viewport::-webkit-scrollbar { display: none; }
+.root[data-carousel-ready="true"] .viewport { overflow: hidden; touch-action: pan-y pinch-zoom; }
+.control { touch-action: manipulation; }
+:where(.control[data-magnetic]) { position: relative; }
+.control[data-magnetic] {
+ background: transparent;
+ border-color: transparent;
+ box-shadow: none;
+}
+.control .magneticSurface {
+ position: absolute;
+ inset: -1px;
+ border: 1px solid var(--border);
+ background: var(--card);
+ box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-ink) 5%, transparent);
+}
+.control:hover .magneticSurface { background: var(--accent); }
+.root:not([data-carousel-ready="true"]) .control { visibility: hidden; }
+.status { font-variant-numeric: tabular-nums; }
+
+@media (hover: hover) and (pointer: fine) {
+ .root[data-carousel-ready="true"]:not([data-carousel-static]) .viewport { cursor: grab; }
+ .root[data-carousel-ready="true"]:not([data-carousel-static]) .viewport:active { cursor: grabbing; }
+}

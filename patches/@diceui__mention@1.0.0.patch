@@ -1,0 +1,120 @@
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+index afd51347526ff1063fb976c7f0db4b88909eed59..ecd97c4d7a159ac9a3bc54c850ff43b61620ac3b 100644
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -54,6 +54,8 @@ interface MentionRootProps extends Omit<React.ComponentPropsWithoutRef<typeof Pr
+    * Can be used to prevent the default filtering behavior.
+    */
+   onFilter?: (options: string[], term: string) => string[];
++  /** Candidates have already been filtered by an asynchronous data source. */
++  manualFiltering?: boolean;
+   /**
+    * Whether the mention uses exact string matching or fuzzy matching.
+    * When onFilter is provided, this prop is ignored.
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 61b343e6c5fb5efeacb138aeae029c31dfe7602c..9ea07a5e4f80429dd9a795856c1f637bfa7c42fd 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -10,13 +10,13 @@ function getDataState(open) {
+ const ROOT_NAME = "MentionRoot";
+ const [MentionProvider, useMentionContext] = createContext(ROOT_NAME);
+ const MentionRoot = React.forwardRef((props, forwardedRef) => {
+-	const { children, open: openProp, defaultOpen = false, onOpenChange: onOpenChangeProp, inputValue: inputValueProp, onInputValueChange, value: valueProp, defaultValue, onValueChange, onFilter, trigger: triggerProp = "@", dir: dirProp, disabled = false, exactMatch = false, loop = false, modal = false, readonly = false, required = false, name, ...rootProps } = props;
++	const { children, open: openProp, defaultOpen = false, onOpenChange: onOpenChangeProp, inputValue: inputValueProp, onInputValueChange, value: valueProp, defaultValue, onValueChange, onFilter, manualFiltering = false, trigger: triggerProp = "@", dir: dirProp, disabled = false, exactMatch = false, loop = false, modal = false, readonly = false, required = false, name, ...rootProps } = props;
+ 	const listRef = React.useRef(null);
+ 	const inputRef = React.useRef(null);
+ 	const inputId = useId();
+ 	const labelId = useId();
+ 	const listId = useId();
+-	const { collectionRef, itemMap, getItems, onItemRegister } = useCollection();
++	const { collectionRef, itemMap, getItems, onItemRegister: registerItem } = useCollection();
+ 	const { isFormControl, onTriggerChange } = useFormControl();
+ 	const composedRef = composeRefs(forwardedRef, collectionRef, (node) => onTriggerChange(node));
+ 	const dir = useDirection(dirProp);
+@@ -43,6 +43,7 @@ const MentionRoot = React.forwardRef((props, forwardedRef) => {
+ 	const { filterStore, onItemsFilter, getIsItemVisible } = useFilterStore({
+ 		itemMap,
+ 		onFilter,
++		manualFiltering,
+ 		exactMatch,
+ 		onCallback: (itemCount) => {
+ 			if (itemCount === 0) {
+@@ -55,20 +56,43 @@ const MentionRoot = React.forwardRef((props, forwardedRef) => {
+ 	const getEnabledItems = React.useCallback(() => {
+ 		return getItems().filter((item) => !item.disabled);
+ 	}, [getItems]);
++	const highlightFrame = React.useRef(null);
++	const reconcileHighlight = useCallbackRef(() => {
++		if (!open) return;
++		const items = getEnabledItems().filter((item) => item.ref.current && getIsItemVisible(item.value));
++		setHighlightedItem((current) => items.find((item) => item.value === current?.value && item.ref.current === current?.ref.current) ?? items[0] ?? null);
++	});
++	const scheduleHighlight = React.useCallback(() => {
++		if (highlightFrame.current !== null) cancelAnimationFrame(highlightFrame.current);
++		highlightFrame.current = requestAnimationFrame(() => {
++			highlightFrame.current = null;
++			reconcileHighlight();
++		});
++	}, [reconcileHighlight]);
++	// Reconcile once refs and every asynchronous option registration have settled.
++	const onItemRegister = React.useCallback((item) => {
++		const unregister = registerItem(item);
++		scheduleHighlight();
++		return () => { unregister(); scheduleHighlight(); };
++	}, [registerItem, scheduleHighlight]);
++	useIsomorphicLayoutEffect(() => {
++		if (open) scheduleHighlight();
++		return () => {
++			if (highlightFrame.current !== null) cancelAnimationFrame(highlightFrame.current);
++			highlightFrame.current = null;
++		};
++	}, [open, scheduleHighlight]);
+ 	const onOpenChange = React.useCallback((nextOpen) => {
+ 		if (nextOpen && filterStore.search && filterStore.itemCount === 0) return;
+ 		setOpen(nextOpen);
+-		if (nextOpen) requestAnimationFrame(() => {
+-			const firstItem = getEnabledItems()[0] ?? null;
+-			setHighlightedItem(firstItem);
+-		});
++		if (nextOpen) scheduleHighlight();
+ 		else {
+ 			setHighlightedItem(null);
+ 			setVirtualAnchor(null);
+ 		}
+ 	}, [
+ 		setOpen,
+-		getEnabledItems,
++		scheduleHighlight,
+ 		filterStore
+ 	]);
+ 	const { onHighlightMove } = useListHighlighting({
+@@ -117,7 +141,7 @@ const MentionRoot = React.forwardRef((props, forwardedRef) => {
+ 		setInputValue,
+ 		setValue,
+ 		setOpen,
+-		getEnabledItems,
++		scheduleHighlight,
+ 		filterStore
+ 	]);
+ 	const onMentionsRemove = React.useCallback((mentionsToRemove) => {
+@@ -507,20 +531,6 @@ const MentionInput = React.forwardRef((props, forwardedRef) => {
+ 			}
+ 			return false;
+ 		}
+-		function getIsTriggerPartOfText() {
+-			const textBeforeTrigger = value.slice(0, lastTriggerIndex);
+-			if (!/\S/.test(textBeforeTrigger)) return false;
+-			const lastCharBeforeTrigger = textBeforeTrigger.slice(-1);
+-			return lastCharBeforeTrigger !== " " && lastCharBeforeTrigger !== "\n";
+-		}
+-		if (getIsTriggerPartOfText()) {
+-			if (context.open) {
+-				context.onOpenChange(false);
+-				context.onHighlightedItemChange(null);
+-				context.filterStore.search = "";
+-			}
+-			return false;
+-		}
+ 		const textAfterTrigger = value.slice(lastTriggerIndex + 1, currentPosition);
+ 		const isValidMention = !textAfterTrigger.includes(" ");
+ 		const isCursorAfterTrigger = currentPosition > lastTriggerIndex;

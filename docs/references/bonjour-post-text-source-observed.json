@@ -1,0 +1,22 @@
+{
+  "observedOn": "2026-10-16",
+  "method": "HTTP source inspection only; no browser or computed-layout verification",
+  "source": "https://bonjour.bio/_next/static/chunks/105_3jsy3xymz.js",
+  "symbol": "FEED_POST_TEXT_COLLAPSE / ExpandablePostText / collapseFromLayout",
+  "observed": {
+    "smallScreen": {"after": 6, "visible": 5},
+    "smVariant": {"after": 9, "visible": 8},
+    "criterion": "Rendered text rows with paragraph/blank-gap accounting, not character count",
+    "remeasureTriggers": ["resize", "font loading", "paragraph spacing"],
+    "control": "Expandable button; caller may override with open-detail action"
+  },
+  "localConventions": {
+    "breakpoint": "40rem",
+    "feedTextLimit": 1500,
+    "completeText": "Inline expand/collapse",
+    "truncatedText": "Link to full detail page",
+    "typography": "Existing DESIGN.md type and paragraph spacing",
+    "measureBounds": {"textNodes": 128, "rectangles": 256}
+  },
+  "validation": "Implementation has not been built, tested or inspected in a browser."
+}

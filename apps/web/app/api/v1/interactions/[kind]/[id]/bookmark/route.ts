@@ -1,0 +1,2 @@
+import {setBookmark,checkWriteOrigin,readJson,errorResponse} from "@sohoin/core/server";
+export async function PUT(request:Request,{params}:{params:Promise<{kind:string;id:string}>}){try{checkWriteOrigin(request);const {kind,id}=await params;return Response.json(await setBookmark(request.headers,kind,id,await readJson(request)),{headers:{"Cache-Control":"no-store"}});}catch(error){return errorResponse(error);}}

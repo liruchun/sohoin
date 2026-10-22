@@ -1,0 +1,62 @@
+{
+  "reference": "https://bonjour.bio/",
+  "capturedOn": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "method": "Read public HTML, JavaScript chunks and CSS over HTTP only. No browser used for this research/revision. Source declarations are not an observed runtime trace.",
+  "sources": {
+    "feedAndLaunch": "https://bonjour.bio/_next/static/chunks/0oh56qo5lj9s9.js",
+    "scopedStyles": "https://bonjour.bio/_next/static/chunks/0earx5r4g12li.css",
+    "tailwindStyles": "https://bonjour.bio/_next/static/chunks/07ko6eezq~34f.css"
+  },
+  "sourceDeclarations": {
+    "textSkeleton": {
+      "minimumHeightPx": 6,
+      "maximumHeightPx": 10,
+      "alignment": "centered vertically within actual measured text line; real width retained"
+    },
+    "pulse": {
+      "periodMs": 2000,
+      "opacityAtMidpoint": 0.5,
+      "easing": "cubic-bezier(.4,0,.6,1)",
+      "scope": "measured-layout container, not one animation per line"
+    },
+    "ordinaryExpansion": {
+      "initialHeightPx": 100,
+      "heightMs": 400,
+      "staggerMs": 50,
+      "heightEasing": "cubic-bezier(0,0,0,1)",
+      "fadeMs": 180,
+      "fadeStarts": "after height transition end and stable layout, next animation frame",
+      "fallbackHeightCompletionMs": 434
+    },
+    "launch": {
+      "splashFadeStartsAtMs": 860,
+      "splashFadeMs": 400,
+      "declaredTotalMs": 2240,
+      "feedContainerStartMs": 1460,
+      "feedContainerFadeMs": 512,
+      "feedContainerShownAtMs": 1972,
+      "launchFeedCrossfadeMs": 200,
+      "caveat": "launch branch crossfades without ordinary height expansion; first content reveal is coordinated through whenLaunchEntered, not immediately after DOM measurement"
+    }
+  },
+  "projectAdoption": {
+    "textStroke": "center measured lines; clamp font-size/2 to .375–.625 root rem (normally 6–8px on this site), preserve actual line width and center",
+    "entrances": "Latest user instruction: SSR splash -> measured skeleton at final natural height -> top-to-bottom staggered opacity; only SPA retains two placeholders -> measured skeleton -> height expansion.",
+    "splash": "One-shot official HeartHandshake motion slowed from 700ms to 1260ms; when ready in time, fade Splash from 860ms to 1260ms, wait 200ms, then fade the measured skeleton/container in for 512ms. Late data holds the final icon pose without replay. SPA unchanged.",
+    "measuredSettleMs": 100,
+    "heightMs": 400,
+    "rowStaggerMs": 50,
+    "textFadeMs": 180,
+    "textFadeStarts": {
+      "SSR": "After settle interval, 180ms opacity fade with 50ms row stagger; no height/translate animation",
+      "SPA": "After each 400ms height expansion, replacing the old 120ms early reveal"
+    },
+    "pulsePeriodMs": 2000,
+    "pulseScope": "one inner layer per card; outer layer handles exit fade; pause until measured geometry becomes visible",
+    "validation": "Code/manual source review only for this revision. Prior desktop checks cover older timing and thicker line geometry, not this revision.",
+    "splashGapMs": 200,
+    "skeletonEntranceMs": 512,
+    "sourceRechecked": "2026-10-16: public launch JS and CSS fetched over HTTP again; 860ms fade start, 400ms fade, 1460ms feed start and 512ms feed fade declarations still present. No browser/runtime validation."
+  }
+}

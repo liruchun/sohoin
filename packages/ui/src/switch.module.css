@@ -1,0 +1,8 @@
+@reference "../../../apps/web/app/globals.css";
+.root { @apply relative inline-flex h-11 w-11 shrink-0 cursor-pointer items-center border-0 bg-transparent p-0 outline-none disabled:cursor-default disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring; }
+.root::before { @apply absolute inset-x-0 h-6 rounded-full bg-input; content: ""; transition: background-color 140ms; }
+.root[data-state=checked]::before { @apply bg-foreground; }
+.thumb { @apply relative block size-5 translate-x-0.5 rounded-full bg-background; transition: transform 140ms var(--site-ease-feedback); }
+.root[data-state=checked] .thumb { @apply translate-x-[1.375rem]; }
+.root:active .thumb { filter: brightness(.92); }
+@media (prefers-reduced-motion: reduce) { .root::before,.thumb { transition: none; } }

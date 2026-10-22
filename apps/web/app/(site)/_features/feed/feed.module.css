@@ -1,0 +1,110 @@
+@reference "../../../globals.css";
+
+.panel {
+  @apply
+    min-h-dvh overflow-hidden rounded-3xl border border-solid border-border;
+}
+
+.feed { @apply relative min-h-dvh min-w-0; }
+.list { @apply min-w-0; }
+.navigation {
+  @apply flex items-center gap-2;
+  padding-inline: calc(var(--spacing, 0.25rem) * 8);
+  min-height: var(--site-toolbar-height);
+}
+.tab {
+  @apply relative isolate inline-flex min-h-0 min-w-0 items-center justify-center gap-1.5 rounded-[.625rem] border-0 bg-transparent px-4 py-0 text-[0.875rem] font-medium whitespace-nowrap text-foreground no-underline;
+  height: calc(var(--spacing, .25rem) * 12);
+}
+.tab::before {
+  @apply border border-solid border-border/60 bg-card;
+  content: "";
+  position: absolute;
+  inset: .5rem 0;
+  z-index: -1;
+  border-radius: inherit;
+}
+.tab[aria-current=page]::before { @apply border-primary/10 bg-primary/5; }
+.tab[aria-current=page] .label { @apply text-primary; }
+.tab[aria-current=page] .icon { @apply fill-primary text-primary; }
+.tab[aria-current=page] .clockHand,
+.tab[aria-current=page] .minuteHand { stroke: var(--primary-foreground); }
+.publish {
+  @apply relative ml-auto min-h-11 border-0 bg-transparent p-0 text-[0.875rem] text-primary-foreground;
+}
+.publishSurface {
+  @apply min-h-8 bg-primary px-4 py-1;
+}
+.navigation {
+  --skeleton-enter-transform: translateY(-.75rem);
+  --skeleton-enter-duration: var(--site-motion-navigation-enter);
+  --skeleton-enter-stagger: var(--site-motion-navigation-stagger);
+  --skeleton-enter-ease: var(--site-ease-emphasis);
+}
+.label { @apply inline-flex items-center; }
+.icon {
+  @apply size-4 shrink-0;
+  stroke-width: 1.75;
+}
+/* CSS adaptation of lucide-animated Clock/Sparkles (MIT, apps/web/LICENSE.lucide-animated).
+   https://lucide-animated.com/r/clock.json and /r/sparkles.json */
+.clockHand, .minuteHand { transform-origin: 12px 12px; }
+.clockHand { transition: transform .6s cubic-bezier(.4,0,.2,1); }
+.minuteHand { transition: transform .5s ease-in-out; }
+.tab:focus-visible { @apply z-10 outline-2 -outline-offset-4 outline-foreground; }
+.stream { @apply overflow-clip; }
+
+@media (hover: hover) and (pointer: fine) {
+  a.tab:hover { @apply text-foreground; }
+  a.tab:not([aria-current=page]):hover::before { @apply bg-accent; }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .clockHand { transform: rotate(360deg); }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .minuteHand { transform: rotate(45deg); }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .sparkle { fill: currentColor; animation: sparkle 1s ease-in-out; }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .stars { animation: blink 2s 1s forwards; }
+}
+
+@keyframes sparkle {
+  0%, 66.667%, 100% { transform: translateY(0); }
+  33.333% { transform: translateY(-1px); }
+}
+@keyframes blink {
+  0%, 33.333%, 50%, 66.667%, 83.333% { opacity: 0; }
+  16.667%, 100% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clockHand, .minuteHand { transition: none; }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .clockHand, :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .minuteHand { transform: none; }
+  :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .sparkle, :is(a.tab, [data-feed-choice]:not([data-disabled=true])):hover .stars { animation: none; }
+}
+
+.empty {
+  @apply
+    px-6 py-20 text-center;
+}
+
+.heading1 {
+  @apply
+    text-[2rem] font-bold;
+}
+
+.heading2 {
+  @apply
+    text-[1.25rem] font-medium;
+}
+
+.description {
+  @apply
+    mt-2.5 text-[0.875rem] text-muted-foreground;
+}
+
+@media (width < 30rem) {
+  .navigation { @apply gap-1; }
+  .tab { @apply gap-1 px-2; }
+  .panel { @apply rounded-none border-x-0; }
+}
+
+@media (width < 40rem) {
+ .navigation { @apply gap-1 px-3; }
+ .tab { @apply gap-1 px-2; }
+ .tab:disabled { @apply hidden; }
+}

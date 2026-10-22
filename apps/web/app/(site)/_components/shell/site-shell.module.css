@@ -1,0 +1,127 @@
+@reference "../../../globals.css";
+
+.frame {
+  @apply grid min-h-svh;
+  --site-header-height: calc(var(--site-toolbar-height) * 2);
+  grid-template-columns: minmax(1.5rem, 1fr) 12rem minmax(0, 40.25rem) minmax(1.5rem, 1fr);
+  grid-template-rows: var(--site-header-height) minmax(0, 1fr);
+  /* Header and body use the same grid tracks at every breakpoint. */
+}
+
+/* One transparent grid item gives both rules their own native snapshot.
+   A viewport-high sticky layer keeps its capture bounds stable across scroll
+   restoration and long-list/short-detail changes, without changing scroll ownership. */
+.dividers {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  grid-column: 3 / 4;
+  grid-row: 1 / -1;
+  box-sizing: border-box;
+  min-width: 0;
+  height: 100dvh;
+  border-inline: 1px solid var(--border);
+  z-index: 41;
+  pointer-events: none;
+}
+
+/* Lightbox sets this existing marker before capturing either snapshot; keep
+   the rules in its root backdrop rather than above the modal surface.
+   Override the inline name, which must bypass CSS Modules name rewriting. */
+:global(:root[data-lightbox-direction]) .dividers,
+:global(:root[data-lightbox-direction]) .content {
+  view-transition-name: none !important;
+}
+
+/* SiteFrame is a direct body child. Bound root matching to that stable shell,
+   never to descendants that mutate during routes, focus or skeleton animation.
+   Page snapshots use layers 1/2, sidebar 3. Never crossfade two translucent borders.
+   Keep named pseudo selectors separate for the CSS Modules compiler. */
+:global(:root):has(> :global(body) > .frame):global(::view-transition-group(site-dividers)) {
+  animation: none;
+  z-index: 5;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-old(site-dividers)) {
+  display: none;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-new(site-dividers)) {
+  animation: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+/* Keep the sidebar stationary above page transitions. */
+:global(:root):has(> :global(body) > .frame):global(::view-transition-group(site-sidebar)) {
+  animation: none;
+  z-index: 3;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-old(site-sidebar)) {
+  display: none;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-new(site-sidebar)) {
+  animation: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-group(site-header)) {
+  animation: none;
+  z-index: 3;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-old(site-header)) {
+  display: none;
+}
+:global(:root):has(> :global(body) > .frame):global(::view-transition-new(site-header)) {
+  animation: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+.content {
+  @apply col-start-3 row-start-2 box-border min-w-0 bg-background;
+  /* Capture an opaque page, including gaps between sections and the footer.
+     A transparent snapshot lets the incoming page show through before exit. */
+  /* Clip horizontal entry motion without creating a nested scroll container. */
+  overflow-x: clip;
+}
+
+/* The document cover is a sibling of both columns. Match its existing phase
+   before hydration too; keep sidebar geometry for native scroll restoration. */
+.frame:has(> [data-skeleton-persistent-splash][data-reveal-entry="server"]:is([data-reveal-phase="pending"], [data-reveal-phase="splash-out"])) > :is([data-skeleton-chrome], [data-skeleton-chrome-group]) {
+  visibility: hidden;
+}
+
+.main {
+  @apply min-h-[65svh] min-w-0 w-full max-w-[40.25rem];
+}
+
+
+/* The footer streams outside the page slot. Keep its space, but do not expose
+   it before the document cover exits (including restored deep scroll positions). */
+.frame:has(> [data-skeleton-persistent-splash][data-reveal-entry="server"]:is([data-reveal-phase="pending"], [data-reveal-phase="splash-out"])) .footer {
+  visibility: hidden;
+}
+.footer {
+  @apply px-5 py-9 text-center text-xs text-muted-foreground;
+}
+
+.skip {
+  @apply fixed -top-20 left-4 z-[80] rounded-lg bg-primary px-4 py-2.5 text-primary-foreground no-underline focus:top-3;
+}
+
+@media (width >= 82rem) {
+  .frame {
+    --site-header-height: var(--site-toolbar-height);
+    grid-template-columns: minmax(1.5rem, 1fr) 12rem minmax(0, 40.25rem) 19rem minmax(1.5rem, 1fr);
+  }
+}
+
+@media (width < 64rem) {
+  .frame {
+    grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 40.25rem) minmax(0, 1fr);
+  }
+
+}
+
+@media (width < 40rem) {
+
+  .footer { @apply px-3 text-[0.6875rem]; }
+}

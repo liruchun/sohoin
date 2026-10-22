@@ -1,0 +1,87 @@
+@reference "../../../globals.css";
+
+/* History forward may restore the detail without a React snapshot. This
+   document surface exists only in the intercepted detail, not direct SSR. */
+.surface[data-slot=dialog-content][data-size=document] {
+ animation: none;
+ transform: none;
+ opacity: 1;
+ transition: transform var(--site-motion-page-enter) var(--site-ease-emphasis), opacity var(--site-motion-page-enter) var(--site-ease-emphasis);
+ @starting-style {
+  transform: translateX(3.125rem);
+  opacity: .001;
+ }
+}
+
+/* Snapshot navigation owns both images; capture the real detail at its final
+   pose instead of starting a second entrance underneath the snapshot. */
+:global(:root:active-view-transition) .surface[data-slot=dialog-content][data-size=document],
+:global(:root[data-reduce-motion=true]) .surface[data-slot=dialog-content][data-size=document] {
+ transition: none;
+ transform: none;
+ opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+ .surface[data-slot=dialog-content][data-size=document] {
+  transition: none;
+  transform: none;
+  opacity: 1;
+ }
+}
+
+:global(:root):has(> :global(body) > .scope)::view-transition { pointer-events: none; }
+
+/* Keep pseudo-element selectors separate: the CSS pipeline rewrites selector
+   lists to :is(), where view-transition pseudo-elements are invalid. */
+:global(:root):has(> :global(body) > .scope):global(::view-transition-group(.reading-forward)) {
+ animation: none;
+ overflow: clip;
+ z-index: 2;
+}
+:global(:root):has(> :global(body) > .scope):global(::view-transition-group(.reading-back)) {
+ animation: none;
+ overflow: clip;
+ z-index: 2;
+}
+
+/* Route names separate old/new groups so neither snapshot inherits the other
+   page's scroll offset or height. Keep the browser's intrinsic snapshot sizing. */
+:global(:root):has(> :global(body) > .scope):global(::view-transition-old(.reading-forward)) {
+ mix-blend-mode: normal;
+ z-index: 1;
+ animation: leave-left var(--site-motion-page-exit) var(--site-ease-emphasis) both;
+}
+:global(:root):has(> :global(body) > .scope):global(::view-transition-new(.reading-forward)) {
+ mix-blend-mode: normal;
+ z-index: 2;
+ animation: enter-left var(--site-motion-page-enter) var(--site-ease-emphasis) both;
+}
+:global(:root):has(> :global(body) > .scope):global(::view-transition-old(.reading-back)) {
+ mix-blend-mode: normal;
+ z-index: 2;
+ animation: leave-right var(--site-motion-page-exit) var(--site-ease-emphasis) both;
+}
+:global(:root):has(> :global(body) > .scope):global(::view-transition-new(.reading-back)) {
+ mix-blend-mode: normal;
+ z-index: 1;
+ animation: enter-right var(--site-motion-page-enter) var(--site-ease-emphasis) both;
+}
+
+/* The named header/sidebar/dividers stay still; lightbox uses this root policy too. */
+:global(:root):has(> :global(body) > .scope):global(::view-transition-group(root)) { animation: none; z-index: 0; }
+:global(:root):has(> :global(body) > .scope):global(::view-transition-old(root)) { animation: none; opacity: 0; }
+:global(:root):has(> :global(body) > .scope):global(::view-transition-new(root)) { animation: none; opacity: 1; }
+
+@keyframes leave-left { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(-2.5rem); } }
+@keyframes leave-right { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(2.5rem); } }
+@keyframes enter-left { from { opacity: .001; transform: translateX(3.125rem); } to { opacity: 1; transform: none; } }
+@keyframes enter-right { from { transform: translateX(-3.125rem); } to { transform: none; } }
+
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-group(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-old(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-new(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+@media (prefers-reduced-motion: reduce) {
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-group(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-old(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-new(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+}

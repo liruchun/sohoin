@@ -1,0 +1,3 @@
+@reference "../../../globals.css";
+.image { @apply block size-full object-contain; }
+.fallback { @apply block size-full; }

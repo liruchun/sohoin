@@ -1,0 +1,51 @@
+@reference "../../../globals.css";
+
+.post {
+  @apply
+    block border-0 border-b border-solid border-border pt-6 pb-5
+    last:border-b-0 cursor-pointer;
+  padding-inline: calc(var(--spacing, 0.25rem) * 8);
+}
+.entry { @apply sr-only; }
+.post:has(> .entry:focus-visible) { @apply outline-2 outline-offset-[-2px] outline-ring; }
+
+.avatarLink { @apply block h-fit shrink-0 rounded-lg no-underline outline-offset-4; margin-inline-end: var(--card-content-inset, 0rem); }
+.content { @apply min-w-0; }
+.heading {
+  @apply mb-4 flex items-center gap-3;
+}
+@media (hover: hover) and (pointer: fine) {
+  .post:hover > .heading > .avatarLink {
+    --content-avatar-tilt: 0deg;
+    --content-avatar-shadow-opacity: 0;
+  }
+}
+
+.title {
+  @apply
+    mb-2.5 text-[1.1875rem] leading-normal font-semibold;
+}
+
+.titleLink {
+  @apply
+    no-underline hover:underline;
+}
+
+@media (width < 40.625rem) {
+  .post { @apply py-5; }
+}
+
+.post[data-within-discussion] {
+  --content-avatar-size: 2rem;
+  --card-text-offset: calc(var(--content-avatar-size) + var(--spacing, .25rem) * 3 + var(--card-content-inset, 0rem));
+  --content-text-size: .875rem;
+  --content-body-size: .96875rem;
+  --content-avatar-text-size: 1rem;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.post[data-within-discussion] > .heading { @apply mb-1; }
+.post[data-within-discussion] > .content > footer {
+  margin-inline-start: var(--card-text-offset);
+}

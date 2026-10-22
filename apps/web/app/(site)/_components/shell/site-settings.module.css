@@ -1,0 +1,41 @@
+@reference "../../../globals.css";
+
+.panel { @apply min-w-0 text-foreground; }
+.language { @apply flex items-center justify-between gap-3; }
+.languageLabel,.label,.motionName { @apply flex items-center gap-2 text-[0.8125rem] font-medium; }
+.languageLabel svg,.label svg,.motionName svg { @apply size-4 shrink-0 text-muted-foreground; }
+.modes,.sizes { @apply grid grid-cols-3 gap-1 rounded-xl bg-muted p-1; }
+.modes { @apply mt-5; }
+.mode { @apply min-h-12 min-w-0 flex-col gap-1 rounded-lg px-1 py-1.5 text-xs; }
+.mode svg { @apply size-4; }
+.mode[data-state=on],.size[data-state=on] {
+ @apply bg-background text-foreground;
+ box-shadow: 0 1px 3px color-mix(in srgb, var(--shadow-ink) 10%, transparent);
+}
+.section { @apply m-0 mt-5 min-w-0 border-0 p-0; }
+.label { @apply mb-2 w-full p-0; }
+.hint { @apply ml-auto text-xs font-normal text-muted-foreground; }
+.size { @apply min-h-8 rounded-lg px-2 py-1 text-xs; }
+.colors { @apply flex w-full gap-0.5; }
+.colorSection { @apply mt-5 border-x-0 border-b-0 border-t border-solid border-border pt-3; }
+.color { @apply h-8 min-h-0 min-w-0 flex-1 overflow-hidden rounded-none border-0 p-0; }
+.color:first-child { @apply rounded-l-lg; }
+.color:last-child { @apply rounded-r-lg; }
+.swatch {
+ @apply grid h-full w-full place-items-center;
+ background: var(--primary-preview, var(--primary));
+ border-radius: inherit;
+}
+.check { @apply size-4 opacity-0; color: var(--primary-foreground); transition: opacity 140ms var(--site-ease-feedback); }
+.color[data-state=on] .check { opacity: 1; }
+@media (hover: hover) { .color:not([data-state=on]):hover .check { opacity: .55; } }
+.motion { @apply mt-5 flex items-center justify-between gap-3; }
+.motionLabel { @apply flex cursor-pointer flex-col gap-1; }
+.motionLabel > span:last-child { @apply pl-6 text-xs text-muted-foreground; }
+@media (prefers-reduced-motion: reduce) {
+ .check { transition: none; }
+}
+@media (pointer: coarse) {
+ .size { @apply min-h-11; }
+ .color { @apply h-11; }
+}
