@@ -16,7 +16,7 @@ import {MagneticSurface} from "@sohoin/ui/magnetic-surface";
 import {ImagePicker} from "../../../../_features/media/image-picker";
 import {MediaLibraryProvider} from "../../../../_features/media/media-library";
 import {ProfileHeaderRegistration} from "../../../../_components/shell/profile-header-context";
-import {ReadingLink} from "../../../../_components/feedback/page-transition";
+import {ReadingLink} from "../../../../_components/feedback/reading-navigation";
 import buttonStyles from "../../../../_components/content/detail-panel.module.css";
 import styles from "./profile-editor.module.css";
 

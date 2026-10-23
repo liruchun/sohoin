@@ -1,6 +1,6 @@
 import {RelativeTime} from "@sohoin/ui/relative-time";
 import {adminRead} from "@/lib/admin-page";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {listSettingsAudit,listUserAudit,listAccountAudit,listContentAudit,listMediaAudit,listCommentAudit,ServiceError} from "@sohoin/core/server";
 import {PageHeader,EmptyState,Badge} from "@sohoin/admin-ui/layout";

@@ -213,6 +213,7 @@ test("shared Core security, content and HTTP integration",async t=>{
    await getPool().query("DELETE FROM media_assets WHERE id=$1",[asset.id]);assert.equal((await getPool().query("SELECT 1 FROM media_variants WHERE media_id=$1",[asset.id])).rowCount,0);
   });
   await t.test("image uploads authorize before reading and reject invalid raster input",async()=>{
+   const existing=(await getPool().query("SELECT id::text FROM media_assets WHERE uploader_id=$1 ORDER BY id",[admin.user.id])).rows;
    const url="/api/v1/admin/media";const png=await sharp({create:{width:20,height:10,channels:3,background:"white"}}).png().toBuffer();
    async function send(bytes:Uint8Array,mime:string,token=adminToken,origin=base,name="测试.png"){return fetch(base+url,{method:"POST",headers:{Authorization:"Bearer "+token,Origin:origin,"Content-Type":mime,"X-File-Name":encodeURIComponent(name)},body:bytes});}
    assert.equal((await request(url)).status,401);assert.equal((await request(url,"GET",undefined,userToken)).status,403);
@@ -225,9 +226,10 @@ test("shared Core security, content and HTTP integration",async t=>{
    await assert.rejects(()=>uploadMediaRequest(new Request(base+url,{method:"POST",headers:authHeaders,body:png})),e=>e instanceof ServiceError&&e.status===413);
    const largeStream=new ReadableStream<Uint8Array>({start(controller){controller.enqueue(new Uint8Array(10*1024*1024));controller.enqueue(new Uint8Array(1));controller.close();}});
    authHeaders.delete("Content-Length");await assert.rejects(()=>uploadMediaRequest(new Request(base+url,{method:"POST",headers:authHeaders,body:largeStream,duplex:"half"} as RequestInit)),e=>e instanceof ServiceError&&e.status===413);
-   assert.equal((await getPool().query("SELECT 1 FROM media_assets WHERE uploader_id=$1",[admin.user.id])).rowCount,0);
+   assert.deepEqual((await getPool().query("SELECT id::text FROM media_assets WHERE uploader_id=$1 ORDER BY id",[admin.user.id])).rows,existing);
   });
   await t.test("images are re-encoded, private, bounded, audited and protected while referenced",async()=>{
+   const existingFiles=(await readdir(process.env.MEDIA_STORAGE_DIR!,{recursive:true})).filter(file=>/\.webp$/.test(file)).sort();
    const bytes=await sharp({create:{width:1200,height:800,channels:3,background:"white"}}).withMetadata({exif:{IFD0:{Copyright:"private-test"}}}).png().toBuffer();
    const uploaded=await fetch(base+"/api/v1/admin/media",{method:"POST",headers:{Authorization:"Bearer "+adminToken,"Content-Type":"image/png","X-File-Name":encodeURIComponent("图片.png")},body:bytes});assert.equal(uploaded.status,201);const image=await uploaded.json();assert.equal(image.mimeType,"image/webp");assert.equal(image.width,1200);assert.equal(image.height,800);assert.equal(image.version,1);assert.ok(!("storage_key" in image)&&!JSON.stringify(image).includes(process.env.MEDIA_STORAGE_DIR!));
    const first=await (await request("/api/v1/admin/media","GET",undefined,adminToken)).json();assert.ok(first.items.some(item=>item.id===image.id));assert.equal((await request("/api/v1/admin/media?before=0","GET",undefined,adminToken)).status,400);
@@ -240,13 +242,23 @@ test("shared Core security, content and HTTP integration",async t=>{
    assert.equal((await request(deletePath,"DELETE",{version:1},adminToken)).status,409);assert.equal((await request(image.fileUrl,"GET",undefined,adminToken)).status,200);
    await getPool().query("DELETE FROM contents WHERE id=$1",[content.id]);const deleted=await request(deletePath,"DELETE",{version:1},adminToken);assert.equal(deleted.status,200);assert.deepEqual(await deleted.json(),{deleted:true,cleanupPending:false});assert.equal((await request(image.fileUrl,"GET",undefined,adminToken)).status,404);assert.equal((await request(deletePath,"DELETE",{version:1},adminToken)).status,404);
    const audits=await getPool().query("SELECT action FROM media_audit WHERE media_id=$1 ORDER BY id",[image.id]);assert.deepEqual(audits.rows.map(row=>row.action),["uploaded","deleted"]);
-   const remaining=await readdir(process.env.MEDIA_STORAGE_DIR!,{recursive:true});assert.ok(!remaining.some(file=>/\.webp$/.test(file)));
+   const remaining=await readdir(process.env.MEDIA_STORAGE_DIR!,{recursive:true});assert.deepEqual(remaining.filter(file=>/\.webp$/.test(file)).sort(),existingFiles);
    const spec=await (await request("/api/openapi.json")).json();assert.ok(spec.paths["/api/v1/admin/media"].post.requestBody.content["image/png"]);
   });
   await logoCases(t,{base,request,adminToken,userToken});
   await t.test("media pagination is bounded and hides tombstones and storage locations",async()=>{
    await getPool().query(`INSERT INTO media_assets(uploader_id,storage_provider,storage_namespace,storage_key,original_name,kind,mime_type,byte_size,width,height,status) SELECT $1,'test','pagination','key-'||i,'item-'||i,'image','image/webp',10,1,1,'ready' FROM generate_series(1,35) i`,[admin.user.id]);
-   const first=await (await request("/api/v1/admin/media","GET",undefined,adminToken)).json();assert.equal(first.items.length,30);assert.ok(first.nextCursor);const second=await (await request("/api/v1/admin/media?before="+first.nextCursor,"GET",undefined,adminToken)).json();assert.equal(second.items.length,5);assert.equal(second.nextCursor,null);assert.equal(new Set([...first.items,...second.items].map(item=>item.id)).size,35);assert.ok(!JSON.stringify(first).includes("storage_"));
+   const expected=(await getPool().query("SELECT m.id::text FROM media_assets m WHERE m.status='ready' ORDER BY m.id DESC")).rows.map(row=>row.id as string);
+   const seen:string[]=[];let before:string|null=null;
+   for(let offset=0;offset<expected.length;offset+=30){
+    const response=await request("/api/v1/admin/media"+(before?"?before="+before:""),"GET",undefined,adminToken);assert.equal(response.status,200);
+    const page=await response.json();const ids=page.items.map((item:{id:string})=>item.id);
+    assert.deepEqual(ids,expected.slice(offset,offset+30));
+    assert.ok(!JSON.stringify(page).includes("storage_"));
+    seen.push(...ids);before=page.nextCursor;
+    assert.equal(before,offset+30<expected.length?ids[ids.length-1]:null);
+   }
+   assert.equal(new Set(seen).size,expected.length);
    await getPool().query("DELETE FROM media_assets WHERE storage_provider='test' AND storage_namespace='pagination'");
   });
   await t.test("maintenance blocks media mutations before receiving input while reads stay available",async()=>{

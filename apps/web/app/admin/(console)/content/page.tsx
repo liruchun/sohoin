@@ -1,7 +1,7 @@
 import {Button} from "@sohoin/admin-ui/button";
 import {ContentFilters} from "./_components/content-filters";
 import {ServiceError} from "@sohoin/core/server";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {adminRead} from "@/lib/admin-page";
 import {contentService} from "@/lib/content";

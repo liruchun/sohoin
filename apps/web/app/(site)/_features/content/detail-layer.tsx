@@ -15,8 +15,8 @@ import {DetailValidationContext,type DetailCheck} from "./detail-validation";
 import {DetailPanel} from "../../_components/content/detail-panel";
 import {SiteMain,SiteFooter} from "../../_components/shell/site-shell";
 import panelStyles from "../../_components/content/detail-panel.module.css";
-import motion from "../../_components/feedback/page-transition.module.css";
-import {useReadingReturn} from "../../_components/feedback/page-transition";
+import motion from "./detail-layer.module.css";
+import {useReadingReturn} from "../../_components/feedback/reading-navigation";
 
 type DetailEntry={content:SiteContent|null;check:DetailCheck;error:boolean;retry:()=>void};
 const Entry=createContext<DetailEntry|null>(null);

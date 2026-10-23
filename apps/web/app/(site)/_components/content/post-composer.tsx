@@ -22,7 +22,7 @@ import {MagneticSurface} from "@sohoin/ui/magnetic-surface";
 import {MentionTextarea,type MentionEditorHandle} from "./mention-textarea";
 import styles from "./post-composer.module.css";
 import {AuthorAvatar} from "./author-avatar";
-import {ReadingLink} from "../feedback/page-transition";
+import {ReadingLink} from "../feedback/reading-navigation";
 import type {DiscussionTarget} from "./discussion-composer-context";
 import {DiscussionPreview,type ReplyTarget} from "./discussion-preview";
 import {beginFeedPublication} from "../../_features/feed/feed-publication-event";
@@ -225,5 +225,5 @@ export function PostComposer({className,surfaceClassName,discussion,anchor,contr
      resize(event.key==="Home"?bounds.min:event.key==="End"?bounds.max:visibleHeight+(event.key==="ArrowDown"?step:-step));
     }}><span/></div>
   </DialogContent>
- </Dialog><Dialog open={discard} onOpenChange={next=>{setDiscard(next);if(!next)navigation.current=null;}}><DialogContent className={styles.discard} style={geometry} aria-describedby={undefined}><DialogTitle>{p('discardTitle')}</DialogTitle><p>{p('discardBody')}</p><div className={styles.confirmActions}><Button variant="outline" onClick={()=>{setDiscard(false);navigation.current=null;}}>{p('keepEditing')}</Button><Button onClick={()=>{setText('');setMedia([]);setReplyTo(null);submission.current=null;setDiscard(false);commitOpen(false);const href=navigation.current;navigation.current=null;if(href&&/^\/(?!\/)/.test(href))router.push(href);}}>{p('discard')}</Button></div></DialogContent></Dialog></TooltipProvider>;
+ </Dialog><Dialog open={discard} onOpenChange={next=>{setDiscard(next);if(!next)navigation.current=null;}}><DialogContent className={styles.discard} style={geometry} aria-describedby={undefined}><DialogTitle>{p('discardTitle')}</DialogTitle><p>{p('discardBody')}</p><div className={styles.confirmActions}><Button variant="outline" onClick={()=>{setDiscard(false);navigation.current=null;}}>{p('keepEditing')}</Button><Button onClick={()=>{setText('');setMedia([]);setReplyTo(null);submission.current=null;setDiscard(false);commitOpen(false);const href=navigation.current;navigation.current=null;if(href&&/^\/(?!\/)/.test(href))router.push(href,{transitionTypes:["page-switch"]});}}>{p('discard')}</Button></div></DialogContent></Dialog></TooltipProvider>;
 }

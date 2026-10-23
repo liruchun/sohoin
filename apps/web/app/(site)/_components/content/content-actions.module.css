@@ -10,10 +10,11 @@
   @apply block size-4;
 }
 .reactionTrigger { position: relative; padding: 0; border-width: 0; }
-.reactionSurface {
-  @apply absolute inset-0 box-border border border-solid border-border bg-card;
-  box-shadow: 0 1px 2px color-mix(in oklch, var(--shadow-ink) 8%, transparent);
+.reactionSurface { @apply absolute inset-0; }
+.reactionSurface, .action[data-skeleton-action="bookmark"], .action[data-skeleton-action="comment"] {
+  @apply box-border border border-solid border-border bg-card;
 }
+.action[data-skeleton-action="comment"]:has(.participants) { padding-left: .2rem; }
 .action[data-state="open"], .action:focus-visible { color: var(--primary); }
 /* Saved selections highlight the icon while retaining the resting surface. */
 .reactions[data-open="true"] .reactionSurface,
@@ -28,7 +29,7 @@
 .emoji { @apply inline-flex size-4 shrink-0 items-center justify-center text-[0.9375rem] leading-none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .action, .count { font-variant-numeric: tabular-nums; --animated-number-height: 1rem; }
 
-.summary { @apply relative flex min-w-0 flex-1 items-center gap-1; }
+.summary { @apply relative flex min-w-0 flex-1 items-center gap-1; overflow: clip; }
 /* Optical correction for emoji glyphs; keep the shared box and number alignment. */
 .summary .count .emoji { translate: 0 -.0625rem; }
 .summary > [data-overflow="true"] {
@@ -116,6 +117,6 @@
 
 
 .actionLabel { @apply text-xs; }
-@container (width < 22rem) {
- .actionLabel { display: none; }
-}
+.participants { @apply flex shrink-0 items-center; --content-avatar-size: 1.5rem; --content-avatar-text-size: .625rem; --content-avatar-shadow-opacity: 0; }
+.participant { @apply block shrink-0 rounded-full; }
+.participant + .participant { margin-inline-start: -.5rem; }

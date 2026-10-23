@@ -14,6 +14,6 @@ const pageOverrides:Record<string,Partial<SitePageConfig>>={
 const isCommunity=(pathname:string)=>pathname==="/community"||pathname.startsWith("/community/");
 const isMembers=(pathname:string)=>pathname==="/members"||pathname.startsWith("/members/");
 export function sitePageConfig(pathname:string):SitePageConfig{
- const type=pathname==="/"||pathname==="/featured"?"feed":isCommunity(pathname)?"community":isMembers(pathname)?"profile":"detail";
+ const type=pathname==="/"||pathname==="/featured"||pathname==="/circle"?"feed":isCommunity(pathname)?"community":isMembers(pathname)?"profile":"detail";
  return {...pageTypes[type],...pageOverrides[pathname]};
 }

@@ -1,5 +1,6 @@
 import "server-only";
-import {writeFollow,readFollowStates,readOwnFollows,FollowStoreError,type FollowStateRow} from "@sohoin/database";
+import {writeFollow,readFollowStates,readOwnFollows,readPublicRouteTarget,FollowStoreError,type FollowStateRow} from "@sohoin/database";
+import {siteInteractionIdSchema} from "@sohoin/extension-api/interactions";
 import {setFollowSchema,followBatchSchema,followQuerySchema,followDirectionSchema} from "@sohoin/extension-api/follows";
 import {userIdSchema} from "@sohoin/extension-api/users";
 import {requireAuthenticatedUser,enforceLimit,ServiceError} from "./security";
@@ -9,3 +10,19 @@ const state=(row:FollowStateRow)=>({id:row.id,following:row.following,followsMe:
 export async function setFollow(headers:Headers,id:unknown,input:unknown){const actor=await access(headers,true),target=parse(userIdSchema,id),value=parse(setFollowSchema,input);try{return await writeFollow(actor.id,target,value.active);}catch(error){if(error instanceof FollowStoreError){const map={forbidden:[403,"FORBIDDEN","当前账号无法操作"],missing:[404,"FOLLOW_TARGET_NOT_FOUND","用户不存在或不可关注"],self:[400,"CANNOT_FOLLOW_SELF","不能关注自己"]} as const;const [status,code,message]=map[error.code];throw new ServiceError(status,code,message);}throw error;}}
 export async function getFollowStates(headers:Headers,input:unknown){const actor=await access(headers),query=parse(followBatchSchema,input);return {items:(await readFollowStates(actor.id,query.ids)).map(state)};}
 export async function getOwnFollows(headers:Headers,direction:unknown,input:unknown){const actor=await access(headers),query=parse(followQuerySchema,input),rows=await readOwnFollows(actor.id,parse(followDirectionSchema,direction),query.before);return {items:rows.slice(0,30).map(row=>({...state(row),name:row.name,relationshipId:row.relationship_id,createdAt:row.created_at.toISOString()})),nextCursor:rows.length>30?rows[29].relationship_id:null};}
+
+async function siteTarget(headers:Headers,id:unknown){
+ await requireAuthenticatedUser(headers);
+ const target=await readPublicRouteTarget(parse(siteInteractionIdSchema,id),"user");
+ if(!target)throw new ServiceError(404,"FOLLOW_TARGET_NOT_FOUND","用户不存在或不可关注");
+ return target;
+}
+export async function getSiteFollow(headers:Headers,id:unknown){
+ const target=await siteTarget(headers,id);
+ const {items}=await getFollowStates(headers,{ids:[target]});
+ if(!items[0])throw new ServiceError(404,"FOLLOW_TARGET_NOT_FOUND","用户不存在或不可关注");
+ return {active:items[0].following};
+}
+export async function setSiteFollow(headers:Headers,id:unknown,input:unknown){
+ return setFollow(headers,await siteTarget(headers,id),input);
+}

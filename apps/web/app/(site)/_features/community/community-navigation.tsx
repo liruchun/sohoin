@@ -2,7 +2,7 @@ import {useTranslations} from "next-intl";
 import {Flame,HeartHandshake} from "lucide-react";
 import type {ReactNode} from "react";
 import {Button} from "@sohoin/ui/button";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import {PostComposer} from "../../_components/content/post-composer";
 import feedStyles from "../feed/feed.module.css";
 import {communityHref,type CommunitySort} from "./community-route";

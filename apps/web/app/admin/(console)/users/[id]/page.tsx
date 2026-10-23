@@ -3,7 +3,7 @@ import {RelativeTime} from "@sohoin/ui/relative-time";
 import {profileService} from "@/lib/profiles";
 import {ProfileEditor} from "../../../_features/profiles/profile-editor";
 import {adminRead} from "@/lib/admin-page";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {getUser,requireAdministrator,ServiceError} from "@sohoin/core/server";
 import {PageHeader,EmptyState} from "@sohoin/admin-ui/layout";

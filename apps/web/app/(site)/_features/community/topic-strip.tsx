@@ -1,5 +1,5 @@
 import {useTranslations} from "next-intl";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import {communityHref} from "./community-route";
 import styles from "./community.module.css";
 

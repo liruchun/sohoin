@@ -2,7 +2,7 @@ import {useLocale,useTranslations} from "next-intl";
 import {getTranslations} from "next-intl/server";
 import "server-only";
 import {cache} from "react";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import type {Metadata} from "next";
 import {getSiteDiscussion,getSiteContentHead,getReactionTypes,ServiceError,type DiscussionQuery,type SiteContentHead} from "@sohoin/core/server";
 import {headers} from "next/headers";

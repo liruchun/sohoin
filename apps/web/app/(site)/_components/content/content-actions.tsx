@@ -1,10 +1,13 @@
 "use client";
+import {Tooltip,TooltipProvider} from "@sohoin/ui/tooltip";
+import {BookmarkButton} from "./bookmark-button";
+import {AuthorAvatar} from "./author-avatar";
 import {rememberMentionMember} from "./recent-mention-members";
 import {useTranslations} from "next-intl";
 
 
 import {useReducedMotionPreference} from "@sohoin/ui/theme-provider";
-import {ReadingLink as Link} from "../feedback/page-transition";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import {useEffect,useLayoutEffect,useRef,useState,type CSSProperties,type PointerEvent,type MouseEvent} from "react";
 import {Button} from "@sohoin/ui/button";
 import {MagneticSurface} from "@sohoin/ui/magnetic-surface";
@@ -25,7 +28,7 @@ type ReactionCount=ReactionOption&{count:number};
 type ActionError="networkFailed"|"signInRequired"|"tooManyRequests"|"notAllowed"|"actionFailed";
 const MotionButton=motion.create(Button);
 
-export function ContentActions({publicId,href,comments,reactions,options,interaction,commentToken,discussion}:{publicId:string;href:string;comments?:number;reactions:ReactionCount[];options:ReactionOption[];interaction?:SiteInteraction;commentToken?:string;discussion?:DiscussionTarget}){
+export function ContentActions({publicId,href,comments,reactions,options,interaction,commentToken,discussion,participants=[]}:{participants?:{name:string;avatar:string|null}[];publicId:string;href:string;comments?:number;reactions:ReactionCount[];options:ReactionOption[];interaction?:SiteInteraction;commentToken?:string;discussion?:DiscussionTarget}){
  const t=useTranslations("Web");
  const [commentCount,setCommentCount]=useState({source:comments,value:comments});
  if(commentCount.source!==comments)setCommentCount({source:comments,value:comments});
@@ -37,6 +40,7 @@ export function ContentActions({publicId,href,comments,reactions,options,interac
   window.addEventListener(discussionCountEvent,update);
   return ()=>window.removeEventListener(discussionCountEvent,update);
  },[publicId,discussion?.publicId,comments]);
+ const emptyDiscussion=!commentToken&&commentCount.value===0;
  const showDiscussion=useDiscussionComposer();
  const {notify,dismiss}=useToast();
  const limitToastId=`reaction-limit:${publicId}:${commentToken??"post"}`;
@@ -66,10 +70,8 @@ export function ContentActions({publicId,href,comments,reactions,options,interac
  const displayed:ReactionCount[]=current?current.reactions.flatMap(reaction=>{const label=labels.get(reaction.code);return label?[{code:reaction.code,label:label.label,emoji:label.emoji,count:reaction.count}]:[];}):[...reactions];
  const order=new Map(options.map((option,index)=>[option.code,index]));
  displayed.sort((a,b)=>(order.get(a.code)??options.length)-(order.get(b.code)??options.length));
- const likes=(current?.reactions??reactions).find(reaction=>reaction.code==="like")?.count??0;
  const selected=current?.myReactions??[];
- const hasSelectedReaction=selected.some(code=>code!=="like");
- const bookmarked=current?.bookmarked??false;
+ const hasSelectedReaction=selected.length>0;
  const visibleOptions=options.filter(option=>option.enabled!==false).slice(0,12);
  const columns=Math.max(1,Math.ceil(visibleOptions.length/2));
  function startIcon(name:ContentActionIconName,event:PointerEvent<HTMLElement>){
@@ -101,19 +103,19 @@ export function ContentActions({publicId,href,comments,reactions,options,interac
   const mouse=event.detail>0&&window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   hoverEntry.current=mouse;setPointerEntry(mouse);changeOpen(true);
  }
- async function save(action:"reaction"|"bookmark",value:{code:string;active:boolean}|{active:boolean}){
+ async function save(value:{code:string;active:boolean}){
   if(writing.current)return;
   writing.current=true;setPending(true);setError(null);setNeedsLogin(false);
   // Keep the tentative view separate so failure reveals the latest confirmed
   // snapshot, including any server props received while this request is pending.
   const previous:SiteInteraction=snapshot??{publicId,myReactions:[],bookmarked:false,reactions:reactions.map(({code,count})=>({code,count}))};
-  if(action==="reaction"&&"code" in value){
+  {
    const {code,active}=value,wasSelected=previous.myReactions.includes(code);
    const count=Math.max(0,(previous.reactions.find(item=>item.code===code)?.count??0)+(Number(active)-Number(wasSelected)));
    setOptimistic({...previous,myReactions:active?[...previous.myReactions.filter(item=>item!==code),code]:previous.myReactions.filter(item=>item!==code),reactions:[...previous.reactions.filter(item=>item.code!==code),...(count>0?[{code,count}]:[])]});
-  }else if(action==="bookmark")setOptimistic({...previous,bookmarked:value.active});
+  }
   try{
-   const response=await fetch(`/api/site/interactions/${publicId}/${commentToken?"comments/":""}${action}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(commentToken?{commentToken,value}:value),cache:"no-store"});
+   const response=await fetch(`/api/site/interactions/${publicId}/${commentToken?"comments/":""}reaction`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(commentToken?{commentToken,value}:value),cache:"no-store"});
    if(!response.ok){
     if(response.status===401){setSnapshot(previous=>previous?{...previous,myReactions:[],bookmarked:false}:undefined);setNeedsLogin(true);}
     setError(response.status===401?"signInRequired":response.status===429?"tooManyRequests":response.status===403?"notAllowed":"actionFailed");
@@ -130,7 +132,7 @@ export function ContentActions({publicId,href,comments,reactions,options,interac
   const active=!selected.includes(code);
   if(active&&selected.length>=5){notify({id:limitToastId,variant:"warning",message:t("reactionLimit")});return;}
   dismiss(limitToastId);
-  void save("reaction",{code,active});
+  void save({code,active});
  }
  return <footer className={styles.root} data-kind={commentToken?"comment":"post"} aria-label={commentToken?t("discussionActions"):t("postActions")} data-skeleton-part="actions">
   <div className={styles.reactions} data-open={open} data-selected={hasSelectedReaction} data-skeleton-align-start="">
@@ -150,12 +152,11 @@ export function ContentActions({publicId,href,comments,reactions,options,interac
      </div>
     </PopoverContent>
    </Popover>
-   <ReactionSummary reactions={displayed.filter(reaction=>reaction.code!=="like"&&reaction.count>0)} options={options} selected={selected} pending={pending} onSelect={react}/>
+   <ReactionSummary reactions={displayed.filter(reaction=>reaction.count>0)} options={options} selected={selected} pending={pending} onSelect={react}/>
   </div>
   <div className={styles.tools}>
-   <Button asChild data-skeleton-shape="" data-skeleton-action="comment" variant="plain" size="icon-sm" className={styles.action} onPointerEnter={event=>startIcon(commentToken?"reply":"comment",event)} onPointerLeave={()=>setHoveredIcon(null)} onFocus={()=>setHoveredIcon(commentToken?"reply":"comment")} onBlur={()=>setHoveredIcon(null)}><Link href={href} transitionTypes={["detail-forward"]} onClick={event=>{if(discussion&&showDiscussion&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey){event.preventDefault();showDiscussion(discussion,event.currentTarget);}}} aria-label={commentToken?t("reply"):discussion?t("joinDiscussion"):t("viewPostComments",{count:commentCount.value??0})} title={commentToken?t("reply"):t("discussion")}><ContentActionIcon name={commentToken?"reply":"discussion"} active={hoveredIcon===(commentToken?"reply":"comment")}/>{!commentToken&&<span className={styles.actionLabel}>{t("discussion")}</span>}{commentCount.value!==undefined&&(!commentToken||commentCount.value>0)&&<AnimatedNumber value={commentCount.value} hideZero/>}</Link></Button>
-   <Button data-skeleton-shape="" data-skeleton-action="like" variant="plain" size="icon-sm" className={styles.action} disabled={!options.some(option=>option.code==="like"&&option.enabled!==false)&&!selected.includes("like")} aria-disabled={pending||(!options.some(option=>option.code==="like"&&option.enabled!==false)&&!selected.includes("like"))} aria-pressed={selected.includes("like")} aria-label={t("likeCount",{action:selected.includes("like")?t("unlike"):t("like"),count:likes})} title={selected.includes("like")?t("unlike"):t("like")} onClick={()=>react("like")} onPointerEnter={event=>startIcon("heart",event)} onPointerLeave={()=>setHoveredIcon(null)}><ContentActionIcon name="heart" active={hoveredIcon==="heart"}/><span className={styles.actionLabel}>{t("likes")}</span><AnimatedNumber value={likes} hideZero/></Button>
-   <Button data-skeleton-shape="" data-skeleton-action="bookmark" variant="plain" size="icon-sm" className={styles.action} aria-disabled={pending} aria-pressed={bookmarked} aria-label={bookmarked?t("unbookmark"):t("bookmark")} title={bookmarked?t("unbookmark"):t("bookmark")} onClick={()=>{void save("bookmark",{active:!bookmarked});}} onPointerEnter={event=>startIcon("bookmark",event)} onPointerLeave={()=>setHoveredIcon(null)}><ContentActionIcon name="bookmark" active={hoveredIcon==="bookmark"}/></Button>
+   <Button asChild data-skeleton-shape="" data-skeleton-action="comment" variant="plain" size="icon-sm" className={styles.action} onPointerEnter={event=>{if(emptyDiscussion||commentToken)startIcon(commentToken?"reply":"comment",event);}} onPointerLeave={()=>setHoveredIcon(null)} onFocus={()=>{if(emptyDiscussion||commentToken)setHoveredIcon(commentToken?"reply":"comment");}} onBlur={()=>setHoveredIcon(null)}><Link href={href} onClick={event=>{if(discussion&&showDiscussion&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey){event.preventDefault();showDiscussion(discussion,event.currentTarget);}}} aria-label={emptyDiscussion?t("shareInsight"):commentToken?t("reply"):t("viewPostComments",{count:commentCount.value??0})}>{emptyDiscussion||commentToken?<ContentActionIcon name={commentToken?"reply":"comment"} active={hoveredIcon===(commentToken?"reply":"comment")}/>:participants.length>0?<span className={styles.participants}><TooltipProvider delayDuration={300}>{participants.slice(0,3).map((person,index)=><Tooltip key={index} label={person.name}><span className={styles.participant} role="img" aria-label={person.name}><AuthorAvatar src={person.avatar} name={person.name}/></span></Tooltip>)}</TooltipProvider></span>:null}{!commentToken&&<span className={styles.actionLabel}>{emptyDiscussion?t("shareInsight"):t("discussion")}</span>}{!emptyDiscussion&&commentCount.value!==undefined&&(!commentToken||commentCount.value>0)&&<AnimatedNumber value={commentCount.value}/>}</Link></Button>
+   <BookmarkButton target={{publicId,commentToken,interaction}} onBookmarked={()=>rememberMentionMember(discussion?.author.publicId)}/>
   </div>
   {error&&<Alert statusLabel={t(needsLogin?"warning":"error")} className={styles.feedback} variant={needsLogin?"warning":"error"}>{t(error)}{needsLogin&&<> · <Link href="/admin/login">{t("login")}</Link></>}</Alert>}
  </footer>;
@@ -167,7 +168,7 @@ function ReactionSummary({reactions,options,selected,pending,onSelect}:{reaction
  const reduce=useReducedMotionPreference();
  const container=useRef<HTMLDivElement>(null);
  const more=useRef<HTMLButtonElement>(null);
- const [visible,setVisible]=useState(0);
+ const [visible,setVisible]=useState(reactions.length);
  const [expanded,setExpanded]=useState(false);
  const signature=reactions.map(({code,count})=>`${code}:${count}`).join("|");
  useLayoutEffect(()=>{
@@ -190,8 +191,8 @@ function ReactionSummary({reactions,options,selected,pending,onSelect}:{reaction
    for(const width of widths){if(used+gap+width>available)break;used+=gap+width;fit++;}
    setVisible(fit);
   }
-  // The observer supplies an initial notification after layout; measuring here
-  // as well synchronously re-renders all reaction rows during hydration.
+  // SSR already shows the counts. Resolve narrow-row overflow before paint.
+  measure();
   const observer=new ResizeObserver(measure);
   observer.observe(element);observer.observe(overflow);
   buttons.forEach(button=>observer.observe(button));

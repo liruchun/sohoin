@@ -1,5 +1,5 @@
 import {RelativeTime} from "@sohoin/ui/relative-time";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {listNotifications,getUnreadNotificationCount,ServiceError} from "@sohoin/core/server";
 import {notificationQuerySchema} from "@sohoin/extension-api/notifications";

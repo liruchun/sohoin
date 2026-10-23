@@ -5,6 +5,38 @@ const demo="EXISTS(SELECT 1 FROM demo_import_objects d WHERE d.kind='content' AN
 const projection=`c.id::text,c.type,c.title,c.body,false AS body_truncated,c.published_at,to_char(c.published_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,c.updated_at,u.id AS author_id,u.name AS author_name,u.image AS author_image,g.name AS category,g.slug AS category_slug,c.slug AS slug,${demo} AS demo`;
 export async function readSiteFeed(view:"featured"|"latest"|"articles",before:{id:string;at:string}|null,excludeDemo:boolean){return (await getPool().query(`SELECT ${projection.replace("c.body","left(c.body,1500) AS body").replace("false AS body_truncated","(length(c.body)>1500) AS body_truncated")} FROM contents c JOIN "user" u ON u.id=c.author_id AND NOT COALESCE(u.banned,false) LEFT JOIN content_categories g ON g.id=c.category_id WHERE c.status='published' AND c.type IN ('post','article') AND ($1<>'featured' OR c.featured) AND ($1<>'articles' OR c.type='article') AND (NOT $2 OR NOT ${demo}) AND ($3::timestamptz IS NULL OR (c.published_at,c.id)<($3::timestamptz,$4::bigint)) ORDER BY c.published_at DESC,c.id DESC LIMIT 21`,[view,excludeDemo,before?.at??null,before?.id??null])).rows as PublicFeedRow[];}
 export async function readSiteContent(id:string){return (await getPool().query(`SELECT ${projection} FROM contents c JOIN "user" u ON u.id=c.author_id AND NOT COALESCE(u.banned,false) LEFT JOIN content_categories g ON g.id=c.category_id WHERE c.id=$1 AND c.status='published' AND c.type IN ('post','article')`,[id])).rows[0] as PublicFeedRow|undefined;}
+/** A circle is a set of posts, not a page of activity events. EXISTS preserves
+ * one row per post before keyset pagination, including multiple reactions.
+ * Current source rows determine membership; no historical activity cache. */
+export async function readSiteCircleFeed(viewer:string,before:{id:string;at:string}|null,excludeDemo:boolean){
+ const list=projection.replace("c.body","left(c.body,1500) AS body").replace("false AS body_truncated","(length(c.body)>1500) AS body_truncated");
+ return (await getPool().query(`WITH actors AS MATERIALIZED (
+  SELECT u.id FROM "user" u WHERE u.id=$1 AND NOT COALESCE(u.banned,false)
+  UNION
+  SELECT u.id FROM user_follows f JOIN "user" u ON u.id=f.following_id
+  WHERE f.follower_id=$1 AND NOT COALESCE(u.banned,false)
+ )
+ SELECT ${list} FROM contents c
+ JOIN "user" u ON u.id=c.author_id AND NOT COALESCE(u.banned,false)
+ LEFT JOIN content_categories g ON g.id=c.category_id
+ WHERE c.status='published' AND c.type IN ('post','article')
+ AND (NOT $2 OR NOT ${demo})
+ AND ($3::timestamptz IS NULL OR (c.published_at,c.id)<($3::timestamptz,$4::bigint))
+ AND (
+  c.author_id IN (SELECT id FROM actors)
+  OR EXISTS(SELECT 1 FROM content_reactions r JOIN actors a ON a.id=r.user_id WHERE r.content_id=c.id)
+  OR EXISTS(
+   SELECT 1 FROM comments cm
+   JOIN "user" cu ON cu.id=cm.author_id AND NOT COALESCE(cu.banned,false)
+   LEFT JOIN comments root ON root.id=cm.root_id
+   LEFT JOIN "user" ru ON ru.id=root.author_id
+   WHERE cm.content_id=c.id AND cm.status='visible' AND NOT cm.thread_hidden
+   AND (cm.root_id IS NULL OR (root.status='visible' AND NOT root.thread_hidden AND ru.id IS NOT NULL AND NOT COALESCE(ru.banned,false)))
+   AND (cm.author_id IN (SELECT id FROM actors)
+    OR EXISTS(SELECT 1 FROM comment_reactions r JOIN actors a ON a.id=r.user_id WHERE r.comment_id=cm.id))
+  )
+ ) ORDER BY c.published_at DESC,c.id DESC LIMIT 21`,[viewer,excludeDemo,before?.at??null,before?.id??null])).rows as PublicFeedRow[];
+}
 export type CommunitySort="latest"|"hot"|"mine";
 export type SiteTopicRow={id:string;name:string;slug:string;description:string;icon_url:string|null;posts:number};
 export type SiteTopicRef={id:string;name:string;slug:string;description:string;icon_url:string|null};

@@ -1,7 +1,7 @@
 "use client";
 import {useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import type {BadgeDefinition} from "@sohoin/extension-api/badges";
 import type {MediaPage} from "@sohoin/extension-api/media";
 import {MAX_MEDIA_BYTES} from "@sohoin/extension-api/media-limits";
@@ -43,7 +43,7 @@ export function BadgeEditor({initial}:{initial?:BadgeDefinition}){
       const data=await response.json();
       if(!response.ok){setConflict(data.error?.code==="BADGE_REVISION_CONFLICT");if(!initial&&data.error?.code==="BADGE_ALREADY_EXISTS")setExistingKey("badge-"+requestId.current.replaceAll("-",""));throw new Error(data.error?.message??"保存失败");}
       setSaved(true);notify({variant:"success",message:"勋章已保存。"});
-      if(!initial)router.replace("/admin/badges/"+data.key);else router.refresh();
+      if(!initial)router.replace("/admin/badges/"+data.key,{transitionTypes:["page-switch"]});else router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"网络连接失败，请重试。");}finally{setPending(false);}
   }
   return <form className={styles.form} onSubmit={save}>

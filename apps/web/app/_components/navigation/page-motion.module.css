@@ -1,0 +1,43 @@
+/* Forward moves both pages left; history back reverses only page motion. */
+:global(:root):has(> .scope):global(::view-transition-group(.page-switch)) {
+ animation: none;
+ overflow: clip;
+}
+:global(:root):has(> .scope):global(::view-transition-old(.page-switch)) {
+ mix-blend-mode: normal;
+ animation: leave var(--site-motion-switch-exit) var(--site-ease-reveal) both;
+}
+:global(:root):has(> .scope):global(::view-transition-new(.page-switch)) {
+ mix-blend-mode: normal;
+ animation: enter var(--site-motion-switch-enter) var(--site-ease-reveal) both;
+}
+:global(:root:active-view-transition-type(page-back)):has(> .scope) {
+ --page-direction: -1;
+}
+@keyframes leave {
+ from { opacity: 1; transform: translateX(0); }
+ to { opacity: 0; transform: translateX(calc(-1 * var(--site-page-offset) * var(--page-direction, 1))); }
+}
+@keyframes enter {
+ from { opacity: 0; transform: translateX(calc(var(--site-page-offset) * var(--page-direction, 1))); }
+ to { opacity: 1; transform: translateX(0); }
+}
+
+:global(:root:active-view-transition-type(page-switch)):has(> .scope)::view-transition { pointer-events: none; }
+:global(:root:active-view-transition-type(page-switch)):has(> .scope):global(::view-transition-group(root)) { animation: none; }
+:global(:root:active-view-transition-type(page-switch)):has(> .scope):global(::view-transition-old(root)) { animation: none; opacity: 0; }
+:global(:root:active-view-transition-type(page-switch)):has(> .scope):global(::view-transition-new(root)) { animation: none; opacity: 1; }
+:global(:root[data-reduce-motion=true]):has(> .scope) {
+ --site-motion-header: 0ms;
+ --site-motion-switch-enter: 0ms;
+ --site-motion-switch-exit: 0ms;
+ --site-motion-switch-delay: 0ms;
+}
+@media (prefers-reduced-motion: reduce) {
+ :global(:root):has(> .scope) {
+  --site-motion-header: 0ms;
+  --site-motion-switch-enter: 0ms;
+  --site-motion-switch-exit: 0ms;
+  --site-motion-switch-delay: 0ms;
+ }
+}

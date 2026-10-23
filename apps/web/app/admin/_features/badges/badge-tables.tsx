@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {Award} from "lucide-react";
 import {RelativeTime} from "@sohoin/ui/relative-time";
 import {EmptyState,Badge} from "@sohoin/admin-ui/layout";

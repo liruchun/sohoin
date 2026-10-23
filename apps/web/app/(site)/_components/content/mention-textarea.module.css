@@ -10,6 +10,6 @@
  box-decoration-break: clone;
  -webkit-box-decoration-break: clone;
 }
-.avatar { @apply shrink-0; --content-avatar-size:1.75rem; --content-avatar-text-size:.75rem; --content-avatar-tilt:0deg; --content-avatar-offset-x:0%; --content-avatar-shadow-opacity:0; }
+.avatar { @apply shrink-0; --content-avatar-size:1.75rem; --content-avatar-text-size:.75rem; --content-avatar-shadow-opacity:0; }
 .name { @apply min-w-0 break-words; }
 .retry { @apply w-full cursor-pointer border-0 bg-transparent px-3 py-2 text-left text-sm text-primary; }

@@ -21,14 +21,14 @@ export {createContentService} from "./content";
 
 export {getReactionTypes,getAdminReactionTypes,updateReactionType,setReaction,setBookmark,getInteractionBatch,getOwnBookmarks,getSiteInteractions,setSiteInteraction} from "./interactions";
 
-export {setFollow,getFollowStates,getOwnFollows} from "./follows";
+export {setFollow,getFollowStates,getOwnFollows,getSiteFollow,setSiteFollow} from "./follows";
 
 export {getFollowingActivities} from "./activities";
 
 export {createProfileService} from "./profiles";
 export {listNotifications,getNotification,getUnreadNotificationCount,readNotificationsAction,sendNotification} from "./notifications";
 
-export {getSiteFeed,getSiteContent,getSiteProfile,getSiteProfileForEditing,getSiteSitemap,getSiteTopics,getSiteCommunityFeed,type SiteView,type SiteContent,type SiteTopic,type SiteTopicRef,type CommunitySort,type SiteCommunityFeed} from "./public-site";
+export {getSiteCircleFeed,getSiteFeed,getSiteContent,getSiteProfile,getSiteProfileForEditing,getSiteSitemap,getSiteTopics,getSiteCommunityFeed,type SiteView,type SiteContent,type SiteTopic,type SiteTopicRef,type CommunitySort,type SiteCommunityFeed} from "./public-site";
 export {getSiteCategoryMembership,setSiteCategoryMembership,type SiteCategoryMembership} from "./community-membership";
 export {getPublicMedia} from "./public-media";
 export {searchMemberMentions} from "./member-mentions";

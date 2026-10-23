@@ -1,17 +1,23 @@
 @reference "../../../globals.css";
 
-.root { position: relative; margin-inline-start: var(--card-text-offset, 0); --feed-fold-after: 5; --feed-fold-visible: 4; }
-.preview { @apply block cursor-pointer overflow-hidden text-inherit no-underline outline-offset-2; max-height: calc(var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))) * 1.5 * var(--feed-fold-visible)); }
-.root[data-measured="true"] .preview,
-.root[data-expanded="true"] .preview { max-height: none; }
-.inlineAction { position: absolute; bottom: 0; right: 0; display: inline-flex; align-items: baseline; white-space: nowrap; line-height: 1.5; font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
-.root[data-measured="false"] .inlineAction { background: var(--background); }
-.expand, .readMore, .collapse { @apply inline-flex items-baseline p-0 font-normal text-primary no-underline outline-offset-2; height: auto; min-height: 0; font-size: inherit; line-height: inherit; }
+.root { position: relative; margin-inline-start: var(--card-text-offset, 0); --feed-fold-visible: 4; }
+.preview {
+ @apply cursor-pointer overflow-hidden text-inherit no-underline outline-offset-2;
+ display: -webkit-box;
+ -webkit-box-orient: vertical;
+ -webkit-line-clamp: var(--feed-fold-visible);
+}
+.preview[data-measured], .root[data-expanded="true"] .preview { display: block; -webkit-line-clamp: unset; }
+.inlineAction { position: absolute; display: inline-flex; align-items: baseline; white-space: nowrap; line-height: 1.5; background: var(--background); font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
+/* Fade only the tail immediately before the single ellipsis, never the button. */
+.inlineAction::before { content: ""; position: absolute; inset-block: 0; right: 100%; width: 1.5em; background: linear-gradient(to right, transparent, var(--background)); pointer-events: none; }
+.ellipsis { background: linear-gradient(to right, var(--muted-foreground), var(--foreground)); background-clip: text; color: transparent; }
+.expand, .readMore, .collapse { @apply inline-flex items-baseline border-0 p-0 font-normal text-primary no-underline outline-offset-2; height: auto; min-height: 0; font-size: inherit; line-height: inherit; }
 .expand, .readMore { margin-left: .2em; }
 .collapse { @apply mt-1; font-size: var(--reading-body-size, var(--content-body-size, var(--content-text-size, 1rem))); }
 @media (hover: hover) and (pointer: fine) {
  .expand:hover, .readMore:hover, .collapse:hover { @apply underline; }
 }
 @media (width >= 40rem) {
- .root { --feed-fold-after: 7; --feed-fold-visible: 6; }
+ .root { --feed-fold-visible: 6; }
 }

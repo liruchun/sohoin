@@ -9,7 +9,7 @@ import {CommunityNavigation} from "../../_features/community/community-navigatio
 import {communitySlug,parseCommunitySort} from "../../_features/community/community-route";
 import {useDetailData} from "../../_features/content/detail-data";
 import {DetailBack,DetailNavigation} from "../content/detail-panel";
-import {useReadingReturn} from "../feedback/page-transition";
+import {useReadingReturn} from "../feedback/reading-navigation";
 import {sitePageConfig} from "./site-page-config";
 import {CommunityMenuSkeleton} from "../../_features/community/community-menu-skeleton";
 import {CommunityHeaderMenu} from "../../_features/community/community-header-menu";

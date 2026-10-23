@@ -6,10 +6,11 @@ import {Button} from "@sohoin/ui/button";
 import {MagneticSurface} from "@sohoin/ui/magnetic-surface";
 import {DetailBack} from "../content/detail-panel";
 import buttonStyles from "../content/detail-panel.module.css";
-import {ReadingLink,useReadingReturn} from "../feedback/page-transition";
+import {ReadingLink,useReadingReturn} from "../feedback/reading-navigation";
 import {useSiteMedals} from "./site-medals";
 import styles from "./profile-navigation.module.css";
 import {useProfileHeader} from "./profile-header-context";
+import {ProfileFollowButton} from "./profile-follow-button";
 
 export function ProfileNavigation(){
  const t=useTranslations("Web"),pathname=usePathname(),back=useReadingReturn();
@@ -33,9 +34,7 @@ export function ProfileNavigation(){
   <div className={styles.action}>
   {!editing&&(own?<Button variant="plain" className={buttonStyles.back} asChild>
    <ReadingLink href={memberPath+"/edit"}><MagneticSurface className={buttonStyles.backSurface}>{t("editProfile")}</MagneticSurface></ReadingLink>
-  </Button>:<Button variant="plain" className={buttonStyles.publish}>
-   <MagneticSurface className={buttonStyles.publishSurface}>{t("followMember")}</MagneticSurface>
-  </Button>)}
+  </Button>:<ProfileFollowButton key={`${memberPath}:${account?.publicId??"guest"}`} publicId={memberPath.split("/").pop()??""} authenticated={!!account}/>)}
   </div>
  </div>;
 }

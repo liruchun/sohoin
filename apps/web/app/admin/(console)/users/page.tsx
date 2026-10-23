@@ -1,7 +1,7 @@
 import {RelativeTime} from "@sohoin/ui/relative-time";
 import {NativeSelect} from "@sohoin/admin-ui/native-select";
 import {adminRead} from "@/lib/admin-page";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import Form from "next/form";
 import {headers} from "next/headers";
 import {listUsers,ServiceError} from "@sohoin/core/server";

@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {usePathname} from "next/navigation";
 import {SidebarMenu,SidebarMenuItem,SidebarMenuButton} from "@sohoin/admin-ui/sidebar";
 import {SlidersHorizontal,ScrollText,UserRound,Users,Files,Folder,Tags,Images,MessageSquare,Bell,Award} from "lucide-react";

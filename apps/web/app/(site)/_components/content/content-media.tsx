@@ -40,7 +40,7 @@ export function ContentMedia({media,detail=false,priority=false}:{media:SiteCont
  if(single&&media[0].kind==='video')return <ImageLightbox images={lightboxImages} className={styles.frame} data-detail={detail}>{images[0]}</ImageLightbox>;
  if(single)return <ImageLightbox images={lightboxImages} className={styles.frame} data-detail={detail}><div className={styles.single} style={imageStyle(media[0])}>{images[0]}</div></ImageLightbox>;
  return <ImageLightbox images={lightboxImages} className={styles.frame} data-detail={detail}>
-  <ContentMediaCarousel adaptive data-magnetic-area="" className={styles.gallery} style={{"--media-first-ratio":ratio(media[0])} as CSSProperties} aria-label={t("postMedia",{count:media.length})}>
+  <ContentMediaCarousel adaptive className={styles.gallery} style={{"--media-first-ratio":ratio(media[0])} as CSSProperties} aria-label={t("postMedia",{count:media.length})}>
    <CarouselContent className={styles.track} viewportClassName={styles.viewport}>
     {images.map((image,index)=><CarouselItem key={media[index].url} className={styles.slide} style={imageStyle(media[index])} aria-label={t("mediaPosition",{number:index+1,count:media.length})}>{image}</CarouselItem>)}
    </CarouselContent>

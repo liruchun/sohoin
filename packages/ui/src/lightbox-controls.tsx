@@ -8,6 +8,7 @@ import {Button} from './button';
 import {animateLightboxControls} from './lightbox-controls-motion';
 import {LightboxVideoControls} from './lightbox-video-controls';
 import {MagneticSurface} from './magnetic-surface';
+import {prefersReducedMotion} from './theme-preference';
 import type {LightboxImage} from './image-lightbox';
 import styles from './image-lightbox.module.css';
 import carouselStyles from './carousel.module.css';
@@ -59,7 +60,7 @@ export function LightboxControls({instance,images}:{instance:PhotoSwipe;images:r
      style={fixed?{left:fixed.left,top:fixed.top}:undefined}
      className={cn(carouselStyles.control,styles.arrow)} aria-disabled={disabled}
      onPointerEnter={event=>hold(event,side)} onPointerLeave={()=>setLocked(null)} onPointerCancel={()=>setLocked(null)}
-     aria-label={t(previous?'previousImage':'nextImage')} onClick={()=>{if(!disabled){if(previous)instance.prev();else instance.next();}}}>
+     aria-label={t(previous?'previousImage':'nextImage')} onClick={()=>{if(!disabled)instance.mainScroll.moveIndexBy(previous?-1:1,!prefersReducedMotion());}}>
      <MagneticSurface radius={240} maxOffset={18} strength={.65} areaSelector=".pswp" className={carouselStyles.magneticSurface}><Icon size="1.25rem" strokeWidth={1.75} aria-hidden="true"/></MagneticSurface>
     </Button>;
    })}

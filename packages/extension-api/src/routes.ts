@@ -21,7 +21,7 @@ export interface PageOverrides {
   ContentList?: ServerPage<{page:{items:ContentSummary[];nextCursor:string|null};query:Omit<ContentQuery,"status">;children:ReactNode}>;
   ContentDetail?: ServerPage<{content:PublicContent;children:ReactNode}>;
 }
-const reserved = new Set(["admin","api","_next","content","featured","p","members","community","threads","comments","favicon.ico","robots.txt","sitemap.xml"]);
+const reserved = new Set(["admin","api","_next","content","featured","circle","p","members","community","threads","comments","favicon.ico","robots.txt","sitemap.xml"]);
 function segments(path:string) {
   if(path.length>200 || !/^\/(?:[a-z0-9][a-z0-9-]*|\[[a-z][a-zA-Z0-9]*\])(?:\/(?:[a-z0-9][a-z0-9-]*|\[[a-z][a-zA-Z0-9]*\]))*$/.test(path)) throw new Error("Invalid route pattern: "+path);
   const parts=path.slice(1).split("/");

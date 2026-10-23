@@ -30,9 +30,7 @@ export function useDetailData(){const value=useContext(Context);if(!value)throw 
 export function DetailBackground({children,active:forced}:{children:ReactNode;active?:boolean}){
  const {active}=useDetailData();
  const covered=forced??active;
- const [hasCovered,setHasCovered]=useState(covered);
- if(covered&&!hasCovered)setHasCovered(true);
- return <div className={styles.background} data-covered={covered} data-reading-return={hasCovered&&!covered||undefined} inert={covered||undefined}>{children}</div>;
+ return <div className={styles.background} data-covered={covered} inert={covered||undefined}>{children}</div>;
 }
 
 /** Current lists register; a bounded cache keeps clicked cards usable after the

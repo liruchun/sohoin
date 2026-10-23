@@ -3,7 +3,7 @@ import {StatusMessage,Alert} from "@sohoin/ui/feedback";
 
 import {Disclosure} from "@sohoin/admin-ui/disclosure";
 import {NativeSelect} from "@sohoin/admin-ui/native-select";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {useState} from "react";
 import type {AdminContentMedia} from "@sohoin/extension-api/content";
 import type {MediaAsset,MediaPage} from "@sohoin/extension-api/media";

@@ -1,15 +1,16 @@
 "use client";
 
-import {useId,useState} from "react";
+import {useId,useLayoutEffect,useRef,useState} from "react";
 import {useTranslations} from "next-intl";
 import {Menu,Hash,UsersRound} from "lucide-react";
-import {ReadingLink as Link,useReadingPush} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link,useReadingPush} from "../../_components/feedback/reading-navigation";
 import {RadioGroup,RadioGroupItem} from "@sohoin/ui/radio-group";
 import {MagneticSurface} from "@sohoin/ui/magnetic-surface";
 import {IconButton} from "@sohoin/ui/icon-button";
 import {DropdownMenu,DropdownMenuTrigger} from "@sohoin/ui/dropdown-menu";
 import {DropdownMenuContent,DropdownMenuItem} from "@sohoin/ui/dropdown-menu-content";
 import {PostComposer} from "../../_components/content/post-composer";
+import {feedHref} from "./feed-route";
 import {communityHref} from "../community/community-route";
 import type {SiteView} from "@sohoin/core/server";
 import iconStyles from "./feed.module.css";
@@ -19,6 +20,19 @@ export type FeedCategory={name:string;slug:string};
 export function FeedNavigation({view,categories}:{view:SiteView;categories:FeedCategory[]}){
  const t=useTranslations("Web"),id=useId(),push=useReadingPush();
  const [menuOpen,setMenuOpen]=useState(false);
+ const selectedView=useRef<SiteView|null>(null);
+ useLayoutEffect(()=>{
+  if(selectedView.current!==view)return;
+  selectedView.current=null;
+  // Explicit category selections start at the top, even when Next considers
+  // the new page already visible. History navigation has no selection intent.
+  window.scrollTo({top:0,behavior:"instant"});
+ },[view]);
+ function selectView(value:string){
+  if((value!=="latest"&&value!=="featured"&&value!=="circle")||value===view)return;
+  selectedView.current=value;
+  push(feedHref(value));
+ }
  return <nav className={styles.navigation} aria-label={t("feedCategories")} data-skeleton-chrome-group="" data-magnetic-area="">
   <DropdownMenu modal={false} open={menuOpen} onOpenChange={setMenuOpen}>
    <DropdownMenuTrigger asChild><IconButton animation="menu" active={menuOpen} className={styles.menuTrigger} aria-label={t("communityCategories")} data-skeleton-chrome-item=""><MagneticSurface className={styles.menuSurface} maxOffset={5}><Menu size={18} aria-hidden="true"/></MagneticSurface></IconButton></DropdownMenuTrigger>
@@ -27,9 +41,9 @@ export function FeedNavigation({view,categories}:{view:SiteView;categories:FeedC
     {categories.map(category=><DropdownMenuItem key={category.slug} asChild><Link href={communityHref({slug:category.slug})}><Hash size={16} aria-hidden="true"/><span>{category.name}</span></Link></DropdownMenuItem>)}
    </DropdownMenuContent>
   </DropdownMenu>
-  <RadioGroup value={view} orientation="horizontal" onValueChange={value=>{if(value==="latest"||value==="featured")push(value==="featured"?"/featured":"/",{scroll:false,feedTab:true});}} className={styles.group} aria-label={t("feedCategories")} data-skeleton-chrome-item="">
-   {([{value:"latest",label:t("recommended")},{value:"featured",label:t("featured")},{value:"circle",label:t("myCircle")}] as const).map(option=><label key={option.value} className={styles.choice} data-feed-choice="" htmlFor={`${id}-${option.value}`} data-disabled={option.value==="circle"}>
-    <RadioGroupItem className={styles.radio} id={`${id}-${option.value}`} value={option.value} disabled={option.value==="circle"} aria-current={view===option.value?"page":undefined}/>
+  <RadioGroup value={view} orientation="horizontal" onValueChange={selectView} className={styles.group} aria-label={t("feedCategories")} data-skeleton-chrome-item="">
+   {([{value:"latest",label:t("recommended")},{value:"featured",label:t("featured")},{value:"circle",label:t("myCircle")}] as const).map(option=><label key={option.value} className={styles.choice} data-feed-choice="" htmlFor={`${id}-${option.value}`}>
+    <RadioGroupItem className={styles.radio} id={`${id}-${option.value}`} value={option.value} aria-current={view===option.value?"page":undefined}/>
     {option.value==="latest"?<svg className={iconStyles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
      <circle cx="12" cy="12" r="10"/>
      <line className={iconStyles.clockHand} x1="12" x2="12" y1="12" y2="6"/>
@@ -41,7 +55,7 @@ export function FeedNavigation({view,categories}:{view:SiteView;categories:FeedC
     <span>{option.label}</span>
    </label>)}
   </RadioGroup>
-  <noscript className={styles.noScript}><div className={styles.fallback}><Link href="/">{t("recommended")}</Link><Link href="/featured">{t("featured")}</Link></div></noscript>
+  <noscript className={styles.noScript}><div className={styles.fallback}><Link href="/">{t("recommended")}</Link><Link href="/featured">{t("featured")}</Link><Link href="/circle">{t("myCircle")}</Link></div></noscript>
   <PostComposer className={styles.publish} surfaceClassName={styles.publishSurface}/>
  </nav>;
 }

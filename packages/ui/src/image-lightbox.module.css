@@ -5,6 +5,15 @@
  --pswp-icon-stroke-color:var(--lightbox-background);
  --pswp-error-text-color:var(--lightbox-foreground);
 }
+/* The viewer always has a black backdrop. Its navigation controls keep the
+   same white surfaces and dark icons regardless of the site's color scheme. */
+.viewer .arrow, .viewer .closeButton {
+ --card:var(--lightbox-foreground);
+ --foreground:var(--lightbox-backdrop);
+ --border:var(--lightbox-foreground);
+ --accent:color-mix(in srgb,var(--lightbox-foreground) 90%,var(--lightbox-backdrop));
+ --ring:var(--lightbox-foreground);
+}
 /* Let PhotoSwipe's backdrop fade across the whole viewport. Keep the document
    at its original width so hiding the scrollbar does not move source tiles.
    No overflow/scroll-position override: PhotoSwipe still owns input handling. */
@@ -48,13 +57,13 @@
 .thumbnails::-webkit-scrollbar { display:none; }
 .thumbnail {
  position:relative;flex:0 0 3.5rem;width:3.5rem;height:4.5rem;padding:0;
- border:1px solid var(--border);border-radius:.75rem;overflow:hidden;background:var(--muted);
+ border:1px solid var(--lightbox-foreground);border-radius:.75rem;overflow:hidden;background:var(--lightbox-background);
  opacity:.55;cursor:pointer;transition:opacity 150ms ease-out;
 }
 .thumbnail img { width:100%;height:100%;object-fit:cover; }
-.thumbnail[aria-current=true] { opacity:1;outline:2px solid var(--primary);outline-offset:2px; }
+.thumbnail[aria-current=true] { opacity:1;outline:2px solid var(--lightbox-foreground);outline-offset:2px; }
 .thumbnail:hover,.thumbnail:focus-visible { opacity:1; }
-.thumbnail:focus-visible { outline:2px solid var(--ring);outline-offset:2px; }
+.thumbnail:focus-visible { outline:2px solid var(--lightbox-foreground);outline-offset:2px; }
 .videoMark { position:absolute;left:.375rem;bottom:.375rem;width:1rem;height:1rem;color:white;filter:drop-shadow(0 1px 2px black); }
 @media(prefers-reduced-motion:reduce) { .thumbnail { transition:none; } }
 :global(:root[data-reduce-motion=true]) .thumbnail { transition:none; }
@@ -89,14 +98,14 @@
 .volumeRange { position:relative;display:flex;align-items:center;align-self:stretch;flex:1;min-width:0;font-size:.8125rem;font-variant-numeric:tabular-nums; }
 .volumeRange span { padding-left:.25rem;pointer-events:none; }
 .mediaRange { position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;touch-action:pan-y; }
-.timeline:has(input:focus-visible),.volumeControl:has(input:focus-visible),.volumeControl:has(button:focus-visible) { outline:2px solid var(--ring);outline-offset:2px; }
+.timeline:has(input:focus-visible),.volumeControl:has(input:focus-visible),.volumeControl:has(button:focus-visible) { outline:2px solid var(--lightbox-foreground);outline-offset:2px; }
 .mediaRange:disabled { cursor:default; }
 @media(pointer:coarse) { .timeline,.volumeControl { height:2.75rem; } .videoControls .playButton,.volumeControl button { min-width:2.75rem;min-height:2.75rem; } }
 @media(prefers-reduced-motion:reduce) { .videoControls { animation:none; } }
 :global(:root[data-reduce-motion=true]) .videoControls { animation:none; }
 
 .mediaOutline {
- position:absolute;z-index:1;pointer-events:none;box-sizing:border-box;border:1px solid var(--border);
+ position:absolute;z-index:1;pointer-events:none;box-sizing:border-box;border:1px solid var(--lightbox-foreground);
  opacity:0;
  transition:opacity var(--site-motion-menu,180ms) var(--site-ease-feedback,ease-out);
 }

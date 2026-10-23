@@ -2,7 +2,7 @@
 import {useTranslations} from "next-intl";
 
 import styles from "./site-menu-content.module.css";
-import {ReadingLink as Link} from "../feedback/page-transition";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import type {ComponentProps} from "react";
 import {DropdownMenuContent,DropdownMenuItem} from "@sohoin/ui/dropdown-menu-content";
 export default function SiteMenuContent({onCloseAutoFocus}:{onCloseAutoFocus?:ComponentProps<typeof DropdownMenuContent>["onCloseAutoFocus"]}){

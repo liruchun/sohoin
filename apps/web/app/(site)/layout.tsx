@@ -1,3 +1,4 @@
+import {PageMotion} from "../_components/navigation/page-motion";
 import {getReactionTypes} from "@sohoin/core/server";
 import {getSiteMedals} from "@sohoin/core/server";
 import {SiteMedalsProvider} from "./_components/shell/site-medals";
@@ -13,7 +14,7 @@ import {SiteHeader,SitePageSidebar} from "./_components/shell/site-header";
 import {SiteBrand} from "./_components/shell/site-brand";
 import {SiteSearch,SiteSearchProvider} from "./_components/shell/site-search";
 import {SiteRecommendations} from "./_components/shell/site-recommendations";
-import {SiteFrame,SiteFooter,SkipToContent} from "./_components/shell/site-shell";
+import {SiteFrame,SiteFooter,SiteContent,SkipToContent} from "./_components/shell/site-shell";
 import {SiteTransition} from "./_components/feedback/site-transition";
 import {DetailSkeleton} from "./_features/content/detail-skeleton";
 import {SiteSplash} from "./_components/feedback/site-splash";
@@ -26,9 +27,8 @@ import {ProfileHeaderProvider} from "./_components/shell/profile-header-context"
 import {cn} from "@sohoin/ui/utils";
 import styles from "./layout.module.css";
 import {DetailDataProvider,DetailBackground} from "./_features/content/detail-data";
-import {PageTransition} from "./_components/feedback/page-transition";
 import {DiscussionComposerProvider} from "./_components/content/discussion-composer-provider";
-import transitionStyles from "./_components/feedback/page-transition.module.css";
+import transitionStyles from "./_components/feedback/lightbox-transition.module.css";
 export const dynamic="force-dynamic";
 export default async function SiteLayout({children,detail}:{children:ReactNode;detail:ReactNode}){
  const requestHeaders=await headers();
@@ -45,7 +45,8 @@ export default async function SiteLayout({children,detail}:{children:ReactNode;d
   <SiteSearchProvider>
   <CommunityHeaderProvider>
   <ProfileHeaderProvider>
-  <PageTransition navigation={<><SiteHeader categories={topics.map(({name,slug})=>({name,slug}))} brand={<SiteBrand brand={settings.siteName} logo={settings.logo}/>} tools={<SiteSearch brand={settings.siteName}/>}/><SiteSidebar brand={settings.siteName}/></>}>
+  <SiteHeader categories={topics.map(({name,slug})=>({name,slug}))} brand={<SiteBrand brand={settings.siteName} logo={settings.logo}/>} tools={<SiteSearch brand={settings.siteName}/>}/><SiteSidebar brand={settings.siteName}/>
+  <PageMotion><SiteContent data-page-motion="">
   <DiscussionComposerProvider>
   <DetailBackground>
   <CommunitySortBar/>
@@ -54,7 +55,7 @@ export default async function SiteLayout({children,detail}:{children:ReactNode;d
   </DetailBackground>
   {detail}
   </DiscussionComposerProvider>
-  </PageTransition>
+  </SiteContent></PageMotion>
   </ProfileHeaderProvider>
   </CommunityHeaderProvider>
   <SitePageSidebar feed={<SiteRecommendations/>} detail={<SiteRecommendations variant="detail"/>} profile={<SiteRecommendations variant="profile"/>}/>

@@ -25,7 +25,7 @@ export async function SiteFeed({items,view,label}:{items:SiteContent[];view:Site
  const reactionOptions=catalog.items.map(({code,label,emoji,enabled})=>({code,label,emoji,enabled}));
  const own=new Map(viewer.items.map(item=>[item.publicId,item]));
  return <FeedDetailData items={items.map(item=>({...item,interaction:own.get(item.publicId)}))} label={label} className={styles.list}>
-  <FeedPublication rows={items.map((post,index)=>({id:post.publicId,node:<PostCard post={post} priority={index===0} reactionOptions={reactionOptions} interaction={post.comment?.interaction??own.get(post.publicId)}/>}))} empty={<FeedEmptyState title={view==="articles"?t("noArticles"):t("noContent")}>{t("startConversation")}</FeedEmptyState>}/>
+  <FeedPublication rows={items.map((post,index)=>({id:post.publicId,node:<PostCard post={post} priority={index===0} reactionOptions={reactionOptions} interaction={post.comment?.interaction??own.get(post.publicId)}/>}))} empty={<FeedEmptyState title={view==="circle"?t("noCirclePosts"):view==="articles"?t("noArticles"):t("noContent")}>{view==="circle"?t("circleEmptyHint"):t("startConversation")}</FeedEmptyState>}/>
  </FeedDetailData>;
 }
 

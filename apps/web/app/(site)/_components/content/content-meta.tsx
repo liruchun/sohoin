@@ -1,7 +1,7 @@
 import {useLocale,useTranslations} from "next-intl";
 import {RelativeTime} from "@sohoin/ui/relative-time";
 import styles from "./content-meta.module.css";
-import {ReadingLink as Link} from "../feedback/page-transition";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import {communityHref} from "../../_features/community/community-route";
 import {StaticIcon} from "./static-icon";
 import type {SiteContent} from "@sohoin/core/server";
@@ -23,7 +23,7 @@ const linkify=new LinkifyIt({fuzzyLink:false,fuzzyEmail:false,rebuilder:new Cont
 
 function bodyLinks(text:string,href?:string,truncated=false){
  const nodes:ReactNode[]=[];
- const plain=(value:string,key:number)=>href?<Link key={key} href={href} transitionTypes={["detail-forward"]} className={styles.bodyLink}>{value}</Link>:value;
+ const plain=(value:string,key:number)=>href?<Link key={key} href={href} className={styles.bodyLink}>{value}</Link>:value;
  let offset=0;
  for(const match of linkify.match(text)??[]){
   // A server preview can end inside a URL: do not invent a shortened destination.

@@ -1,4 +1,13 @@
 {
+  "routeTransitionRechecked20261022": {
+    "reference": "https://bonjour.bio/posts/6ad871e18373db75611c4857",
+    "method": "Authorized anonymous post-link and return-button clicks; requestAnimationFrame sampling of getAnimations/getKeyframes. No writes.",
+    "forward": {"oldXpx": [0, -40], "oldOpacity": [1, 0], "oldDurationMs": 160, "newXpx": [50, 0], "newOpacity": [0.001, 1], "newDurationMs": 200},
+    "back": {"oldXpx": [0, 40], "oldOpacity": [1, 0], "oldDurationMs": 160, "newXpx": [-50, 0], "newOpacityAnimated": false, "newDurationMs": 200},
+    "delayMs": 0,
+    "keyframeEasing": "cubic-bezier(0.32,0.72,0,1)",
+    "localValidation": "Source inspection only. Local browser, build and tests not run. Native history without React snapshots retains entrance-only fallback."
+  },
   "routeTransitionRechecked20261018": {
     "reference": "https://bonjour.bio/",
     "post": "https://bonjour.bio/posts/6ad1e0a04b9cb999eba94f6e",

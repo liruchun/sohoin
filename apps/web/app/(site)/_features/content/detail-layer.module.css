@@ -11,18 +11,8 @@
   display: none;
 }
 
-/* History traversal can commit synchronously without React snapshots. Only a
-   previously covered background enters here; initial SSR never slides in. */
-.background[data-reading-return] {
-  transform: none;
-  transition: transform var(--site-motion-page-enter) var(--site-ease-emphasis);
-  @starting-style { transform: translateX(-3.125rem); }
-}
 
-:global(:root:active-view-transition) .background[data-reading-return],
-:global(:root[data-reduce-motion=true]) .background[data-reading-return] {
-  transition: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .background[data-reading-return] { transition: none; }
+/* Intercepted details are routes, without dialog entrance/exit animation. */
+.surface[data-slot=dialog-content][data-size=document] {
+ animation: none; transition: none; transform: none; opacity: 1;
 }

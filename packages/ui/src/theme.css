@@ -71,8 +71,15 @@
     --site-toolbar-height: calc(3.75rem + 1px);
     --site-motion-menu: 180ms;
     --site-motion-dialog: 220ms;
-    --site-motion-page-enter: 200ms;
-    --site-motion-page-exit: 160ms;
+    --site-motion-switch-enter: 200ms;
+    --site-motion-header: 280ms;
+    --site-motion-switch-exit: 160ms;
+    --site-motion-switch-delay: 60ms;
+    --site-switch-offset: -.5rem;
+    --site-page-offset: 1rem;
+    --site-motion-page: 260ms;
+    --site-motion-page-enter: var(--site-motion-page);
+    --site-motion-page-exit: var(--site-motion-page);
     --site-motion-image-enter: 320ms;
     --site-motion-image-exit: 260ms;
     --site-motion-skeleton-expand: 240ms;

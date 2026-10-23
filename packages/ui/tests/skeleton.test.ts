@@ -10,70 +10,13 @@ import {contentBootstrap,waitingBootstrap,launchBootstrap} from "../src/skeleton
 import {skeletonBoundaryKey,skeletonBoundaryEntry,recordSkeletonWait} from "../src/skeleton-contract";
 import {measureSkeleton,skeletonNodes,MAX_SHAPES} from "../src/skeleton-geometry";
 import {feedHref,feedView,isFeedPath} from "../../../apps/web/app/(site)/_features/feed/feed-route";
-import {pageTransitionName,readingTransitionTypes} from "../../../apps/web/app/(site)/_components/feedback/page-route";
 import {SKELETON} from "../src/skeleton-contract";
 
-test("text measurements read every card before committing and cancel unmounted cards",()=>{
- const source=readFileSync(new URL("../../../apps/web/app/(site)/_components/content/card-text-measure.ts",import.meta.url),"utf8").replace(/^export /gm,"");
- let nextFrame=0;
- const frames=new Map<number,()=>void>(),events:string[]=[];
- const schedule=runInNewContext(stripTypeScriptTypes(source)+"\nscheduleTextMeasurement;",{
-  requestAnimationFrame:(callback:()=>void)=>{frames.set(++nextFrame,callback);return nextFrame;},
-  cancelAnimationFrame:(id:number)=>{frames.delete(id);},
- });
- schedule(()=>{events.push("read first");return ()=>events.push("commit first");});
- const cancel=schedule(()=>{events.push("read unmounted");});cancel();
- schedule(()=>{events.push("read second");return ()=>events.push("commit second");});
- assert.equal(frames.size,1);
- const flush=Array.from(frames.values())[0];frames.clear();flush();
- assert.deepEqual(events,["read first","read second","commit first","commit second"]);
- const cancelLast=schedule(()=>{events.push("stale");});cancelLast();
- assert.equal(frames.size,0,"unmount must cancel the last pending frame");
-});
 
-test("text folding skips short text and stops once overflow is known, retaining paragraph gaps",()=>{
- const source=readFileSync(new URL("../../../apps/web/app/(site)/_components/content/card-text-measure.ts",import.meta.url),"utf8").replace(/^export /gm,"");
- let visited=0,ranges=0;
- const nodes=Array.from({length:100},(_,index)=>({textContent:"正文",top:100+index*40}));
- const measure=runInNewContext(stripTypeScriptTypes(source)+"\nmeasureRows;",{
-  getComputedStyle:()=>({lineHeight:"24"}),NodeFilter:{SHOW_TEXT:4},
-  document:{
-   createTreeWalker:()=>({nextNode:()=>nodes[visited++]??null}),
-   createRange:()=>{ranges++;let node=nodes[0];return {
-    selectNodeContents:(value:typeof node)=>{node=value;},
-    getClientRects:()=>[{top:node.top,width:100,height:20}],
-   };},
-  },
- });
- const body=(height:number)=>({getBoundingClientRect:()=>({top:100,width:400,height})});
- assert.equal(measure(body(48),5,4).overflowing,false);
- assert.equal(ranges,0,"short text must not create a Range");
- const folded=measure(body(4000),5,4);
- assert.equal(folded.overflowing,true);
- assert.equal(folded.height,142,"the fourth row includes actual paragraph gaps");
- assert.equal(visited,6,"later paragraphs cannot affect the fold boundary");
-});
 
-test("React owns reading snapshots outside skeleton layers and Next owns navigation",()=>{
- const base="../../../apps/web/app/(site)/";
- const read=(path:string)=>readFileSync(new URL(base+path,import.meta.url),"utf8");
- const boundary=read("_components/feedback/page-transition.tsx");
- assert.match(boundary,/<ViewTransition default="none" name=\{pageTransitionName\(pathname,search\)\} update=/);
- assert.match(boundary,/return \(\)=>router\.back\(\)/);
- assert.match(read("layout.tsx"),/<PageTransition navigation=/);
- assert.match(boundary,/\{navigation\}<ViewTransition/);
- assert.doesNotMatch(boundary,/document\.startViewTransition|setTimeout|new Promise|onNavigate=|popstate|history\.pushState/);
- for(const path of ["_features/content/detail-layer.tsx","_components/feedback/site-transition.tsx"]){
-  assert.doesNotMatch(read(path),/DetailPageTransition|<ViewTransition/);
- }
- const css=read("_components/feedback/page-transition.module.css");
- assert.match(css,/reading-forward/);assert.match(css,/reading-back/);
- assert.doesNotMatch(css,/reading-history|data-state=closed/);
- // The CSS pipeline wraps selector lists in :is(), which cannot contain
- // pseudo-elements: animation still runs but its group loses the z-index.
- assert.doesNotMatch(css,/::view-transition-[^\n]*,\s*\n/);
- assert.doesNotMatch(css,/view-transition-(?:new|old)\(site-detail\)/);
-});
+
+
+
 
 test("a cached comment return does not inherit a consumed wait from the previous detail",()=>{
  const wait={fallbackShown:false,fallbackStartedAt:undefined as number|undefined};
@@ -621,25 +564,9 @@ test("loading-to-Page handoff retains the measured deadline instead of starting 
  assert.equal(wait.fallbackStartedAt,900);
 });
 
-test("feed tab directions stay list-local, while reading links use the page transition",()=>{
- assert.deepEqual(readingTransitionTypes("/",null,"/featured",true),["feed-forward"]);
- assert.deepEqual(readingTransitionTypes("/featured",null,"/",true),["feed-back"]);
- assert.deepEqual(readingTransitionTypes("/","featured","/",true),["feed-back"]);
- assert.deepEqual(readingTransitionTypes("/","featured","/featured",true),[]);
- assert.deepEqual(readingTransitionTypes("/",null,"/",true),[]);
- assert.deepEqual(readingTransitionTypes("/",null,"/threads/abc1234567"),["detail-forward"]);
- assert.deepEqual(readingTransitionTypes("/threads/abc1234567",null,"/featured",true),["detail-forward"]);
- assert.deepEqual(readingTransitionTypes("/",null,"/featured"),["detail-forward"]);
-});
 
-test("route snapshots keep separate geometry across scroll restoration without identity collisions",()=>{
- const routes=[["/",""],["/featured",""],["/","feed=featured"],["/threads/abc1234567",""],["/threads/abc1234567","commentsBefore=cursor"],["/members/abc1234567",""]];
- const names=routes.map(([pathname,search])=>pageTransitionName(pathname,search));
- assert.equal(new Set(names).size,routes.length);
- for(const name of names)assert.match(name,/^site-page-[a-f0-9-]+$/);
- assert.equal(pageTransitionName("/",""),names[0]);
- assert.notEqual(pageTransitionName("/","a=bc"),pageTransitionName("/","ab=c"));
-});
+
+
 
 test("failed geometry recovers instead of revealing through a broken barrier",async()=>{
  const app=harness(),gate=deferred();app.gates.set("geometry",gate.promise);

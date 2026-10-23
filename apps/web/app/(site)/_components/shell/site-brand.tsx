@@ -3,7 +3,7 @@ import {useTranslations} from "next-intl";
 
 import styles from "./site-brand.module.css";
 import {cn} from "@sohoin/ui/utils";
-import {ReadingLink as Link} from "../feedback/page-transition";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import {useEffect,useRef,useState} from "react";
 import type {PublicSiteSettings} from "@sohoin/extension-api/settings";
 

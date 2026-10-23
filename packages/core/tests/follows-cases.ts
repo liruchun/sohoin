@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import type {TestContext} from "node:test";
 import {setTimeout as delay} from "node:timers/promises";
-import {getPool,writeFollow,FollowStoreError,ADMIN_PERMISSIONS_LOCK} from "@sohoin/database";
+import {getPool,writeFollow,savePublicRouteIds,FollowStoreError,ADMIN_PERMISSIONS_LOCK} from "@sohoin/database";
 import {setFollow,getOwnFollows,getFollowStates} from "../src/server/follows";
 import {ServiceError} from "../src/server/security";
 import {followPageSchema,followBatchResultSchema} from "@sohoin/extension-api/follows";
@@ -14,6 +14,25 @@ export async function followCases(t:TestContext,request:Requester,adminToken:str
  const batch=async(ids:string[],token=userToken)=>{const response=await request("/api/v1/follows/summary","POST",{ids},token);assert.equal(response.status,200);const value=await response.json();assert.ok(followBatchResultSchema.safeParse(value).success);return value.items;};
  const list=async(direction:string,token=userToken,before?:string)=>{const response=await request("/api/v1/account/follows/"+direction+(before?"?before="+before:""),"GET",undefined,token);assert.equal(response.status,200);assert.match(response.headers.get("cache-control")??"",/no-store/);const value=await response.json();assert.ok(followPageSchema.safeParse(value).success);return value;};
  try{
+  await t.test("site follows resolve public IDs and preserve write protections",async()=>{
+   const token="follow0001",path=`/api/site/members/${token}/follow`;
+   await savePublicRouteIds([{kind:"user",content_id:null,user_id:ids[44],token}]);
+   assert.equal((await request(path)).status,401,"公开关注路由应先鉴权；若返回 404，请先运行 pnpm build 更新安全测试使用的生产构建");
+   assert.equal((await request(path,"PUT",{active:true})).status,401);
+   assert.equal((await request(path,"PUT",{active:true},userToken,"https://attacker.example")).status,403);
+   assert.equal((await request(path,"PUT",{active:true,padding:"x".repeat(2000)},userToken)).status,413);
+   assert.equal((await request(path,"PUT",{active:true,userId:adminId},userToken)).status,400);
+   assert.equal((await request(`/api/site/members/${ids[44]}/follow`,"GET",undefined,userToken)).status,400);
+   for(const active of [true,false]){
+    const written=await request(path,"PUT",{active},userToken);
+    assert.equal(written.status,200);assert.deepEqual(await written.json(),{active});
+    const read=await request(path,"GET",undefined,userToken);
+    assert.equal(read.status,200);assert.deepEqual(await read.json(),{active});
+    assert.match(read.headers.get("cache-control")??"",/private.*no-store/);
+    assert.equal(read.headers.get("x-robots-tag"),"noindex");
+    assert.equal((await batch([ids[44]]))[0].following,active);
+   }
+  });
   await t.test("follow services and HTTP authorize, validate origin and reject caller-selected owner",async()=>{
    assert.equal((await request(url(adminId),"PUT",{active:true})).status,401);
    assert.equal((await request("/api/v1/account/follows/followers")).status,401);

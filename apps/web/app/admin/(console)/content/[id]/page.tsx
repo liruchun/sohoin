@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {contentService} from "@/lib/content";
 import {adminRead} from "@/lib/admin-page";

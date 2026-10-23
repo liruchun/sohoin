@@ -1,5 +1,5 @@
 import {RelativeTime} from "@sohoin/ui/relative-time";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {notFound} from "next/navigation";
 import {getCommentContext,ServiceError} from "@sohoin/core/server";

@@ -13,7 +13,7 @@ test("custom dynamic pages and access declarations survive dispatch",()=>{
  const r=createSiteRouter({routes:[route("/about"),{...route("/projects/[slug]"),access:"admin"}]});const m=r.match(["projects","你好"]);assert.equal(m?.kind,"custom");assert.equal(m?.params.slug,"你好");if(m?.kind==="custom")assert.equal(m.route.access,"admin");assert.equal(r.href.custom("/projects/[slug]",{slug:"你好"}),"/projects/%E4%BD%A0%E5%A5%BD");
 });
 test("reserved paths cannot shadow host pages or endpoints",()=>{
- for(const path of ["/admin","/admin/audit","/api","/api/test","/_next/test","/content","/content/[slug]","/featured","/featured/[slug]","/p/test","/members/test","/threads/test","/comments/test"])assert.throws(()=>createSiteRouter({routes:[route(path)]}));
+ for(const path of ["/admin","/admin/audit","/api","/api/test","/_next/test","/content","/content/[slug]","/featured","/featured/[slug]","/circle","/circle/[slug]","/p/test","/members/test","/threads/test","/comments/test"])assert.throws(()=>createSiteRouter({routes:[route(path)]}));
  assert.throws(()=>createSiteRouter({paths:{contentList:"/admin"}}));assert.throws(()=>createSiteRouter({paths:{contentDetail:"/api/[id]"}}));
 });
 test("ambiguous static and dynamic patterns fail early in either order",()=>{

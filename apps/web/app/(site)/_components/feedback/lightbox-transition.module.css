@@ -1,0 +1,15 @@
+:global(:root):has(> :global(body) > .scope)::view-transition { pointer-events: none; }
+
+/* The named header/sidebar/dividers stay still; lightbox uses this root policy too. */
+:global(:root):has(> :global(body) > .scope):global(::view-transition-group(root)) { animation: none; z-index: 0; }
+:global(:root):has(> :global(body) > .scope):global(::view-transition-old(root)) { animation: none; opacity: 0; }
+:global(:root):has(> :global(body) > .scope):global(::view-transition-new(root)) { animation: none; opacity: 1; }
+
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-group(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-old(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+:global(:root[data-reduce-motion=true]):has(> :global(body) > .scope):global(::view-transition-new(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+@media (prefers-reduced-motion: reduce) {
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-group(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-old(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+ :global(:root):has(> :global(body) > .scope):global(::view-transition-new(*)) { animation-duration: 0s !important; animation-delay: 0s !important; }
+}

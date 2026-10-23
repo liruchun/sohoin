@@ -65,7 +65,7 @@
  @apply absolute inset-0;
  pointer-events: none;
  visibility: hidden;
- transition: visibility 0s 160ms;
+ transition: visibility 0s var(--site-motion-switch-exit);
 }
 .searchLayer[data-active=true] { visibility: visible; transition-delay: 0s; }
 .panel {
@@ -74,15 +74,15 @@
  overflow-y: auto;
  scrollbar-width: none;
  opacity: 0;
- transform: translateY(-.5rem);
- transition: opacity 160ms var(--site-ease-reveal), transform 160ms var(--site-ease-reveal);
+ transform: translateY(var(--site-switch-offset));
+ transition: opacity var(--site-motion-switch-exit) var(--site-ease-reveal), transform var(--site-motion-switch-exit) var(--site-ease-reveal);
 }
 .searchLayer[data-active=true] .panel {
  opacity: 1;
  transform: none;
  pointer-events: auto;
- transition-duration: 200ms;
- transition-delay: 60ms;
+ transition-duration: var(--site-motion-switch-enter);
+ transition-delay: var(--site-motion-switch-delay);
 }
 .panel::-webkit-scrollbar { display: none; }
 .panel.utilityPanel { @apply pt-2; }

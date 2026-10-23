@@ -5,11 +5,15 @@
  --skeleton-enter-duration: var(--site-motion-navigation-enter);
  --skeleton-enter-stagger: var(--site-motion-navigation-stagger);
  --skeleton-enter-ease: var(--site-ease-emphasis);
- @apply grid min-w-0 items-center gap-3 px-6;
+ @apply grid min-w-0 items-center gap-3 px-8;
  grid-template-columns: 4rem minmax(0, 1fr) 4rem;
  min-height: var(--site-toolbar-height);
 }
-.menuTrigger { @apply justify-self-start border-0 bg-transparent p-0 text-foreground; }
+.menuTrigger {
+ @apply justify-self-start border-0 bg-transparent p-0 text-foreground;
+ width: calc(var(--spacing, 0.25rem) * 8);
+ height: calc(var(--spacing, 0.25rem) * 8);
+}
 .menuSurface {
  @apply size-8 border border-border bg-transparent;
  box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-ink) 5%, transparent);
@@ -24,16 +28,15 @@
   background-color var(--site-motion-feedback) var(--site-ease-feedback),
   scale var(--site-motion-feedback) var(--site-ease-feedback);
 }
-.choice:not([data-disabled=true]):active {
+.choice:active {
  scale: .98;
  transition-duration: 70ms;
 }
 .choice .radio { @apply sr-only; }
 .choice:has(.radio:focus-visible) { @apply outline-2 outline-offset-2 outline-ring; }
 .choice:has([data-state=checked]) { @apply bg-background text-foreground shadow-sm; }
-.choice[data-disabled=true] { @apply cursor-not-allowed text-muted-foreground/60; }
 @media (hover: hover) and (pointer: fine) {
- .choice:not([data-disabled=true]):hover { @apply bg-background/70 text-foreground; }
+ .choice:hover { @apply bg-background/70 text-foreground; }
 }
 .noScript { grid-column: 1 / -1; grid-row: 2; }
 .fallback { @apply flex gap-3 text-xs; }

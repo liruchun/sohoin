@@ -75,7 +75,7 @@ export async function readSettingsAudit(before?:string) {
  return result.rows as {id:string;actor_name:string|null;actor_email:string|null;created_at:Date;changed_fields:string[]}[];
 }
 
-export {readSiteFeed,readSiteContent,readSiteProfile,readPublicRouteTarget,readPublicRouteIds,savePublicRouteIds,readSiteSitemap,readSiteTopics,readSiteTopic,readSiteCommunityFeed,readSiteCategoryMembership,writeSiteCategoryMembership,type PublicFeedRow,type SiteTopicRow,type SiteTopicRef,type CommunitySort} from "./public-site";
+export {readSiteCircleFeed,readSiteFeed,readSiteContent,readSiteProfile,readPublicRouteTarget,readPublicRouteIds,savePublicRouteIds,readSiteSitemap,readSiteTopics,readSiteTopic,readSiteCommunityFeed,readSiteCategoryMembership,writeSiteCategoryMembership,type PublicFeedRow,type SiteTopicRow,type SiteTopicRef,type CommunitySort} from "./public-site";
 export {readSiteInteractionTargets,readSiteCommentTarget} from "./public-interactions";
 export {createMemberPublication,readPublishingCategories,readOwnPublication,changeOwnPublication,PublishingStoreError} from './member-publishing';
 export {MEMBER_MEDIA_PAGE_SIZE,readMemberMediaPage,readMemberMediaById} from './member-media';

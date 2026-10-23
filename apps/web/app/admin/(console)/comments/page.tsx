@@ -1,7 +1,7 @@
 import {Input} from "@sohoin/admin-ui/fields";
 import {Button} from "@sohoin/admin-ui/button";
 import {NativeSelect} from "@sohoin/admin-ui/native-select";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import Form from "next/form";
 import {headers} from "next/headers";
 import {listComments} from "@sohoin/core/server";

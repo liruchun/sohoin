@@ -1,6 +1,6 @@
 import {useTranslations} from "next-intl";
 import styles from "./feed-pagination.module.css";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import type {SiteView} from "@sohoin/core/server";
 import {feedHref} from "./feed-route";
 

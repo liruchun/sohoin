@@ -1,15 +1,17 @@
 import {avatarUrl} from "./avatar-url";
 import "server-only";
+import {createHash} from "node:crypto";
 import {readProfileBadges,readWornBadges} from "@sohoin/database";
 import type {WornBadge} from "@sohoin/extension-api/badges";
 import type {SiteInteraction} from "@sohoin/extension-api/interactions";
-import {readSiteFeed,readSiteContent,readSiteProfile,readPublicRouteTarget,readSiteSitemap,readSitePresentation,readSiteTopics,readSiteTopic,readSiteCommunityFeed,type SitePresentation,type PublicFeedRow} from "@sohoin/database";
+import {readSiteCircleFeed,readSiteFeed,readSiteContent,readSiteProfile,readPublicRouteTarget,readSiteSitemap,readSitePresentation,readSiteTopics,readSiteTopic,readSiteCommunityFeed,type SitePresentation,type PublicFeedRow} from "@sohoin/database";
 import {publicIdCodec} from "./public-id";
 import {publicRoutes as routes} from "./public-routes";
 import {getSiteComment} from "./public-discussion";
 import {ServiceError,requireAuthenticatedUser} from "./security";
 import {getOwnMemberDetails} from './member-profiles';
-export type SiteView="featured"|"latest"|"articles";
+export type PublicSiteView="featured"|"latest"|"articles";
+export type SiteView=PublicSiteView|"circle";
 const communitySorts=["latest","hot","mine"] as const;
 export type CommunitySort=typeof communitySorts[number];
 export type SiteTopic={name:string;slug:string;description:string;iconUrl:string|null;posts:number};
@@ -17,12 +19,32 @@ export type SiteTopicRef={name:string;slug:string;description:string;iconUrl:str
 const missing=()=>new ServiceError(404,"PUBLIC_PAGE_NOT_FOUND","内容不存在或未公开");
 const validContent=(id:string|null|undefined):id is string=>Boolean(id&&/^[1-9][0-9]{0,18}$/.test(id)&&BigInt(id)<=9223372036854775807n);
 
-function serialize(row:PublicFeedRow,ids:Map<string,string>,presentation?:SitePresentation,wornBadge:WornBadge|null=null){return {publicId:ids.get("content:"+row.id)!,type:row.type,title:row.title,body:row.body,bodyTruncated:row.body_truncated,category:row.category,categorySlug:row.category_slug,slug:row.slug,publishedAt:row.published_at.toISOString(),updatedAt:row.updated_at.toISOString(),author:{wornBadge,name:row.author_name,publicId:ids.get("user:"+row.author_id)!,avatar:avatarUrl(row.author_image)},media:presentation?.media??[],reactions:presentation?.reactions??[],comments:presentation?.comments??0,demo:row.demo};}
-export async function getSiteFeed(view:SiteView="featured",cursor?:string,excludeDemo=false){
+function serialize(row:PublicFeedRow,ids:Map<string,string>,presentation?:SitePresentation,wornBadge:WornBadge|null=null){return {publicId:ids.get("content:"+row.id)!,type:row.type,title:row.title,body:row.body,bodyTruncated:row.body_truncated,category:row.category,categorySlug:row.category_slug,slug:row.slug,publishedAt:row.published_at.toISOString(),updatedAt:row.updated_at.toISOString(),author:{wornBadge,name:row.author_name,publicId:ids.get("user:"+row.author_id)!,avatar:avatarUrl(row.author_image)},media:presentation?.media??[],reactions:presentation?.reactions??[],comments:presentation?.comments??0,participants:presentation?.participants.map(person=>({name:person.name,avatar:avatarUrl(person.image)}))??[],demo:row.demo};}
+export async function getSiteFeed(view:PublicSiteView="featured",cursor?:string,excludeDemo=false){
  let before:{id:string;at:string;view:SiteView}|null=null;if(cursor){try{before=JSON.parse(publicIdCodec().open("cursor",cursor)??"");if(!before||before.view!==view||!validContent(before.id)||!/^\d{4}-\d{2}-\d{2}T/.test(before.at)||!Number.isFinite(Date.parse(before.at)))throw new Error();}catch{throw new ServiceError(400,"INVALID_FEED_CURSOR","分页地址无效");}}
- const rows=await readSiteFeed(view,before,excludeDemo),items=rows.slice(0,20);const ids=await routes(items.map(r=>r.id),items.map(r=>r.author_id));const last=items.at(-1);const [presentationRows,worn]=await Promise.all([readSitePresentation(items.map(r=>r.id)),readWornBadges(items.map(r=>r.author_id))]);const presentation=new Map(presentationRows.map(r=>[r.id,r]));
- return {items:items.map(r=>serialize(r,ids,presentation.get(r.id),worn.get(r.author_id)??null)),next:rows.length>20&&last?publicIdCodec().seal("cursor",JSON.stringify({id:last.id,at:last.cursor_at,view})):null};
+ return presentFeed(await readSiteFeed(view,before,excludeDemo),{view});
 }
+/** Request-scoped circle; authenticated cursors cannot cross accounts. */
+export async function getSiteCircleFeed(headers:Headers,cursor?:string,excludeDemo=false){
+ const actor=await requireAuthenticatedUser(headers);
+ // Fixed-size account binding keeps even long user IDs inside the codec's
+ // 128-byte payload limit; authentication still comes from the session.
+ const viewer=createHash("sha256").update(actor.id).digest("base64url").slice(0,22);
+ let before:{id:string;at:string;view:string;viewer:string}|null=null;
+ if(cursor){try{
+  before=JSON.parse(publicIdCodec().open("cursor",cursor)??"");
+  if(!before||before.view!=="circle"||before.viewer!==viewer||!validContent(before.id)||!/^\d{4}-\d{2}-\d{2}T/.test(before.at)||!Number.isFinite(Date.parse(before.at)))throw new Error();
+ }catch{throw new ServiceError(400,"INVALID_FEED_CURSOR","分页地址无效");}}
+ return presentFeed(await readSiteCircleFeed(actor.id,before,excludeDemo),{view:"circle",viewer});
+}
+async function presentFeed(rows:PublicFeedRow[],scope:{view:SiteView;viewer?:string}){
+ const items=rows.slice(0,20),last=items.at(-1);
+ const ids=await routes(items.map(r=>r.id),items.map(r=>r.author_id));
+ const [presentationRows,worn]=await Promise.all([readSitePresentation(items.map(r=>r.id)),readWornBadges(items.map(r=>r.author_id))]);
+ const presentation=new Map(presentationRows.map(r=>[r.id,r]));
+ return {items:items.map(r=>serialize(r,ids,presentation.get(r.id),worn.get(r.author_id)??null)),next:rows.length>20&&last?publicIdCodec().seal("cursor",JSON.stringify({...scope,id:last.id,at:last.cursor_at})):null};
+}
+
 export async function getSiteTopics(excludeDemo=false):Promise<SiteTopic[]>{
  return (await readSiteTopics(excludeDemo)).map(({name,slug,description,icon_url,posts})=>({name,slug,description,iconUrl:icon_url,posts}));
 }

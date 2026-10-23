@@ -20,8 +20,7 @@ export function SiteSkeleton({listOnly=false,rows=2}:{listOnly?:boolean;rows?:1|
      <span className={cn(styles.action,styles.reactionAction)} data-skeleton-part="action" data-skeleton-action="reaction" data-skeleton-placeholder=""/>
      <div className={styles.tools}>
       <span className={cn(styles.action,styles.commentAction)} data-skeleton-part="action" data-skeleton-action="comment" data-skeleton-placeholder=""/>
-      <span className={cn(styles.action,styles.likeAction)} data-skeleton-part="action" data-skeleton-action="like" data-skeleton-placeholder=""/>
-      <span className={cn(styles.action,styles.bookmarkAction)} data-skeleton-part="action" data-skeleton-action="bookmark" data-skeleton-placeholder=""/>
+      <span className={styles.action} data-skeleton-part="action" data-skeleton-action="bookmark" data-skeleton-placeholder=""/>
      </div>
     </div>
    </div>

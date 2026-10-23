@@ -18,7 +18,7 @@ export function LightboxVideoControls({instance,video,top,width}:{instance:Photo
   events.forEach(event=>video.addEventListener(event,update));update();
   return ()=>{active.current=false;events.forEach(event=>video.removeEventListener(event,update));};
  },[video]);
- const isActive=()=>active.current&&!instance.isDestroying&&instance.element?.dataset.controlsState!=='exiting'&&instance.currSlide?.content.element===video;
+ const isActive=()=>active.current&&!instance.isDestroying&&instance.element?.dataset.controlsState!=='exiting'&&video.isSameNode(instance.currSlide?.content.element??null);
  async function toggle(){
   if(!video.paused){video.pause();return;}
   try{await video.play();}catch(error){

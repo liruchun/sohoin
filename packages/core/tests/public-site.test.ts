@@ -1,3 +1,4 @@
+import {circleFeedCases} from "./circle-feed-cases";
 import {spawn} from "node:child_process";
 import path from "node:path";
 import {setTimeout as delay} from "node:timers/promises";
@@ -27,6 +28,31 @@ test("public pages preserve stable IDs, exact keyset order, type and visibility 
  await db.query(`INSERT INTO contents(type,title,body,category_id,status,author_id,published_at,featured,featured_at) SELECT 'post','', '正文 '||i,$1,'published','site-author',t,true,t FROM (SELECT i,'2026-10-15 10:00:00+00'::timestamptz+i*interval '1 microsecond' AS t FROM generate_series(1,25) i) x`,[cat]);
  const article=(await db.query("INSERT INTO contents(type,title,body,category_id,status,author_id,published_at) VALUES('article','真实文章','文章正文',$1,'published','site-other',now()) RETURNING id::text",[cat])).rows[0].id;
  let first:Awaited<ReturnType<typeof getSiteFeed>>;
+ await t.test("circle membership, visibility, withdrawal and post pagination",circleFeedCases);
+ await t.test("discussion avatars are the three latest distinct visible authors",async()=>{
+  const users=["participant-a","participant-b","participant-c","participant-d"];
+  for(const id of users)await db.query('INSERT INTO "user"(id,name,email,"emailVerified",role,banned) VALUES($1,$1,$2,false,\'user\',false)',[id,id+"@example.invalid"]);
+  const post=(await db.query("INSERT INTO contents(type,title,body,category_id,status,author_id,published_at) VALUES('post','','Participants',$1,'published','site-author',now()) RETURNING id::text",[cat])).rows[0].id;
+  try{
+   const add=async(author:string,seconds:number)=>(await db.query("INSERT INTO comments(content_id,author_id,body,created_at) VALUES($1,$2,'Discussion','2026-10-22T00:00:00Z'::timestamptz+$3*interval '1 second') RETURNING id::text",[post,author,seconds])).rows[0].id;
+   await add(users[0],1);await add(users[1],2);await add(users[2],3);await add(users[3],4);
+   const repeat=await add(users[1],5);
+   const names=async()=>((await readSitePresentation([post]))[0].participants.map(person=>person.name));
+   assert.deepEqual(await names(),[users[1],users[3],users[2]]);
+   await db.query("UPDATE comments SET status='hidden' WHERE id=$1",[repeat]);
+   assert.deepEqual(await names(),[users[3],users[2],users[1]]);
+   await db.query('UPDATE "user" SET banned=true WHERE id=$1',[users[3]]);
+   assert.deepEqual(await names(),[users[2],users[1],users[0]]);
+   const root=await add(users[0],6);
+   await db.query("INSERT INTO comments(content_id,author_id,body,root_id,reply_to_id,created_at) VALUES($1,$2,'Reply',$3,$3,'2026-10-22T00:00:07Z')",[post,users[1],root]);
+   assert.deepEqual(await names(),[users[1],users[0],users[2]]);
+   await db.query("UPDATE comments SET thread_hidden=true WHERE id=$1",[root]);
+   assert.deepEqual(await names(),[users[2],users[1],users[0]]);
+  }finally{
+   await db.query("DELETE FROM contents WHERE id=$1",[post]);
+   await db.query('DELETE FROM "user" WHERE id=ANY($1::text[])',[users]);
+  }
+ });
  await t.test("local media requires a current public reference and protects avatar deletion",async()=>{
   await db.query(`INSERT INTO "user"(id,name,email,"emailVerified",role,banned) VALUES('site-media-admin','媒体管理员','site-media-admin@example.invalid',false,'admin',false)`);
   const key='2026/10/'+"a".repeat(32)+'.webp';
@@ -254,6 +280,12 @@ test("public pages preserve stable IDs, exact keyset order, type and visibility 
   try{
    let ready=false;for(let i=0;i<60;i++){try{if((await fetch(base+"/robots.txt")).ok){ready=true;break;}}catch{}if(server.exitCode!==null)throw new Error("Test public server failed");await delay(100);}assert.ok(ready);
    const req=(p:string)=>fetch(base+p,{headers:{"User-Agent":"Googlebot"},redirect:"manual"});
+   const circleResponse=await req("/circle");assert.equal(circleResponse.status,200);
+   const circleHtml=await circleResponse.text();
+   assert.match(circleHtml,/<meta name="robots" content="noindex, follow"/);
+   assert.ok(circleHtml.includes('登录后查看我的SOHO圈'));
+   assert.ok(circleHtml.includes('rel="canonical" href="https://sohoin.com/circle"'));
+   assert.equal((circleHtml.match(/<h1[ >]/g)??[]).length,1);
    for(const p of ["/t/123","/p/123","/members/123","/comments/123","/threads/123","/discussions/123","/c/123","/u/123","/content","/content/1"]){assert.equal((await req(p)).status,404,p);}
    const item=(await getSiteFeed("featured",undefined,true)).items[0];const postPath="/threads/"+item.publicId;const id=(await db.query("SELECT content_id::text AS id FROM public_route_ids WHERE short_id=$1",[item.publicId])).rows[0].id;
    const dangerous='正文 </script><script>alert(1)</script>';await db.query("UPDATE contents SET body=$2 WHERE id=$1",[id,dangerous]);

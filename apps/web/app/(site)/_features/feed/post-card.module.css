@@ -7,23 +7,20 @@
   padding-inline: calc(var(--spacing, 0.25rem) * 8);
 }
 .entry { @apply sr-only; }
+.post[data-detail] { @apply cursor-auto border-b-0; }
 .post:has(> .entry:focus-visible) { @apply outline-2 outline-offset-[-2px] outline-ring; }
 
-.avatarLink { @apply block h-fit shrink-0 rounded-lg no-underline outline-offset-4; margin-inline-end: var(--card-content-inset, 0rem); }
+.avatarLink { @apply block h-fit shrink-0 rounded-full no-underline outline-offset-4; margin-inline-end: var(--card-content-inset, 0rem); }
 .content { @apply min-w-0; }
+.post:not([data-detail]):not([data-within-discussion]) > .content {
+  margin-inline-start: calc(var(--content-avatar-size, 2.5rem) + var(--spacing, .25rem) * 3 + var(--card-content-inset, 0rem));
+}
 .heading {
-  @apply mb-4 flex items-center gap-3;
+  @apply flex items-center gap-3;
 }
-@media (hover: hover) and (pointer: fine) {
-  .post:hover > .heading > .avatarLink {
-    --content-avatar-tilt: 0deg;
-    --content-avatar-shadow-opacity: 0;
-  }
-}
-
 .title {
   @apply
-    mb-2.5 text-[1.1875rem] leading-normal font-semibold;
+    mt-0 mb-2.5 text-[1.1875rem] leading-normal font-semibold;
 }
 
 .titleLink {
@@ -31,8 +28,15 @@
     no-underline hover:underline;
 }
 
+
 @media (width < 40.625rem) {
   .post { @apply py-5; }
+}
+
+@media (width < 30rem) {
+  .post:not([data-detail]):not([data-within-discussion]) > .content {
+    margin-inline-start: calc(var(--content-avatar-size, 2.25rem) + var(--spacing, .25rem) * 3 + var(--card-content-inset, 0rem));
+  }
 }
 
 .post[data-within-discussion] {
@@ -45,7 +49,6 @@
   border-bottom: 0;
 }
 
-.post[data-within-discussion] > .heading { @apply mb-1; }
 .post[data-within-discussion] > .content > footer {
   margin-inline-start: var(--card-text-offset);
 }

@@ -56,7 +56,8 @@ export async function commentCases(t:TestContext,request:Requester,adminToken:st
    const first=await (await request("/api/v1/admin/comments?contentId="+postId,"GET",undefined,adminToken)).json();assert.equal(first.items.length,30);assert.ok(first.nextCursor);assert.ok(!("body" in first.items[0]));assert.equal(first.items[0].excerpt.length,120);
    const second=await (await request("/api/v1/admin/comments?contentId="+postId+"&before="+first.nextCursor,"GET",undefined,adminToken)).json();assert.ok(second.items.length>0);assert.equal(new Set([...first.items,...second.items].map(row=>row.id)).size,first.items.length+second.items.length);
    const context=await (await request(endpoint(b),"GET",undefined,adminToken)).json();assert.equal(context.replies.items.length,30);assert.ok(context.replies.nextCursor);
-   const html=await (await request("/admin/comments/"+x,"GET",undefined,adminToken)).text();assert.ok(html.includes("当前评论")&&html.includes("整个评论串"));
+   const page=await request("/admin/comments/"+x,"GET",undefined,adminToken);assert.equal(page.status,200);
+   const html=await page.text();assert.ok(html.includes("当前讨论")&&html.includes("整个讨论串"));
    const escaped=await insert('<img src=x onerror=alert(1)>');const safeHtml=await (await request("/admin/comments/"+escaped,"GET",undefined,adminToken)).text();assert.ok(safeHtml.includes("&lt;img"));assert.ok(!safeHtml.includes('<img src=x'));
    assert.equal((await request("/admin/comments")).status,307);
   });

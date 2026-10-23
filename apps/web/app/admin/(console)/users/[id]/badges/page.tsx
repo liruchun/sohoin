@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import {headers} from "next/headers";
 import {notFound} from "next/navigation";
 import {createAdminBadgeService,getUser,ServiceError} from "@sohoin/core/server";

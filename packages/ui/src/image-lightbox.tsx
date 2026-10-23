@@ -8,6 +8,7 @@ import {syncLightboxMediaShape} from './lightbox-media-shape';
 import {lightboxVisibleBounds} from './lightbox-visible-bounds';
 import {useTranslations} from 'next-intl';
 import type PhotoSwipe from 'photoswipe';
+import type {PhotoSwipeFiltersMap} from 'photoswipe';
 import 'photoswipe/style.css';
 import {prefersReducedMotion} from './theme-preference';
 import styles from './image-lightbox.module.css';
@@ -43,7 +44,7 @@ export function ImageLightbox({images,children,onClick,...props}:ComponentProps<
    const rem=parseFloat(getComputedStyle(document.documentElement).fontSize)||16;
    const duration=(property:string,fallback:number)=>parseFloat(theme.getPropertyValue(property))||fallback;
    const playVideo=async(video:HTMLVideoElement):Promise<void>=>{
-    const active=()=>!instance.isDestroying&&instance.element?.dataset.controlsState!=='exiting'&&instance.currSlide?.content.element===video;
+    const active=()=>!instance.isDestroying&&instance.element?.dataset.controlsState!=='exiting'&&video.isSameNode(instance.currSlide?.content.element??null);
     if(!active()||video.readyState===0)return;
     try{await video.play();}catch(error){
      if(!active()||!(error instanceof DOMException)||error.name!=='NotAllowedError')return;
@@ -114,7 +115,8 @@ export function ImageLightbox({images,children,onClick,...props}:ComponentProps<
     video.tabIndex=0;video.setAttribute('role','button');
     video.addEventListener('keydown',event=>{if(event.key===' '||event.key==='Enter'){event.preventDefault();event.stopPropagation();if(video.paused)void playVideo(video);else video.pause();}});
     video.setAttribute('aria-label',content.data.alt??'');
-    content.element=video;
+    // PhotoSwipe 5.4.4 supports custom content, but types element as img | div.
+    (content as {element:HTMLElement|undefined}).element=video;
     video.addEventListener('loadedmetadata',()=>{
      const resumeAt=Number(content.data.resumeAt)||0;
      if(resumeAt>0)video.currentTime=Number.isFinite(video.duration)?Math.min(resumeAt,Math.max(0,video.duration-.01)):resumeAt;
@@ -130,14 +132,16 @@ export function ImageLightbox({images,children,onClick,...props}:ComponentProps<
    });
    // Preserve the original object-fit scale, but crop to what the card actually
    // shows, including overflow hidden in the carousel's ancestors.
-   instance.addFilter('thumbBounds',(bounds,data)=>{
+   // In 5.4.4 getThumbBounds/opener handle undefined to disable thumbnail zoom,
+   // but the filter declaration omits undefined from its return type.
+   instance.addFilter('thumbBounds',((bounds,data)=>{
     const thumbnail=data.element?.querySelector('img');
     if(!bounds?.innerRect||!thumbnail)return bounds;
     const visible=lightboxVisibleBounds(thumbnail);
     if(!visible.width||!visible.height)return undefined;
     const y=data.element?.dataset.longImage==='true'?thumbnail.getBoundingClientRect().top:bounds.y;
     return {...bounds,y,innerRect:{w:visible.width,h:visible.height,x:bounds.x-visible.left,y:y-visible.top}};
-   });
+   }) as PhotoSwipeFiltersMap['thumbBounds']);
    instance.on('close',()=>{
     instance.element?.setAttribute('data-closing','true');
     instance.element?.querySelectorAll('video').forEach(video=>video.pause());

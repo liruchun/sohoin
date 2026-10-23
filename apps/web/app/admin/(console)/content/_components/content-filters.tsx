@@ -1,7 +1,7 @@
 "use client";
 import {Disclosure} from "@sohoin/admin-ui/disclosure";
 import {NativeSelect} from "@sohoin/admin-ui/native-select";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import Form from "next/form";
 import {useState} from "react";
 import type {ContentQuery} from "@sohoin/extension-api/content";

@@ -1,7 +1,7 @@
 @reference "../../../globals.css";
 
 .avatar {
- @apply relative block shrink-0 rounded-lg text-muted-foreground;
+ @apply relative block shrink-0 rounded-full text-muted-foreground;
  width: var(--content-avatar-size, 2.5rem);
  height: var(--content-avatar-size, 2.5rem);
  font-size: var(--content-avatar-text-size, 1.125rem);
@@ -16,38 +16,19 @@
  filter: blur(.1875rem);
  pointer-events: none;
  opacity: var(--content-avatar-shadow-opacity, 1);
- transition: opacity 200ms var(--site-ease-feedback);
-}
-.motion {
- @apply relative block size-full;
- transform: scale(.84) translateX(var(--content-avatar-offset-x, 15%)) rotate(var(--content-avatar-tilt, -11deg));
- transform-origin: var(--content-avatar-origin, 0 100%);
 }
 .frame {
- @apply relative box-border flex size-full items-center justify-center overflow-hidden rounded-lg border-solid bg-background;
- border-color: var(--background);
+ @apply relative box-border flex size-full items-center justify-center overflow-hidden rounded-full border-solid border-white bg-background;
  border-width: 2px;
  box-shadow: 0 1px 2px color-mix(in oklch, var(--shadow-ink) 8%, transparent);
 }
-.frame img { @apply block size-full object-cover; transform: scale(1.2) rotate(calc(-1 * var(--content-avatar-tilt, -11deg))); }
-.fallback { transform: rotate(calc(-1 * var(--content-avatar-tilt, -11deg))); }
+.frame img { @apply block size-full object-cover; }
 .medal {
  @apply absolute bottom-0 right-0 box-content grid place-items-center rounded-full border-2 border-solid border-background bg-background text-primary;
  width: var(--content-avatar-medal-size, 35%);
  height: var(--content-avatar-medal-size, 35%);
  line-height: 1;
 }
-.motion, .frame img, .fallback {
- transition: transform 200ms var(--site-ease-feedback);
-}
-:global(a:focus-visible) > .avatar .motion { transform: scale(.84) translateX(var(--content-avatar-offset-x, 15%)) rotate(0deg); }
-:global(a:focus-visible) > .avatar .frame img { transform: scale(1.2) rotate(0deg); }
-:global(a:focus-visible) > .avatar .fallback { transform: rotate(0deg); }
-:global(a:focus-visible) > .avatar::before { opacity: 0; }
-@media (prefers-reduced-motion: reduce) {
- .avatar::before, .motion, .frame img, .fallback { transition: none; }
-}
-
 @media (width < 30rem) {
  .avatar { width: var(--content-avatar-size, 2.25rem); height: var(--content-avatar-size, 2.25rem); }
 }

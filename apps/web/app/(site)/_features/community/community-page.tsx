@@ -5,7 +5,7 @@ import {getTranslations} from "next-intl/server";
 import {getSiteCategoryMembership,getSiteCommunityFeed,ServiceError} from "@sohoin/core/server";
 import {settingsService} from "@/lib/settings";
 import {absolute,indexingEnabled,robotsFor} from "@/lib/site";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import {FeedEmptyState,SiteFeed} from "../feed/feed";
 import {CommunityPagination} from "./community-pagination";
 import {communityHref,parseCommunitySort,type CommunitySort} from "./community-route";

@@ -1,24 +1,26 @@
+import {headers} from "next/headers";
 import {getTranslations} from "next-intl/server";
 import {settingsService} from "@/lib/settings";
-import {ReadingLink as Link} from "../../_components/feedback/page-transition";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import type {Metadata} from "next";
-import {getSiteFeed,ServiceError,type SiteView} from "@sohoin/core/server";
+import {getSiteCircleFeed,getSiteFeed,ServiceError,type SiteView} from "@sohoin/core/server";
 import {absolute,indexingEnabled,robotsFor,JsonLd} from "@/lib/site";
 import {SiteFeed,FeedEmptyState} from "./feed";
 import {FeedPagination} from "./feed-pagination";
 import {feedHref} from "./feed-route";
 export type FeedSearch={feed?:string;after?:string};
-const views={featured:"featuredCommunity",latest:"recommended",articles:"articles"} as const satisfies Record<SiteView,string>;
+const views={featured:"featuredCommunity",latest:"recommended",articles:"articles",circle:"myCircle"} as const satisfies Record<SiteView,string>;
 export async function feedMetadata(view:SiteView,after?:string):Promise<Metadata>{
  const t=await getTranslations("Web");
  const {settings}=await settingsService.readPublic();
- return {title:settings.siteName+" · "+t(views[view]),description:settings.description,alternates:{canonical:absolute(feedHref(view,after))},robots:after?{index:false,follow:true}:robotsFor()};
+ return {title:settings.siteName+" · "+t(views[view]),description:settings.description,alternates:{canonical:absolute(feedHref(view,after))},robots:after||view==="circle"?{index:false,follow:true}:robotsFor()};
 }
 async function HomeFeed({view,after}:{view:SiteView;after?:string}){
  const t=await getTranslations("Web");
  let page;
- try{page=await getSiteFeed(view,after,indexingEnabled());}
+ try{page=view==="circle"?await getSiteCircleFeed(await headers(),after,indexingEnabled()):await getSiteFeed(view,after,indexingEnabled());}
  catch(e){
+  if(view==="circle"&&e instanceof ServiceError&&(e.status===401||e.status===403))return <FeedEmptyState title={t("loginForCircle")}><Link href="/admin/login">{t("login")}</Link></FeedEmptyState>;
   if(e instanceof ServiceError&&e.status===400)return <FeedEmptyState title={t("expiredPage")}><Link href={feedHref(view)}>{t("firstPage")}</Link></FeedEmptyState>;
   throw e;
  }

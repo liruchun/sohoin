@@ -3,7 +3,7 @@
 import {useEffect,useState} from "react";
 import {useTranslations} from "next-intl";
 import {Check} from "lucide-react";
-import Link from "next/link";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import {cn} from "@sohoin/ui/utils";
 import {useSiteMedals} from "./site-medals";
 import {AuthorAvatar} from "../content/author-avatar";
@@ -32,7 +32,7 @@ export function SeedPanel(){
    <div className={styles.summary}><p className={styles.number}>3<span>{t("streakDays")}</span></p><span className={styles.seedIcon}><SeedIcon size={32} strokeWidth={1.5}/></span></div>
    <h3>{t("keepGrowing")}</h3><p className={styles.description}>{t("streakDescription")}</p>
    <div className={styles.month}><h4>{t("month")}</h4><span><Check size={14} aria-hidden="true"/>{t("checkedIn")}</span></div>
-   <div className={styles.weekdays} aria-hidden="true">{["mon","tue","wed","thu","fri","sat","sun"].map(day=><span key={day}>{t(day)}</span>)}</div>
+   <div className={styles.weekdays} aria-hidden="true">{(["mon","tue","wed","thu","fri","sat","sun"] as const).map(day=><span key={day}>{t(day)}</span>)}</div>
    <ol className={styles.calendar} aria-label={t("month")}>
     {Array.from({length:31},(_,index)=>{
      const day=index+1,checked=day>=19&&day<=21;
@@ -46,7 +46,7 @@ export function SeedPanel(){
   <section className={styles.records}>
    <h3>{t("records")}</h3>
    <ToggleGroup type="single" value={filter} onValueChange={value=>{if(value)setFilter(value);}} aria-label={t("recordFilter")} className={styles.filters}>
-    {["all","earned","spent"].map(value=><ToggleGroupItem key={value} value={value} asChild><Button variant="ghost" size="sm">{t(value)}</Button></ToggleGroupItem>)}
+    {(["all","earned","spent"] as const).map(value=><ToggleGroupItem key={value} value={value} asChild><Button variant="ghost" size="sm">{t(value)}</Button></ToggleGroupItem>)}
    </ToggleGroup>
    <ul className={styles.ledger}>{records.map(record=><li key={record.id}><div><p>{t(record.label)}</p><time dateTime={`2026-10-${record.day}`}>2026.10.{record.day}</time></div><span className={styles.amount}>{record.amount>0?"+":""}{record.amount}</span></li>)}</ul>
   </section>

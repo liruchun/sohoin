@@ -1,0 +1,5 @@
+@reference "../../../globals.css";
+
+.surface { @apply gap-1.5; }
+.surface svg { @apply size-4; }
+.surface[data-following] { @apply bg-muted text-muted-foreground; }

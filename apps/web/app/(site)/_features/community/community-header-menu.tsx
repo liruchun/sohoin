@@ -1,6 +1,6 @@
 "use client";
 import {useTranslations} from "next-intl";
-import Link from "next/link";
+import {ReadingLink as Link} from "../../_components/feedback/reading-navigation";
 import {useEffect,useRef,useState} from "react";
 import {Check,Hash,Plus} from "lucide-react";
 import {Button} from "@sohoin/ui/button";

@@ -3,7 +3,7 @@ import {useTranslations} from "next-intl";
 
 
 import {useRef,type ComponentProps} from "react";
-import {ReadingLink,useReadingPush} from "../../_components/feedback/page-transition";
+import {ReadingLink,useReadingPush} from "../../_components/feedback/reading-navigation";
 import styles from "./post-card.module.css";
 
 const interactive="a,button,input,textarea,select,label,summary,img,picture,video,audio,iframe,[role='button'],[role='link'],[role='menuitem'],[role='slider'],[role='checkbox'],[role='switch'],[contenteditable]:not([contenteditable='false']),[tabindex],[data-magnetic-area],[draggable='true'],[data-card-no-navigation]";
@@ -28,7 +28,7 @@ export function PostCardSurface({href,children,...props}:Omit<ComponentProps<"ar
   event.preventDefault();
   push(href);
  }}>
-  <ReadingLink ref={entry} href={href} prefetch={false} transitionTypes={["detail-forward"]} className={styles.entry}>{t("viewDetails")}</ReadingLink>
+  <ReadingLink ref={entry} href={href} prefetch={false} className={styles.entry}>{t("viewDetails")}</ReadingLink>
   {children}
  </article>;
 }

@@ -36,7 +36,6 @@
 .form { @apply flex min-h-0 flex-1 flex-col; }
 .count { @apply text-xs text-muted-foreground; }
 .confirmActions { @apply mt-4 flex justify-end gap-2; }
-.ownerControls { @apply mb-2 flex justify-end gap-1; }
 .attachments { @apply shrink-0 px-5; }
 .imageGrid { @apply gap-3 py-2; }
 .imageTile { @apply relative shrink-0 rounded-xl; flex:0 0 7.5rem; height:10rem; }
@@ -114,8 +113,9 @@
 .contextHeading strong { @apply min-w-0 break-words; }
 .replyTarget { @apply flex shrink-0 items-center gap-2 px-5 text-xs text-muted-foreground; }
 .replyTarget svg { @apply size-3; }
+.discussionReveal { @apply min-h-0 shrink; }
 .discussion {
-  @apply mx-5 mt-4 min-h-0 shrink border-t border-border pt-3;
+  @apply px-5 pt-4;
 }
 /* The overlay bar needs a bounded viewport; keep the previous 42% share of the
    resizable composer without reserving a scrollbar gutter. */
@@ -123,7 +123,7 @@
   max-height: calc(var(--composer-height, 42rem) * .42);
   overscroll-behavior: contain;
 }
-.discussionHeading { @apply mb-2 flex items-center justify-between gap-3 pe-2 text-sm; }
+.discussionHeading { @apply mb-2 flex items-center justify-between gap-3 border-t border-border pt-3 pe-2 text-sm; }
 .discussionHeading h3 { @apply font-medium; }
 .previewRow { @apply flex items-start gap-3 py-2 text-sm; }
 .previewRow[data-nested] { @apply ml-12 pl-3; }
@@ -139,10 +139,6 @@
 @media (hover: hover) and (pointer: fine) {
   .replyLink:hover > .replySurface { @apply bg-accent; }
 }
-.previewStatus { @apply py-5 text-center text-sm text-muted-foreground; }
-.skeletonAvatar { @apply size-10 shrink-0 rounded-full bg-muted; }
-.skeletonName { @apply mb-3 block h-3 w-20 rounded bg-muted; }
-.skeletonLine { @apply mb-4 block h-3 w-4/5 rounded bg-muted; }
 .resize {
   @apply flex h-8 shrink-0 cursor-ns-resize touch-none select-none items-center justify-center outline-none;
 }

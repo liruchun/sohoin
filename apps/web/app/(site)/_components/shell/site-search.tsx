@@ -2,7 +2,7 @@
 
 import {useTranslations} from "next-intl";
 import {createContext,useContext,useEffect,useId,useLayoutEffect,useRef,useState,type CSSProperties,type FocusEventHandler,type PointerEvent as ReactPointerEvent,type ReactNode,type RefObject} from "react";
-import Link from "next/link";
+import {ReadingLink as Link} from "../feedback/reading-navigation";
 import {Search,Settings,Award,UserRound,X} from "lucide-react";
 import {Tooltip,TooltipProvider} from "@sohoin/ui/tooltip";
 import {IconButton} from "@sohoin/ui/icon-button";

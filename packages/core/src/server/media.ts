@@ -72,7 +72,7 @@ async function processMediaUpload(actorId:string,source:{name:string;mime:string
   const imageKey=prefix+(isSvg?".svg":".webp"),thumbKey=prefix+"-thumb.webp",imageBytes=isSvg?bytes:output.data;
   await saveMediaBytes(imageKey,imageBytes);written.push(imageKey);await saveMediaBytes(thumbKey,thumb.data);written.push(thumbKey);
   const variants:{variant:string;key:string;mime:string;size:number;width:number;height:number}[]=[];
-  if(!member&&!isSvg&&!source.purpose){
+  if(!isSvg&&!source.purpose){
    for(const image of await buildResponsiveImages(output.data,output.info.width)){
     const key=prefix+"-"+image.variant+".webp";
     await saveMediaBytes(key,image.data);written.push(key);
@@ -89,7 +89,7 @@ async function processMediaUpload(actorId:string,source:{name:string;mime:string
   let id:string,created=true;
   const checksum=createHash('sha256').update(imageBytes).digest('hex');
   if(member){
-   try{const result=await insertMemberMedia(actorId,createShortPublicId(),sourceChecksum,mediaNamespace,source.name,checksum,image,storedImage(thumbKey,thumb));id=result.id;created=result.created;}
+   try{const result=await insertMemberMedia(actorId,createShortPublicId(),sourceChecksum,mediaNamespace,source.name,checksum,image,storedImage(thumbKey,thumb),{kind:'image',variants});id=result.id;created=result.created;}
    catch(error){if(error instanceof MemberMediaFullError)throw new ServiceError(409,'MEDIA_LIBRARY_FULL','媒体库最多保存 500 张图片');if(error instanceof MediaStoreError)throw new ServiceError(403,'FORBIDDEN','当前账号不可上传图片');throw error;}
   }else id=await stored(()=>insertMedia(actorId,mediaNamespace,source.name,checksum,image,storedImage(thumbKey,thumb),variants));
   // Commit is the success boundary: never remove files after a successful metadata transaction.

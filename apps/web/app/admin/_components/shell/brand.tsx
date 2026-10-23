@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 
 export function AdminBrand({name,href,subtitle=false}:{name:string;href:string;subtitle?:boolean}){
  const initial=Array.from(name)[0];

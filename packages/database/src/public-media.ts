@@ -1,7 +1,7 @@
 import "server-only";
 import {getPool} from "./index";
 
-export type SitePresentation={id:string;media:{url:string;width:number;height:number;alt:string;kind?:string;image?:string;icon?:string;mime?:string;durationMs?:number;hasAudio?:boolean|null;poster?:string;sources?:{variant:string;width:number}[]}[];reactions:{code:string;label:string;emoji:string;count:number}[];comments:number};
+export type SitePresentation={id:string;media:{url:string;width:number;height:number;alt:string;kind?:string;image?:string;icon?:string;mime?:string;durationMs?:number;hasAudio?:boolean|null;poster?:string;sources?:{variant:string;width:number}[]}[];reactions:{code:string;label:string;emoji:string;count:number}[];comments:number;participants:{name:string;image:string|null}[]};
 // Identifiers come only from this closed owner mapping, never from a request.
 function attachmentProjection(kind:'content'|'comment'){
  const owner=kind==='comment'?'comment_id':'content_id',id=kind==='comment'?'a.id':'c.id';
@@ -28,7 +28,15 @@ export async function readSitePresentation(ids:string[]):Promise<SitePresentatio
   ) counts GROUP BY code) r JOIN reaction_types t ON t.code=r.code AND t.enabled),'[]'::jsonb) AS reactions,
  (SELECT count(*)::int FROM comments a LEFT JOIN comments root ON root.id=a.root_id LEFT JOIN "user" root_user ON root_user.id=root.author_id JOIN "user" au ON au.id=a.author_id AND NOT COALESCE(au.banned,false)
   WHERE a.content_id=c.id AND a.status='visible' AND NOT a.thread_hidden AND NOT COALESCE(root.thread_hidden,false)
-  AND (a.root_id IS NULL OR (root.status='visible' AND root_user.id IS NOT NULL AND NOT COALESCE(root_user.banned,false)))) AS comments
+  AND (a.root_id IS NULL OR (root.status='visible' AND root_user.id IS NOT NULL AND NOT COALESCE(root_user.banned,false)))) AS comments,
+ COALESCE((SELECT jsonb_agg(jsonb_build_object('name',recent.name,'image',recent.image) ORDER BY recent.last_at DESC,recent.last_comment DESC) FROM (
+  SELECT au.id,au.name,au.image,max(a.created_at) AS last_at,max(a.id) AS last_comment
+  FROM comments a JOIN "user" au ON au.id=a.author_id AND NOT COALESCE(au.banned,false)
+  LEFT JOIN comments root ON root.id=a.root_id LEFT JOIN "user" ru ON ru.id=root.author_id
+  WHERE a.content_id=c.id AND a.status='visible' AND NOT a.thread_hidden
+   AND (a.root_id IS NULL OR (root.status='visible' AND NOT root.thread_hidden AND ru.id IS NOT NULL AND NOT COALESCE(ru.banned,false)))
+  GROUP BY au.id ORDER BY last_at DESC,last_comment DESC LIMIT 3
+ ) recent),'[]'::jsonb) AS participants
  FROM contents c JOIN "user" u ON u.id=c.author_id AND NOT COALESCE(u.banned,false)
  WHERE c.id=ANY($1::bigint[]) AND c.status='published' AND c.type IN ('post','article')`,[ids])).rows;
 }

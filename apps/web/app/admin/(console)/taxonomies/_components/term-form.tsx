@@ -4,7 +4,7 @@ import {useToast} from "@sohoin/ui/toast";
 
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
-import Link from "next/link";
+import {NavigationLink as Link} from "@/app/_components/navigation/page-motion";
 import type {Term,TermKind} from "@sohoin/extension-api/content";
 import type {MediaPage} from "@sohoin/extension-api/media";
 import {Button} from "@sohoin/admin-ui/button";

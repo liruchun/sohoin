@@ -11,7 +11,7 @@ export async function readMemberMediaById(user:string,id:string){return (await g
 export async function readMemberMediaFile(user:string,id:string){return (await getPool().query(`SELECT ${fields} FROM member_media mm JOIN media_assets m ON m.id=mm.media_id AND m.status='ready' WHERE mm.user_id=$1 AND mm.public_id=$2`,[user,id])).rows[0] as MemberMediaRow|undefined;}
 export class MemberMediaFullError extends Error{}
 /** Serialize by owner to make both deduplication and the 500-image cap atomic. */
-export async function insertMemberMedia(actor:string,publicId:string,sourceChecksum:string,namespace:string,name:string,checksum:string,image:StoredImage,thumbnail:StoredImage,options:{kind:'image'|'video';durationMs?:number;hasAudio?:boolean}={kind:'image'}){
+export async function insertMemberMedia(actor:string,publicId:string,sourceChecksum:string,namespace:string,name:string,checksum:string,image:StoredImage,thumbnail:StoredImage,options:{kind:'image'|'video';durationMs?:number;hasAudio?:boolean;variants?:(StoredImage&{variant:string})[]}={kind:'image'}){
  const client=await getPool().connect();
  try{
   await client.query('BEGIN');
@@ -22,7 +22,8 @@ export async function insertMemberMedia(actor:string,publicId:string,sourceCheck
   const count=await client.query(`SELECT 1 FROM member_media mm JOIN media_assets m ON m.id=mm.media_id AND m.status='ready' WHERE mm.user_id=$1 LIMIT 500`,[actor]);
   if(count.rowCount===500)throw new MemberMediaFullError();
   const row=(await client.query(`INSERT INTO media_assets(uploader_id,storage_provider,storage_namespace,storage_key,original_name,kind,mime_type,byte_size,width,height,checksum_sha256,status,duration_ms,has_audio) VALUES($1,'local',$2,$3,$4,$10,$5,$6,$7,$8,$9,'ready',$11,$12) RETURNING id::text`,[actor,namespace,image.key,name,image.mime,image.size,image.width,image.height,checksum,options.kind,options.durationMs??null,options.hasAudio??null])).rows[0];
-  await client.query(`INSERT INTO media_variants(media_id,variant_key,storage_provider,storage_namespace,storage_key,mime_type,byte_size,width,height,status) VALUES($1,'thumbnail','local',$2,$3,$4,$5,$6,$7,'ready')`,[row.id,namespace,thumbnail.key,thumbnail.mime,thumbnail.size,thumbnail.width,thumbnail.height]);
+  const derived=[{...thumbnail,variant:'thumbnail'},...(options.variants??[])];
+  await client.query(`INSERT INTO media_variants(media_id,variant_key,storage_provider,storage_namespace,storage_key,mime_type,byte_size,width,height,status) SELECT $1,v.variant,'local',$2,v.key,v.mime,v.size,v.width,v.height,'ready' FROM jsonb_to_recordset($3::jsonb) AS v(variant text,key text,mime text,size bigint,width integer,height integer)`,[row.id,namespace,JSON.stringify(derived)]);
   // A deleted asset can be uploaded again without accumulating duplicate library entries.
   await client.query(`INSERT INTO member_media(media_id,user_id,public_id,source_checksum) VALUES($1,$2,$3,$4) ON CONFLICT(user_id,source_checksum) DO UPDATE SET media_id=EXCLUDED.media_id`,[row.id,actor,publicId,sourceChecksum]);
   await client.query(`INSERT INTO media_audit(actor_id,media_id,label,action) VALUES($1,$2,$3,'uploaded')`,[actor,row.id,name]);

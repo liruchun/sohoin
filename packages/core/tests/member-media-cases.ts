@@ -9,8 +9,25 @@ import {getOwnMediaResponse} from '../src/server/video-http';
 import {getPool,readMemberContacts,readMemberMediaFile,tombstoneMedia,MediaStoreError} from '@sohoin/database';
 import {getMemberImage,getOwnMemberDetails,listOwnMedia,saveMemberDetails,uploadOwnMedia} from '../src/server/member-profiles';
 import {ServiceError} from '../src/server/security';
+import {loadMediaBytes} from '../src/server/media-storage';
 
 export async function memberMediaCases(t:TestContext,userToken:string,adminToken:string,userId:string,adminId:string){
+ await t.test('member uploads persist responsive files and deduplicate their variants',async()=>{
+  const bytes=await sharp({create:{width:1600,height:800,channels:3,background:'#3581a9'}}).png().toBuffer();
+  const upload=()=>uploadOwnMedia(new Request('http://127.0.0.1/api/v1/account/media',{method:'POST',headers:{authorization:'Bearer '+userToken,'content-type':'image/png','x-file-name':'responsive.png'},body:new Uint8Array(bytes)}));
+  const first=await upload(),again=await upload();
+  assert.equal(first.id,again.id);
+  const asset=await readMemberMediaFile(userId,first.id);assert.ok(asset);
+  const variants=(await getPool().query(`SELECT variant_key,width,height,storage_namespace,storage_key,byte_size FROM media_variants WHERE media_id=$1 AND status='ready' ORDER BY width`,[asset.id])).rows;
+  assert.equal(variants.length,4);
+  const responsive=variants.filter(v=>v.variant_key!=='thumbnail');
+  assert.deepEqual(responsive.map(v=>[v.variant_key,v.width,v.height]),[['w480',480,240],['w960',960,480],['w1440',1440,720]]);
+  for(const variant of responsive){
+   const file=await loadMediaBytes(variant.storage_namespace,variant.storage_key,Number(variant.byte_size));
+   const metadata=await sharp(file).metadata();
+   assert.equal(metadata.format,'webp');assert.equal(metadata.width,variant.width);assert.equal(metadata.height,variant.height);
+  }
+ });
  await t.test('video libraries filter by type and owner and preserve media permissions',async()=>{
   const headers=new Headers({authorization:'Bearer '+userToken}),adminHeaders=new Headers({authorization:'Bearer '+adminToken});
   const publicId=createShortPublicId(),checksum=randomBytes(32).toString('hex'),key='2026/10/'+randomBytes(16).toString('hex');
