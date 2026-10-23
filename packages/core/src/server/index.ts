@@ -4,7 +4,7 @@ export {checkOwnAchievements} from "./achievements";
 export {createAdminBadgeService,createSystemBadgeService,listOwnBadges} from "./badges";
 export {getOwnMedals,getSiteMedals,wearOwnBadge} from "./badges";
 export {createSystemPointsService,createAdminPointsService,getOwnPointsBalance,listOwnPointsEntries} from "./points";
-export {getSiteReplyBranch} from "./public-discussion";
+export {getSiteReplyBranch,getSiteAncestorReplyCounts} from "./public-discussion";
 export {getSiteContentHead,getSiteDiscussion,type SiteContentHead,type SiteComment,type DiscussionQuery} from "./public-discussion";
 export {setSiteCommentInteraction} from "./interactions";
 export {listComments,getCommentContext,moderateComment,listCommentAudit} from "./comments";

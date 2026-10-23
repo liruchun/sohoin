@@ -7,7 +7,7 @@ import {randomBytes} from "node:crypto";
 import {getPool,savePublicRouteIds,insertMedia,readMediaFile,tombstoneMedia,MediaStoreError,readPublicMediaFile,readSitePresentation} from "@sohoin/database";
 import {createPublicIdCodec,createShortPublicId} from "../src/server/public-id";
 import {getSiteFeed,getSiteContent,getSiteProfile,getSiteSitemap} from "../src/server/public-site";
-import {getSiteDiscussion,getSiteReplyBranch,getSiteContentHead,readCommentActionToken,commentRoutes} from "../src/server/public-discussion";
+import {getSiteDiscussion,getSiteReplyBranch,getSiteContentHead,getSiteAncestorReplyCounts,readCommentActionToken,commentRoutes} from "../src/server/public-discussion";
 import {ServiceError} from "../src/server/security";
 const key=randomBytes(32).toString("base64url"),codec=createPublicIdCodec(key);
 test("public IDs encrypt with randomized nonces and authenticate purpose, payload and encoding",()=>{
@@ -128,7 +128,7 @@ test("public pages preserve stable IDs, exact keyset order, type and visibility 
    const publicRoot=page.threads[0].comment.publicId;
    assert.match(publicRoot,/^(?=.*[a-z])[a-z0-9]{10}$/);
    assert.equal(publicRoot,again.threads[0].comment.publicId);
-   assert.equal(page.threads[0].comment.replies,12);
+   assert.equal(page.threads[0].comment.replies,24);
    assert.deepEqual(page.threads[0].replies.map(reply=>reply.body),["直接回复 0","直接回复 1","直接回复 2"]);
    const first=page.threads[0];
    assert.equal(first.replies.length,3);assert.ok(first.next);
@@ -181,7 +181,21 @@ test("public pages preserve stable IDs, exact keyset order, type and visibility 
    assert.ok(indexed.every(row=>!row.path.startsWith("/c/")&&!row.path.startsWith("/comments/")));
    const publicChild=childId;
    const nested=await getSiteDiscussion(item.publicId,"post",{comment:publicChild});
-   assert.equal(nested.selected?.body,"直接回复 11");assert.equal(nested.selected?.replies,1);
+   assert.equal(nested.selected?.body,"直接回复 11");assert.equal(nested.selected?.replies,12);
+   // A new deep reply refreshes every ancestor, not just the list owner.
+   const newest=await insert("新增深层回复",root,target);
+   const newestPublic=(await commentRoutes([newest])).get(newest)!;
+   const ancestorCounts=await getSiteAncestorReplyCounts(newestPublic);
+   assert.equal(ancestorCounts.find(row=>row.publicId===publicRoot)?.count,25);
+   assert.equal(ancestorCounts.find(row=>row.publicId===publicChild)?.count,13);
+   assert.equal(ancestorCounts.find(row=>row.publicId===nested.threads[0].comment.publicId)?.count,12);
+   assert.ok(!ancestorCounts.some(row=>row.publicId===newestPublic));
+   assert.equal((await getSiteContent(publicRoot,"comment")).comments,25);
+   assert.equal((await getSiteContent(publicChild,"comment")).comments,13);
+   await db.query("UPDATE comments SET status='hidden' WHERE id=$1",[newest]);
+   assert.deepEqual(await getSiteAncestorReplyCounts(newestPublic),[]);
+   assert.equal((await getSiteContent(publicChild,"comment")).comments,12);
+   await db.query("DELETE FROM comments WHERE id=$1",[newest]);
    assert.equal(nested.threads.length,5);assert.ok(nested.threads.every(thread=>thread.comment.body.startsWith("回复的回复")));
    await assert.rejects(getSiteDiscussion(item.publicId,"post",{comment:publicChild,repliesBefore:selected.next!}),e=>e instanceof ServiceError&&e.status===400);
    await assert.rejects(getSiteDiscussion(other.publicId,"post",{comment:publicRoot}),e=>e instanceof ServiceError&&e.status===404);
@@ -196,6 +210,7 @@ test("public pages preserve stable IDs, exact keyset order, type and visibility 
    assert.ok(hiddenBranch.items.every(reply=>reply.body.startsWith("直接回复")));
    await db.query("UPDATE comments SET status='visible' WHERE id=$1",[child]);
    await db.query("UPDATE comments SET thread_hidden=true WHERE id=$1",[root]);
+   assert.deepEqual(await getSiteAncestorReplyCounts(publicChild),[]);
    for(const comment of [publicRoot,publicChild,nested.threads[0].comment.publicId])await assert.rejects(getSiteDiscussion(item.publicId,"post",{comment}),e=>e instanceof ServiceError&&e.status===404);
    assert.ok(!(await getSiteSitemap()).some(row=>row.path.startsWith("/comments/")));
    await assert.rejects(getSiteContent(publicRoot,"comment"),e=>e instanceof ServiceError&&e.status===404);

@@ -1,8 +1,7 @@
 @reference "../../../globals.css";
 
 .header {
- composes: frosted from "./frosted-toolbar.module.css";
- @apply sticky top-0 z-40 grid min-w-0 border-b border-border;
+ @apply sticky top-0 z-40 grid min-w-0 border-b border-border bg-background;
  grid-column: 1 / -1;
  grid-row: 1;
  grid-template-columns: subgrid;

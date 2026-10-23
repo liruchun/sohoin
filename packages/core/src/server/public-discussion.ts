@@ -1,7 +1,7 @@
 import {plainMentionText} from "@sohoin/extension-api/mentions";
 import {avatarUrl} from "./avatar-url";
 import "server-only";
-import {readWornBadges,readCommentPresentation} from "@sohoin/database";
+import {readWornBadges,readCommentPresentation,readSiteAncestorReplyCounts} from "@sohoin/database";
 import {readSiteContentHead,readSiteCommentParent,readSiteCommentRoots,readSiteCommentReplies,readInteractionBatch,readPublicCommentIds,savePublicCommentIds,readSiteSelectedComment,readSiteDescendantReplies,type PublicCommentRow} from "@sohoin/database";
 import {publicRoutes} from "./public-routes";
 import type {SiteContent} from "./public-site";
@@ -76,6 +76,10 @@ async function readParentDiscussion(token:string,type:"post"|"article",query:Dis
   next:rows.length>pageSize?cursor(token,selected?replyKind:"roots",roots[pageSize-1].id):null};
 }
 export type SiteComment=Awaited<ReturnType<typeof loadCommentItems>>[number];
+export async function getSiteAncestorReplyCounts(publicId:string){
+ if(typeof publicId!=="string"||!/^(?=.*[a-z])[a-z0-9]{10}$/.test(publicId))throw new ServiceError(404,"PUBLIC_PAGE_NOT_FOUND","讨论不存在或未公开");
+ return readSiteAncestorReplyCounts(publicId);
+}
 /** An inline branch uses the same visibility checks and cursors as comment detail. */
 export async function getSiteReplyBranch(publicId:string,before:string|undefined,headers?:Headers){
  if(!/^(?=.*[a-z])[a-z0-9]{10}$/.test(publicId))throw new ServiceError(404,"PUBLIC_PAGE_NOT_FOUND","讨论不存在或未公开");

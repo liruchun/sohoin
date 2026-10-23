@@ -19,10 +19,20 @@ const joins=`FROM comments a JOIN contents c ON c.id=a.content_id AND c.status='
  JOIN "user" u ON u.id=a.author_id AND NOT COALESCE(u.banned,false)
  LEFT JOIN comments target ON target.id=a.reply_to_id AND target.status='visible' AND NOT target.thread_hidden
  LEFT JOIN "user" target_user ON target_user.id=target.author_id AND NOT COALESCE(target_user.banned,false)`;
-const projection=`a.id::text,a.content_id::text,a.author_id,a.updated_at,a.body,u.name AS author_name,u.image AS author_image,a.created_at,target_user.name AS reply_to_name,
+// Root lists include all visible replies; nested branches follow visible parents.
+const replyCount=`CASE WHEN a.root_id IS NULL THEN
  (SELECT count(*)::int FROM comments reply JOIN "user" au ON au.id=reply.author_id AND NOT COALESCE(au.banned,false)
  WHERE reply.content_id=a.content_id AND reply.root_id=COALESCE(a.root_id,a.id)
- AND reply.reply_to_id=a.id AND reply.status='visible' AND NOT reply.thread_hidden) AS reply_count`;
+ AND reply.status='visible' AND NOT reply.thread_hidden)
+ ELSE (WITH RECURSIVE descendants(id) AS (
+ SELECT a.id
+ UNION
+ SELECT child.id FROM comments child JOIN descendants parent ON child.reply_to_id=parent.id
+ JOIN "user" author ON author.id=child.author_id AND NOT COALESCE(author.banned,false)
+ WHERE child.content_id=a.content_id AND child.root_id=a.root_id AND child.status='visible' AND NOT child.thread_hidden
+ ) SELECT count(*)::int FROM descendants WHERE id<>a.id) END`;
+const projection=`a.id::text,a.content_id::text,a.author_id,a.updated_at,a.body,u.name AS author_name,u.image AS author_image,a.created_at,target_user.name AS reply_to_name,
+ ${replyCount} AS reply_count`;
 export async function readSiteCommentRoots(contentId:string,before:string|null,root:string|null){
  return (await getPool().query(`SELECT ${projection} ${joins}
  WHERE a.content_id=$1 AND a.root_id IS NULL AND a.status='visible' AND NOT a.thread_hidden
@@ -52,6 +62,20 @@ export async function savePublicCommentIds(rows:{id:string;token:string}[]){
 // A reply is public only while its original root and the root's author remain public.
 const visibleRoot=`(a.root_id IS NULL OR EXISTS(SELECT 1 FROM comments root JOIN "user" ru ON ru.id=root.author_id
  WHERE root.id=a.root_id AND root.content_id=a.content_id AND root.status='visible' AND NOT root.thread_hidden AND NOT COALESCE(ru.banned,false)))`;
+/** One query refreshes every public ancestor after insertion, including covered views. */
+export async function readSiteAncestorReplyCounts(token:string){
+ return (await getPool().query(`WITH RECURSIVE ancestors(id,content_id,reply_to_id,root_id) AS (
+ SELECT a.id,a.content_id,a.reply_to_id,a.root_id ${joins}
+ JOIN public_comment_ids route ON route.comment_id=a.id
+ WHERE route.short_id=$1 AND a.status='visible' AND NOT a.thread_hidden AND ${visibleRoot}
+ UNION
+ SELECT parent.id,parent.content_id,parent.reply_to_id,parent.root_id
+ FROM comments parent JOIN ancestors child ON parent.id=child.reply_to_id AND parent.content_id=child.content_id
+ ) SELECT route.short_id AS "publicId",${replyCount} AS count ${joins}
+ JOIN public_comment_ids route ON route.comment_id=a.id
+ WHERE a.id IN (SELECT id FROM ancestors UNION SELECT root_id FROM ancestors WHERE root_id IS NOT NULL)
+ AND route.short_id<>$1 AND a.status='visible' AND NOT a.thread_hidden AND ${visibleRoot}`,[token])).rows as {publicId:string;count:number}[];
+}
 export async function readSiteSelectedComment(contentId:string,token:string){
  return (await getPool().query(`SELECT ${projection} ${joins}
  JOIN public_comment_ids route ON route.comment_id=a.id

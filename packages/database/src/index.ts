@@ -6,7 +6,7 @@ export {readProfileBadges,readWornBadges,readMedalCollection,writeWornBadge} fro
 export {readBadgeDefinition,readBadgeOptions,readBadgeRecipients,readUserBadgeDetails} from "./badges";
 export {writeBadgeDefinition,writeUserBadge,readBadgeDefinitions,readUserBadges,readManagedUserBadges,readBadgeAudit,BadgeStoreError,type BadgeActor} from "./badges";
 export {runPointsTransaction,checkPointsActor,writePoints,readPointsBalance,readPointsEntries,PointsStoreError,type PointsClient,type PointsRow} from "./points";
-export {readSiteContentHead,readSiteCommentRoots,readSiteCommentReplies,readPublicCommentIds,savePublicCommentIds,readSiteSelectedComment,readSiteDirectReplies,readSiteDescendantReplies,readSiteCommentParent,type PublicCommentRow} from "./public-discussion";
+export {readSiteAncestorReplyCounts,readSiteContentHead,readSiteCommentRoots,readSiteCommentReplies,readPublicCommentIds,savePublicCommentIds,readSiteSelectedComment,readSiteDirectReplies,readSiteDescendantReplies,readSiteCommentParent,type PublicCommentRow} from "./public-discussion";
 export {readProfile,writeProfile,ProfileStoreError,type ProfileRow} from "./profiles";
 export {readNotifications,unreadNotificationCount,markNotificationsRead,sendSystemNotification,NotificationStoreError,type NotificationRow} from "./notifications";
 export {readFollowingActivities,type ActivityRow} from "./activities";

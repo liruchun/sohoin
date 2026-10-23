@@ -9,7 +9,7 @@ import {useState} from "react";
 import {MessagesSquare} from "lucide-react";
 import styles from "./content-action-icon.module.css";
 
-export type ContentActionIconName="smile"|"heart"|"comment"|"discussion"|"bookmark";
+export type ContentActionIconName="smile"|"heart"|"comment"|"reply"|"discussion"|"bookmark";
 const MotionMessagesSquare=motion.create(MessagesSquare);
 const heartPath="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z";
 const commentPath="M7.9 20A9 9 0 1 0 4 16.1L2 22Z";
@@ -44,7 +44,7 @@ export function ContentActionIcon({name,active}:{name:ContentActionIconName;acti
  const [activated,setActivated]=useState(active);
  if(active&&!activated)setActivated(true);
  // Lucide's paired bubbles use the existing conversation hover motion.
- if(name==="discussion")return !activated&&!active
+ if(name==="discussion"||name==="reply")return !activated&&!active
   ?<MessagesSquare {...svgProps}/>
   :<MotionMessagesSquare {...svgProps} initial="normal" animate={reduce?"reduced":active?"animate":"normal"} variants={comment}/>;
  // The initial normal pose has no animation. Mount Motion's SVG controllers
